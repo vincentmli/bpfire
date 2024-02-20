@@ -170,11 +170,18 @@ else
 	# Build the kernel
 	cd $(DIR_APP) && make $(MAKETUNING) $(KERNEL_TARGET) modules
 
+	# Build bpftool
+	cd $(DIR_APP)/tools/bpf/bpftool && sed -i -e 's/^prefix ?= \/usr\/local/prefix ?= \/usr/' Makefile
+	cd $(DIR_APP)/tools/bpf/bpftool && make $(MAKETUNING)
+
 	# Install the kernel
 	cd $(DIR_APP) && cp -v arch/$(KERNEL_ARCH)/boot/$(KERNEL_TARGET) /boot/vmlinuz-$(VER)-$(VERSUFIX)
 	cd $(DIR_APP) && cp -v System.map /boot/System.map-$(VER)-$(VERSUFIX)
 	cd $(DIR_APP) && cp -v .config /boot/config-$(VER)-$(VERSUFIX)
 	cd $(DIR_APP) && make $(MAKETUNING) modules_install
+
+	# Install bpftool
+	cd $(DIR_APP)/tools/bpf/bpftool && make install
 
 ifneq "$(BUILD_PLATFORM)" "x86"
 	cd $(DIR_APP) && make $(MAKETUNING) dtbs

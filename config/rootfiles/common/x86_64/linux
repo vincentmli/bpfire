@@ -23699,3 +23699,4 @@ lib/modules/KVER-ipfire/modules.symbols
 lib/modules/KVER-ipfire/modules.symbols.bin
 #lib/modules/KVER-ipfire/source
 sbin/gen_init_cpio
+usr/sbin/bpftool
