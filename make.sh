@@ -1109,6 +1109,7 @@ buildipfire() {
   lfsmake2 libcap
   lfsmake2 libcap-ng
   lfsmake2 libpcap
+  lfsmake2 libbpf
   lfsmake2 ppp
   lfsmake2 pptp
   lfsmake2 unzip
