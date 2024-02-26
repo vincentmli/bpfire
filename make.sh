@@ -1129,6 +1129,7 @@ buildipfire() {
   lfsmake2 screen
   lfsmake2 elfutils
   lfsmake2 pahole
+  lfsmake2 llvm-project
   lfsmake2 expat
   lfsmake2 libconfig
   lfsmake2 curl
