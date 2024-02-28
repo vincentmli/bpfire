@@ -1109,7 +1109,6 @@ buildipfire() {
   lfsmake2 libcap
   lfsmake2 libcap-ng
   lfsmake2 libpcap
-  lfsmake2 libbpf
   lfsmake2 ppp
   lfsmake2 pptp
   lfsmake2 unzip
@@ -1128,9 +1127,6 @@ buildipfire() {
   lfsmake2 iproute2
   lfsmake2 screen
   lfsmake2 elfutils
-  lfsmake2 pahole
-  lfsmake2 llvm-project
-  lfsmake2 xdp-tools
   lfsmake2 expat
   lfsmake2 libconfig
   lfsmake2 curl
@@ -1685,6 +1681,11 @@ buildipfire() {
   lfsmake2 shairport-sync
   lfsmake2 borgbackup
   lfsmake2 lmdb
+  lfsmake2 pahole
+  lfsmake2 libbpf
+  lfsmake2 bpftool
+  lfsmake2 llvm-project
+  lfsmake2 xdp-tools
   lfsmake2 knot
   lfsmake2 spectre-meltdown-checker
   lfsmake2 zabbix_agentd
