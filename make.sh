@@ -1686,6 +1686,7 @@ buildipfire() {
   lfsmake2 bpftool
   lfsmake2 llvm-project
   lfsmake2 xdp-tools
+  lfsmake2 ecapture
   lfsmake2 knot
   lfsmake2 spectre-meltdown-checker
   lfsmake2 zabbix_agentd
