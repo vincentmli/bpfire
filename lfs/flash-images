@@ -39,6 +39,7 @@ PART_ROOT  = /dev/mapper/$(patsubst /dev/%,%,$(DEVICE))p3
 IMAGE_FILE = /install/images/$(SNAME)-$(VERSION)-core$(CORE)-$(BUILD_ARCH).img.xz
 
 FSTAB_FMT = UUID=%s %-8s %-4s %-10s %d %d\n
+BPFFS_FMT = %s %-8s %-4s %-10s %d %d\n
 
 ###############################################################################
 # Top-level Rules
@@ -165,6 +166,9 @@ ifeq "$(EFI)" "1"
 endif
 	printf "$(FSTAB_FMT)" "$$(blkid -o value -s UUID $(PART_ROOT))" "/" \
 		"auto" "defaults" 1 1 >> $(MNThdd)/etc/fstab
+
+	printf "$(BPFFS_FMT)" "bpffs" "/sys/fs/bpf" \
+		"bpf" "defaults" 0 0 >> $(MNThdd)/etc/fstab
 
 ifeq "$(BOOTLOADER)" "grub"
 	# backup defaults file
