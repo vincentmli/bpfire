@@ -1246,6 +1246,7 @@
 'fwdfw toggle' => '激活或停用',
 'fwdfw togglelog' => '激活或停用日志',
 'fwdfw use nat' => '使用网络地址转换(NAT)',
+'fwdfw use synproxy' => '使用XDP SYNPROXY加速',
 'fwdfw use srcport' => '源端口:',
 'fwdfw use srv' => '目标端口:',
 'fwdfw useless rule' => '该规则无效。',
