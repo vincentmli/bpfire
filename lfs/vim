@@ -83,6 +83,8 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 
 	ln -svf vim /usr/bin/vi
 	install -m 644 $(DIR_SRC)/config/vim/vimrc /etc/vimrc
+	touch /root/.vimrc
+	echo "set mouse-=a" >> /root/.vimrc
 
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)
