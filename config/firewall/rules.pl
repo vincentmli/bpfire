@@ -42,6 +42,8 @@ my $CHAIN                 = $CHAIN_FORWARD;
 my $CHAIN_NAT_SOURCE      = "NAT_SOURCE";
 my $CHAIN_NAT_DESTINATION = "NAT_DESTINATION";
 my $CHAIN_MANGLE_NAT_DESTINATION_FIX = "NAT_DESTINATION";
+my $CHAIN_INSYNPROXY = "INSYNPROXY";
+my $CHAIN_RAWSYNPROXY = "RAWSYNPROXY";
 my @VALID_CHAINS          = ($CHAIN_INPUT, $CHAIN_FORWARD, $CHAIN_OUTPUT);
 my @ANY_ADDRESSES         = ("0.0.0.0/0.0.0.0", "0.0.0.0/0", "0/0");
 
@@ -218,6 +220,8 @@ sub flush {
 	run("$IPTABLES -F $CHAIN_INPUT");
 	run("$IPTABLES -F $CHAIN_FORWARD");
 	run("$IPTABLES -F $CHAIN_OUTPUT");
+	run("$IPTABLES -F $CHAIN_INSYNPROXY");
+	run("$IPTABLES -t raw -F $CHAIN_RAWSYNPROXY");
 	run("$IPTABLES -t nat -F $CHAIN_NAT_SOURCE");
 	run("$IPTABLES -t nat -F $CHAIN_NAT_DESTINATION");
 	run("$IPTABLES -t mangle -F $CHAIN_MANGLE_NAT_DESTINATION_FIX");
@@ -295,6 +299,12 @@ sub buildrules {
 		my $NAT_MODE;
 		if ($NAT) {
 			$NAT_MODE = uc($$hash{$key}[31]);
+		}
+
+		# Check if XDP SYNPROXY is turned on
+		my $SYNPROXY;
+		if(exists($$hash{$key}[37])) {
+			$SYNPROXY = ($$hash{$key}[37] eq 'ON');
 		}
 
 		# Set up time constraints.
@@ -607,6 +617,23 @@ sub buildrules {
 						run("$IPTABLES -A $chain @options @source_intf_options @destination_intf_options @log_limit_options -j LOG --log-prefix '$chain '");
 					}
 					run("$IPTABLES -A $chain @options @source_intf_options @destination_intf_options -j $target");
+
+					if ($SYNPROXY) {
+						my $dport = &get_external_port($hash, $key);
+						my @raw_options = ("-p", "tcp", "-m", "tcp", "--syn");
+						my @in_options = ("-p", "tcp", "-m", "tcp");
+						my @options = ("--sack-perm", "--timestamp", "--wscale", "7", "--mss", "1460");
+						push(@raw_options, "--dport", "$dport");
+						push(@in_options, "--dport", "$dport", "-m", "state", "--state", "INVALID,UNTRACKED");
+						if ($LOG) {
+							run("$IPTABLES -t raw -A  $CHAIN_RAWSYNPROXY -i $RED_DEV @raw_options -j LOG --log-prefix '$CHAIN_RAWSYNPROXY '");
+						}
+						run("$IPTABLES -t raw -A $CHAIN_RAWSYNPROXY -i $RED_DEV @raw_options -j CT --notrack");
+						if ($LOG) {
+							run("$IPTABLES -A  $CHAIN_INSYNPROXY -i $RED_DEV @in_options -j LOG --log-prefix '$CHAIN_RAWSYNPROXY ' @options");
+						}
+						run("$IPTABLES -A $CHAIN_INSYNPROXY -i $RED_DEV @in_options -j SYNPROXY @options");
+					}
 
 					# Handle forwarding rules and add corresponding rules for firewall access.
 					if ($chain eq $CHAIN_FORWARD) {
@@ -941,6 +968,22 @@ sub get_dnat_target_port {
 
 		if ($external_port && ($port ne $external_port)) {
 			return $$hash{$key}[15];
+		}
+	}
+}
+
+sub get_external_port {
+	my $hash = shift;
+	my $key  = shift;
+
+	if ($$hash{$key}[14] eq "TGT_PORT") {
+		my $port = $$hash{$key}[15];
+		my $external_port = $$hash{$key}[30];
+
+		if ($external_port && ($port ne $external_port)) {
+			return $external_port;
+		} else {
+			return $port;
 		}
 	}
 }
