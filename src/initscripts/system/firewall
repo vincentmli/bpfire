@@ -70,6 +70,12 @@ iptables_init() {
 	modprobe nf_log_ipv4
 	sysctl -q -w net.netfilter.nf_log.2=nf_log_ipv4
 
+        # XDP SYNPROXY Chain, needs to be first chain in INPUT as the chain order matters
+        iptables -t raw -N RAWSYNPROXY
+        iptables -t raw -A PREROUTING -j RAWSYNPROXY
+        iptables -N INSYNPROXY
+        iptables -A INPUT -j INSYNPROXY
+
 	# IPS Bypass Chain which stores the BYPASS bit in connection tracking
 	iptables -N IPSBYPASS
 	iptables -A IPSBYPASS -j CONNMARK --save-mark --mask "$(( ~IPS_REPEAT_MASK & 0xffffffff ))"
