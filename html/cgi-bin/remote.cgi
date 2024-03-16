@@ -82,21 +82,21 @@ if ( (($remotesettings{'ACTION'} eq $Lang::tr{'save'}) || ($remotesettings{'ACTI
 		&General::log("SSH Port 222");
 	}
 
-if ( $remotesettings{'ACTION'} eq $Lang::tr{'ssh tempstart15'} || $remotesettings{'ACTION'} eq $Lang::tr{'ssh tempstart30'} ){
-	if ($remotesettings{'ENABLE_SSH'} eq 'off')
-	{
+	if ( $remotesettings{'ACTION'} eq $Lang::tr{'ssh tempstart15'} || $remotesettings{'ACTION'} eq $Lang::tr{'ssh tempstart30'} ){
+		if ($remotesettings{'ENABLE_SSH'} eq 'off')
+		{
 			&General::system('/usr/bin/touch', "${General::swroot}/remote/enablessh");
 			&General::system('/usr/local/bin/sshctrl');
-	}
-  if ( $remotesettings{'ACTION'} eq $Lang::tr{'ssh tempstart15'} ) { $counter = 900;}
-  elsif ( $remotesettings{'ACTION'} eq $Lang::tr{'ssh tempstart30'} ) { $counter = 1800;}
+		}
+		if ( $remotesettings{'ACTION'} eq $Lang::tr{'ssh tempstart15'} ) { $counter = 900;}
+		elsif ( $remotesettings{'ACTION'} eq $Lang::tr{'ssh tempstart30'} ) { $counter = 1800;}
 
-  system("/usr/local/bin/sshctrl tempstart $counter >/dev/null");
- }
-else {
-	system('/usr/local/bin/sshctrl') == 0
+		system("/usr/local/bin/sshctrl tempstart $counter >/dev/null");
+	}
+	else {
+		system('/usr/local/bin/sshctrl') == 0
 		or $errormessage = "$Lang::tr{'bad return code'} " . $?/256;
- }
+	}
 }
 
 &General::readhash("${General::swroot}/remote/settings", \%remotesettings);
