@@ -1511,6 +1511,8 @@
 'intrusion detection system rules' => 'Ruleset',
 'intrusion detection system2' => 'Intrusion Prevention System',
 'intrusion prevention system' => 'Intrusion Prevention System',
+'ebpf xdp ddos' => 'eBPF XDP DDoS Protection',
+'ebpf xdp ddos system' => 'eBPF XDP DDoS Protection System',
 'invalid broadcast ip' => 'Invalid broadcast IP',
 'invalid cache size' => 'Invalid cache size.',
 'invalid characters found in pre-shared key' => 'Invalid characters found in pre-shared key.',

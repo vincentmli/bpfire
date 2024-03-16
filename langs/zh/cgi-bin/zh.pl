@@ -1503,6 +1503,8 @@
 'intrusion detection system rules' => '规则集',
 'intrusion detection system2' => '入侵检测系统',
 'intrusion prevention system' => '入侵检测系统',
+'ebpf xdp ddos' => 'eBPF XDP DDoS 分布式攻击防御',
+'ebpf xdp ddos system' => 'eBPF XDP DDoS 分布式攻击防御系统',
 'invalid broadcast ip' => '无效的广播IP',
 'invalid cache size' => '无效的缓存大小。',
 'invalid characters found in pre-shared key' => '在预共享密钥中找到无效字符。',
