@@ -1,0 +1,8 @@
+ssh              22/tcp     # The Secure Shell (SSH) Protocol
+smtp             25/tcp     # Simple Mail Transfer
+http             80/tcp     # World Wide Web HTTP
+https            443/tcp    # http protocol over TLS/SSL
+domain           53/tcp     # Domain Name Server
+httpalt         8080/tcp   # HTTP Alternate (see port 80)
+opsmessaging     8090/tcp   # Vehicle to station messaging
+userdefined     5555/tcp   # Vehicle to station messaging
