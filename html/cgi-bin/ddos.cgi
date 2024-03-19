@@ -64,11 +64,13 @@ if ($cgiparams{'ACTION'} eq $Lang::tr{'save'})
 		$ddossettings{'ENABLE_DDOS'} = "on";
 		&General::log($Lang::tr{'ddos is enabled'});
 		&General::system('/usr/bin/touch', "${General::swroot}/ddos/enableddos");
+		&General::system('/usr/local/bin/ddosctrl', 'start');
 		#system('/usr/local/bin/sshctrl') == 0
 		#	or $errormessage = "$Lang::tr{'bad return code'} " . $?/256;
 	} else {
 		$ddossettings{'ENABLE_DDOS'} = "off";
 		&General::log($Lang::tr{'ddos is disabled'});
+		&General::system('/usr/local/bin/ddosctrl', 'stop');
 		unlink "${General::swroot}/ddos/enableddos";
 	}
 
@@ -267,37 +269,58 @@ sub get_tcp_ports()
 sub printxdp()
 {
 	# print active SSH logins (grep outpout of "who -s")
-	my @output = &General::system_output("xdp-loader", "status");
+	my @output = &General::system_output("/usr/local/bin/ddosctrl", "status");
 	chomp(@output);
 
 		# list active logins...
 		foreach my $line (@output)
 		{
+			my $interface;
+			my $prio;
+			my $prog;
+			my $mode;
+			my $id;
+			my $tag;
+			my $action;
+			#comment next below when having issue
 			#next if $line  !~ /^red0/;
 			#next if $line  !~ /^\s=>/;
-			my @arry = split(/\ +/, $line);
+			next if $line =~ /No XDP program loaded!/;
+			if ($line =~ /^red0/) {
+				my @arry = split(/\s+/, $line);
+				$interface = $arry[0];
+				$prio = "N/A";
+				$prog = $arry[1];
+				$mode = $arry[2];
+				$id = $arry[3];
+				$tag = $arry[4];
+				$action = "N/A";
+			} elsif ($line =~ /^\s=>/) {
+				my @arry = split(/\s+/, $line);
+				$interface = "red0";
+				$prio = $arry[2];
+				$prog = $arry[3];
+				$mode = "N/A";
+				$id = $arry[4];
+				$tag = $arry[5];
+				$action = $arry[6];
+			}
+			if ($line =~ /^red0/ or $line =~ /^\s=>/) {
+				my $table_colour = ($id % 2) ? $color{'color20'} : $color{'color22'};
 
-			my $interface = $arry[0];
-			my $prio = $arry[1];
-			my $prog = $arry[2];
-			my $mode = $arry[3];
-			my $id = $arry[4];
-			my $tag = $arry[5];
-			my $action = $arry[6];
-
-			my $table_colour = ($id % 2) ? $color{'color20'} : $color{'color22'};
-
-			print <<END;
-			<tr bgcolor='$table_colour'>
-				<td>$interface</td>
-				<td>$prio</td>
-				<td>$prog</td>
-				<td>$mode</td>
-				<td>$id</td>
-				<td>$tag</td>
-				<td>$action</td>
-			</tr>
+				print <<END;
+					<tr bgcolor='$table_colour'>
+						<td>$interface</td>
+						<td>$prio</td>
+						<td>$prog</td>
+						<td>$mode</td>
+						<td>$id</td>
+						<td>$tag</td>
+						<td>$action</td>
+					</tr>
 END
 ;
+			}
+
 		}
 }
