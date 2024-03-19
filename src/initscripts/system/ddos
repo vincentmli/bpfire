@@ -25,25 +25,59 @@
 
 eval $(/usr/local/bin/readhash /var/ipfire/ddos/settings)
 
+get_ports () {
+# Define an empty variable to store the output
+	local output=""
+
+# Read the input file line by line
+	while IFS= read -r line; do
+		# Check if the line contains '=on'
+		if [[ "$line" == [0-9]*"=on" ]]; then
+			# Extract the service/port number
+			service=$(echo "$line" | cut -d'=' -f1)
+			# Append the service/port number to the output string
+			output="$output$service,"
+		fi
+	done < /var/ipfire/ddos/settings
+
+	# Remove the trailing comma from the output string
+	output="${output%,}"
+	echo $output
+}
+
+ports="$(get_ports)"
+
 case "$1" in
 	start)
-		if [ "$ENABLE_DDOS" == "on" ]; then
-			boot_mesg -n "Starting ddos..."
-			if [ -e /var/ipfire/red/active ]; then
-				boot_mesg ""
-				/usr/sbin/xdp-loader load red0 -m skb /usr/lib/bpf/xdp_synproxy.bpf.o
-				evaluate_retval
+		boot_mesg -n "Starting ddos..."
+		if [ -e /var/ipfire/red/active ]; then
+			boot_mesg ""
+			sysctl -w net.ipv4.tcp_syncookies=2
+			sysctl -w net.ipv4.tcp_timestamps=1
+			sysctl -w net.netfilter.nf_conntrack_tcp_loose=0
+			/usr/sbin/xdp-loader status red0 | grep 'syncookie_xdp'
+			if [ $? -eq 0 ]; then
+				prog_id=$(xdp-loader status red0 | grep 'syncookie_xdp' | awk '{print $4}')
+				xdp_synproxy --prog $prog_id --ports="$ports"
 			else
-				boot_mesg " ERROR! Red0 interface not online!"
-				echo_warning
+				xdp-loader load red0 -m skb /usr/lib/bpf/xdp_synproxy.bpf.o
+				evaluate_retval
+				prog_id=$(/usr/sbin/xdp-loader status red0 | grep 'syncookie_xdp' | awk '{print $4}')
+				xdp_synproxy --prog $prog_id --ports="$ports"
 			fi
+		else
+			boot_mesg " ERROR! Red0 interface not online!"
+			echo_warning
 		fi
 
 		;;
 
 	stop)
 		boot_mesg "Stopping ddos..."
+		sysctl -w net.ipv4.tcp_syncookies=1
 		/usr/sbin/xdp-loader unload red0 -a
+		evaluate_retval
+		/bin/rm -rf /sys/fs/bpf/*
 		evaluate_retval
 		;;
 
