@@ -38,3 +38,4 @@ usr/local/bin/urlfilterctrl
 usr/local/bin/wirelessclient
 usr/local/bin/wirelessctrl
 #usr/local/bin/wlanapctrl
+usr/local/bin/ddosctrl
