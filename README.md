@@ -8,13 +8,16 @@ This repository contains the source code of FireBeeOS which is used to build
 the whole distribution from scratch, since FireBeeOS is based on IPFire which is not based on any other
 distribution.
 
-# Where can I get FireBeeOS?
+# Where can I get FireBeeOS installation image?
 
-Just head over to http://www.99os.org/download
+https://drive.google.com/drive/folders/1HPJTWP6wi5gPd5gyiiKvIhWipqguptzZ?usp=drive_link
 
 # How do I use this software?
 
-We will have documentation on how to use FireBeeOS eBPF features.
+FireBeeOS XDP DDoS feature demo:
+
+[![Enable IPFire eBPF XDP DDoS from WebUI](http://img.youtube.com/vi/1pdNgoP-Kho/0.jpg)](https://www.youtube.com/watch?v=1pdNgoP-Kho "Enable IPFire eBPF XDP DDoS from WebUI")
+
 IPFire have a long and detailed wiki located [here](https://wiki.ipfire.org/) which
 should answers most of your questions for IPFire.
 
@@ -22,3 +25,19 @@ should answers most of your questions for IPFire.
 
 You can ask your question by open github issue report or discussion or
 You can ask your question at ipfire community located [here](https://community.ipfire.org/) that is IPFire related.
+
+# How to build FireBeeOS?
+
+Build Environment Setup https://www.ipfire.org/docs/devel/ipfire-2-x/build-initial
+
+git clone https://github.com/vincentmli/FireBeeOS.git
+
+cd FireBeeOS
+
+git checkout ipfire-bpf
+
+wget http://www.99os.org/download/firebeeos/cache.tar
+
+tar xvf cache.tar
+
+./make.sh build
