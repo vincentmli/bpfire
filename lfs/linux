@@ -178,7 +178,7 @@ else
 	cd $(DIR_APP) && cp -v arch/$(KERNEL_ARCH)/boot/$(KERNEL_TARGET) /boot/vmlinuz-$(VER)-$(VERSUFIX)
 	cd $(DIR_APP) && cp -v System.map /boot/System.map-$(VER)-$(VERSUFIX)
 	cd $(DIR_APP) && cp -v .config /boot/config-$(VER)-$(VERSUFIX)
-	cd $(DIR_APP) && make $(MAKETUNING) modules_install
+	cd $(DIR_APP) && INSTALL_MOD_STRIP=1 make $(MAKETUNING) modules_install
 
 	# Install bpftool
 	cd $(DIR_APP)/tools/bpf/bpftool && make install
