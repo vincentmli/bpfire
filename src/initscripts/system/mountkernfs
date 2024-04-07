@@ -46,6 +46,11 @@ case "${1}" in
 			mount -t cgroup2 none /sys/fs/cgroup || failed=1
 		fi
 
+		if ! mountpoint /sys/fs/bpf &> /dev/null; then
+			boot_mesg -n " /sys/fs/bpf" ${NORMAL}
+			mount -t bpf bpffs /sys/fs/bpf || failed=1
+		fi
+
 		if ! mountpoint /sys/firmware/efi/efivars &>/dev/null && [ -d "/sys/firmware/efi" ]; then
 			boot_mesg -n " /sys/firmware/efi/efivars" ${NORMAL}
 			mount -t efivarfs efivarfs /sys/firmware/efi/efivars || failed=1
