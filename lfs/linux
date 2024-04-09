@@ -157,7 +157,9 @@ else
 
 	# Cleanup kernel source
 	cp $(DIR_SRC)/config/kernel/kernel.config.$(BUILD_ARCH)-$(VERSUFIX) $(DIR_APP)/.config
+	cp $(DIR_SRC)/config/kernel/kernel.config.bpf $(DIR_APP)/bpf-config
 	cd $(DIR_APP) && make oldconfig
+	cd $(DIR_APP) && ./scripts/kconfig/merge_config.sh .config bpf-config
 	cd $(DIR_APP) && make clean
 	cd $(DIR_APP) && sed -i -e 's/EXTRAVERSION\ =.*/EXTRAVERSION\ =\ -$(VERSUFIX)/' Makefile
 
