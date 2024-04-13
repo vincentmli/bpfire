@@ -3,6 +3,7 @@
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
 # Copyright (C) 2007-2020  IPFire Team  <info@ipfire.org>                     #
+# Copyright (C) 2024  FireBeeOS <vincent.mc.li@gmail.com>                     #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
@@ -35,7 +36,6 @@ require "${General::swroot}/header.pl";
 my %color = ();
 my %mainsettings = ();
 my %ddossettings=();
-my %cgiparams=();
 my %checked=();
 my $errormessage='';
 my $counter = 0;
@@ -46,7 +46,6 @@ my $ddossettingfile = "${General::swroot}/ddos/settings";
 &get_tcp_ports();
 
 # Read configuration file.
-&General::readhash("$ddossettingfile", \%ddossettings);
 
 &General::readhash("${General::swroot}/main/settings", \%mainsettings);
 &General::readhash("/srv/web/ipfire/html/themes/ipfire/include/colors.txt", \%color);
@@ -55,36 +54,33 @@ my $ddossettingfile = "${General::swroot}/ddos/settings";
 
 $ddossettings{'ENABLE_DDOS'} = 'off';
 $ddossettings{'ACTION'} = '';
-&Header::getcgihash(\%cgiparams);
+&Header::getcgihash(\%ddossettings);
 
-if ($cgiparams{'ACTION'} eq $Lang::tr{'save'})
+if ($ddossettings{'ACTION'} eq $Lang::tr{'save'})
 {
-
-	if (exists $cgiparams{'ENABLE_DDOS'}) {
-		$ddossettings{'ENABLE_DDOS'} = "on";
-		&General::log($Lang::tr{'ddos is enabled'});
-		&General::system('/usr/bin/touch', "${General::swroot}/ddos/enableddos");
-		&General::system('/usr/local/bin/ddosctrl', 'start');
-		#system('/usr/local/bin/sshctrl') == 0
-		#	or $errormessage = "$Lang::tr{'bad return code'} " . $?/256;
-	} else {
-		$ddossettings{'ENABLE_DDOS'} = "off";
-		&General::log($Lang::tr{'ddos is disabled'});
-		&General::system('/usr/local/bin/ddosctrl', 'stop');
-		unlink "${General::swroot}/ddos/enableddos";
-	}
 
         # Loop through our locations array to prevent from
         # non existing countries or code.
         foreach my $p (values %tcp_ports) {
                 # Check if blocking for this country should be enabled/disabled.
-                if (exists $cgiparams{$p}) {
+                if (exists $ddossettings{$p}) {
                         $ddossettings{$p} = "on";
                 } else {
                         $ddossettings{$p} = "off";
                 }
         }
+
 	&General::writehash("$ddossettingfile", \%ddossettings);
+
+	if ($ddossettings{'ENABLE_DDOS'} eq 'on') {
+		&General::log($Lang::tr{'ddos is enabled'});
+		&General::system('/usr/bin/touch', "${General::swroot}/ddos/enableddos");
+		&General::system('/usr/local/bin/ddosctrl', 'start');
+	} else {
+		&General::log($Lang::tr{'ddos is disabled'});
+		&General::system('/usr/local/bin/ddosctrl', 'stop');
+		unlink "${General::swroot}/ddos/enableddos";
+	}
 
 }
 
