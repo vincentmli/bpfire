@@ -1,0 +1,5 @@
+domain           53/udp     # Domain Name Server
+game1           10408/udp   # Domain Name Server
+sip		5060/udp    # Voice over Internet
+siptls		5061/udp    # Voice over Internet TLS
+

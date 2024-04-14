@@ -3,7 +3,7 @@
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
 # Copyright (C) 2007-2020  IPFire Team  <info@ipfire.org>                     #
-# Copyright (C) 2024  FireBeeOS <vincent.mc.li@gmail.com>                     #
+# Copyright (C) 2024  BPFire <vincent.mc.li@gmail.com>                     #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
@@ -36,14 +36,19 @@ require "${General::swroot}/header.pl";
 my %color = ();
 my %mainsettings = ();
 my %ddossettings=();
+my %udpddossettings=();
 my %checked=();
 my $errormessage='';
 my $counter = 0;
 my %tcp_ports=();
-my $portfile = "${General::swroot}/ddos/tcp_ports";
+my %udp_ports=();
+my $tcp_portfile = "${General::swroot}/ddos/tcp_ports";
+my $udp_portfile = "${General::swroot}/ddos/udp_ports";
 my $ddossettingfile = "${General::swroot}/ddos/settings";
+my $udpddossettingfile = "${General::swroot}/ddos/udp-ddos-settings";
 
 &get_tcp_ports();
+&get_udp_ports();
 
 # Read configuration file.
 
@@ -53,7 +58,10 @@ my $ddossettingfile = "${General::swroot}/ddos/settings";
 &Header::showhttpheaders();
 
 $ddossettings{'ENABLE_DDOS'} = 'off';
+$udpddossettings{'ENABLE_UDP_DDOS'} = 'off';
 $ddossettings{'ACTION'} = '';
+$udpddossettings{'UDP_ACTION'} = '';
+
 &Header::getcgihash(\%ddossettings);
 
 if ($ddossettings{'ACTION'} eq $Lang::tr{'save'})
@@ -84,16 +92,37 @@ if ($ddossettings{'ACTION'} eq $Lang::tr{'save'})
 
 }
 
-# Read configuration file.
-&General::readhash("$ddossettingfile", \%ddossettings);
+&Header::getcgihash(\%udpddossettings);
+
+if ($udpddossettings{'UDP_ACTION'} eq $Lang::tr{'save'})
+{
+
+        # Loop through our locations array to prevent from
+        # non existing countries or code.
+        foreach my $p (values %udp_ports) {
+                # Check if blocking for this country should be enabled/disabled.
+                if (exists $udpddossettings{$p}) {
+                        $udpddossettings{$p} = "on";
+                } else {
+                        $udpddossettings{$p} = "off";
+                }
+        }
+
+	&General::writehash("$udpddossettingfile", \%udpddossettings);
+
+	if ($udpddossettings{'ENABLE_UDP_DDOS'} eq 'on') {
+		&General::log($Lang::tr{'ddos is enabled'});
+		&General::system('/usr/bin/touch', "${General::swroot}/ddos/enableddos");
+		&General::system('/usr/local/bin/ddosctrl', 'start');
+	} else {
+		&General::log($Lang::tr{'ddos is disabled'});
+		&General::system('/usr/local/bin/ddosctrl', 'stop');
+		unlink "${General::swroot}/ddos/enableddos";
+	}
+
+}
 
 &Header::openpage($Lang::tr{'ebpf xdp ddos'}, 1, '');
-
-# Checkbox pre-selection.
-my $checked;
-if ($ddossettings{'ENABLE_DDOS'} eq "on") {
-        $checked = "checked='checked'";
-}
 
 &Header::openbigbox('100%', 'left', '', $errormessage);
 
@@ -103,10 +132,19 @@ if ($errormessage) {
 	&Header::closebox();
 }
 
+# Read configuration file.
+&General::readhash("$ddossettingfile", \%ddossettings);
+
+# Checkbox pre-selection.
+my $checked;
+if ($ddossettings{'ENABLE_DDOS'} eq "on") {
+        $checked = "checked='checked'";
+}
+
 # Print box to enable/disable locationblock.
 print"<form method='POST' action='$ENV{'SCRIPT_NAME'}'>\n";
 
-&Header::openbox('100%', 'center', $Lang::tr{'xdp'});
+&Header::openbox('100%', 'center', $Lang::tr{'xdp tcp'});
 print <<END;
         <table width='95%'>
                 <tr>
@@ -120,7 +158,7 @@ END
 
 &Header::closebox();
 
-&Header::openbox('100%', 'center', $Lang::tr{'xdp port'});
+&Header::openbox('100%', 'center', $Lang::tr{'xdp tcp port'});
 print <<END;
 
 <table width='95%' class='tbl' id="countries">
@@ -206,6 +244,116 @@ END
 
 print "</form>\n";
 
+# Read configuration file.
+&General::readhash("$udpddossettingfile", \%udpddossettings);
+
+# Checkbox pre-selection.
+my $udp_checked;
+if ($udpddossettings{'ENABLE_UDP_DDOS'} eq "on") {
+        $udp_checked = "checked='checked'";
+}
+
+# Print box to enable/disable locationblock.
+print"<form method='POST' action='$ENV{'SCRIPT_NAME'}'>\n";
+
+&Header::openbox('100%', 'center', $Lang::tr{'xdp udp'});
+print <<END;
+        <table width='95%'>
+                <tr>
+                        <td width='50%' class='base'>$Lang::tr{'xdp enable'}
+                        <td><input type='checkbox' name='ENABLE_UDP_DDOS' $udp_checked></td>
+                        <td align='center'><input type='submit' name='UDP_ACTION' value='$Lang::tr{'save'}'></td>
+                </tr>
+        </table>
+
+END
+
+&Header::closebox();
+
+&Header::openbox('100%', 'center', $Lang::tr{'xdp udp port'});
+print <<END;
+
+<table width='95%' class='tbl' id="countries">
+        <tr>
+                <td width='5%' align='center' bgcolor='$color{'color20'}'></td>
+                <td width='5%' align='center' bgcolor='$color{'color20'}'>
+                        <b>$Lang::tr{'port'}</b>
+                </td>
+                <td with='35%' align='left' bgcolor='$color{'color20'}'>
+                        <b>$Lang::tr{'service'}</b>
+                </td>
+
+                <td width='5%' bgcolor='$color{'color20'}'>&nbsp;</td>
+
+                <td width='5%' align='center' bgcolor='$color{'color20'}'></td>
+                <td width='5%' align='center' bgcolor='$color{'color20'}'>
+                        <b>$Lang::tr{'port'}</b>
+                </td>
+                <td with='35%' align='left' bgcolor='$color{'color20'}'>
+                        <b>$Lang::tr{'service'}</b>
+                </td>
+
+        </tr>
+END
+
+my $udp_lines;
+my $udp_lines2;
+my $udp_col;
+
+# Sort output based on hash value port number
+for my $service ( sort { $udp_ports{$a} cmp $udp_ports{$b} }
+    keys %udp_ports )
+{
+        my $port = $udp_ports{$service};
+
+        # Checkbox pre-selection.
+        my $checked;
+        if ($udpddossettings{$port} eq "on") {
+                $checked = "checked='checked'";
+        }
+
+        # Colour lines.
+        if ($udp_lines % 2) {
+                $col="bgcolor='$color{'color20'}'";
+        } else {
+                $col="bgcolor='$color{'color22'}'";
+        }
+
+        # Grouping elements.
+        my $line_start;
+        my $line_end;
+        if ($udp_lines2 % 2) {
+                # Increase lines (background color by once.
+                $lines++;
+
+                # Add empty column in front.
+                $line_start="<td $udp_col>&nbsp;</td>";
+
+                # When the line number can be diveded by "2",
+                # we are going to close the line.
+                $line_end="</tr>";
+        } else {
+                # When the line number is  not divideable by "2",
+                # we are starting a new line.
+                $line_start="<tr>";
+                $line_end;
+        }
+
+        print "$line_start<td align='center' $udp_col><input type='checkbox' name='$port' $checked></td>\n";
+        print "<td align='center' $udp_col>$port</td>\n";
+        print "<td align='left' $udp_col>$service</td>$line_end\n";
+
+$udp_lines2++;
+}
+print <<END;
+</table>
+
+END
+
+&Header::closebox();
+
+print "</form>\n";
+
 &Header::openbox('100%', 'center', $Lang::tr{'xdp status'});
 
 print <<END;
@@ -250,13 +398,29 @@ print "</tbody>\n</table>\n";
 
 sub get_tcp_ports()
 {
-	open(my $fh, '<', $portfile) or die "Unable to open file: $!";
+	my $fh;
+	open($fh, '<', $tcp_portfile) or die "Unable to open file: $!";
 	while (my $line = <$fh>) {
 		chomp $line;
 		next if $line =~ /^\s*#/; # Skip comments
 		my ($service, $port) = $line =~ /^(\w+)\s+(\d+)\/tcp/;
 		if ($service && $port) {
 			$tcp_ports{$service} = $port;
+		}
+	}
+	close($fh);
+}
+
+sub get_udp_ports()
+{
+	my $fh;
+	open($fh, '<', $udp_portfile) or die "Unable to open file: $!";
+	while (my $line = <$fh>) {
+		chomp $line;
+		next if $line =~ /^\s*#/; # Skip comments
+		my ($service, $port) = $line =~ /^(\w+)\s+(\d+)\/udp/;
+		if ($service && $port) {
+			$udp_ports{$service} = $port;
 		}
 	}
 	close($fh);

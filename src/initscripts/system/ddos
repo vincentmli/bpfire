@@ -28,6 +28,7 @@ eval $(/usr/local/bin/readhash /var/ipfire/ddos/settings)
 get_ports () {
 # Define an empty variable to store the output
 	local output=""
+	local ddos_port_file="$1"
 
 # Read the input file line by line
 	while IFS= read -r line; do
@@ -38,38 +39,38 @@ get_ports () {
 			# Append the service/port number to the output string
 			output="$output$service,"
 		fi
-	done < /var/ipfire/ddos/settings
+	done < $ddos_port_file
 
 	# Remove the trailing comma from the output string
 	output="${output%,}"
 	echo $output
 }
 
-ports="$(get_ports)"
+tcp_ports="$(get_ports /var/ipfire/ddos/settings)"
 
 case "$1" in
 	start)
 		boot_mesg -n "Starting ddos..."
-		if [ -e /var/ipfire/red/active ]; then
-			boot_mesg ""
-			sysctl -w net.ipv4.tcp_syncookies=2
-			sysctl -w net.ipv4.tcp_timestamps=1
-			sysctl -w net.netfilter.nf_conntrack_tcp_loose=0
-			/usr/sbin/xdp-loader status red0 | grep 'syncookie_xdp'
-			if [ $? -eq 0 ]; then
-				prog_id=$(xdp-loader status red0 | grep 'syncookie_xdp' | awk '{print $4}')
-				xdp_synproxy --prog $prog_id --ports="$ports"
+		if [ "$ENABLE_DDOS" == "on" ]; then
+			if [ -e /var/ipfire/red/active ]; then
+				sysctl -w net.ipv4.tcp_syncookies=2
+				sysctl -w net.ipv4.tcp_timestamps=1
+				sysctl -w net.netfilter.nf_conntrack_tcp_loose=0
+				/usr/sbin/xdp-loader status red0 | grep 'syncookie_xdp'
+				if [ $? -eq 0 ]; then
+					prog_id=$(xdp-loader status red0 | grep 'syncookie_xdp' | awk '{print $4}')
+					xdp_synproxy --prog $prog_id --ports="$tcp_ports"
+				else
+					xdp-loader load red0 -m skb /usr/lib/bpf/xdp_synproxy.bpf.o
+					evaluate_retval
+					prog_id=$(/usr/sbin/xdp-loader status red0 | grep 'syncookie_xdp' | awk '{print $4}')
+					xdp_synproxy --prog $prog_id --ports="$tcp_ports"
+				fi
 			else
-				xdp-loader load red0 -m skb /usr/lib/bpf/xdp_synproxy.bpf.o
-				evaluate_retval
-				prog_id=$(/usr/sbin/xdp-loader status red0 | grep 'syncookie_xdp' | awk '{print $4}')
-				xdp_synproxy --prog $prog_id --ports="$ports"
+				boot_mesg " ERROR! Red0 interface not online!"
+				echo_warning
 			fi
-		else
-			boot_mesg " ERROR! Red0 interface not online!"
-			echo_warning
 		fi
-
 		;;
 
 	stop)
