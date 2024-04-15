@@ -1,20 +1,20 @@
-# FireBeeOS - The Open Source Firewall
+# BPFire - The Open Source Firewall
 
-# What is FireBeeOS?
+# What is BPFire?
 
-FireBeeOS is fork of IPFire 2.x, a hardened, versatile, state-of-the-art Open Source firewall based on Linux, FireBeeOS extended IPFire 2.x with kernel eBPF support, allow packet filtering in kernel XDP/TC hook, which could bypass the Linux iptables packet filtering to speed up packet processing. Its ease of use, high performance in any scenario and extensibility make it usable for everyone. IPFire has a full list of features have a look [here](https://www.ipfire.org/features).
+BPFire is fork of IPFire 2.x, a hardened, versatile, state-of-the-art Open Source firewall based on Linux, BPFire extended IPFire 2.x with kernel eBPF support, allow packet filtering in kernel XDP/TC hook, which could bypass the Linux iptables packet filtering to speed up packet processing. Its ease of use, high performance in any scenario and extensibility make it usable for everyone. IPFire has a full list of features have a look [here](https://www.ipfire.org/features).
 
-This repository contains the source code of FireBeeOS which is used to build
-the whole distribution from scratch, since FireBeeOS is based on IPFire which is not based on any other
+This repository contains the source code of BPFire which is used to build
+the whole distribution from scratch, since BPFire is based on IPFire which is not based on any other
 distribution.
 
-# Where can I get FireBeeOS installation image?
+# Where can I get BPFire installation image?
 
 https://drive.google.com/drive/folders/1HPJTWP6wi5gPd5gyiiKvIhWipqguptzZ?usp=drive_link
 
 # How do I use this software?
 
-FireBeeOS XDP DDoS feature demo:
+BPFire XDP DDoS feature demo:
 
 [![Enable IPFire eBPF XDP DDoS from WebUI](http://img.youtube.com/vi/1pdNgoP-Kho/0.jpg)](https://www.youtube.com/watch?v=1pdNgoP-Kho "Enable IPFire eBPF XDP DDoS from WebUI")
 
@@ -26,17 +26,17 @@ should answers most of your questions for IPFire.
 You can ask your question by open github issue report or discussion or
 You can ask your question at ipfire community located [here](https://community.ipfire.org/) that is IPFire related.
 
-# How to build FireBeeOS?
+# How to build BPFire?
 
 Build Environment Setup https://www.ipfire.org/docs/devel/ipfire-2-x/build-initial
 
-git clone https://github.com/vincentmli/FireBeeOS.git
+git clone https://github.com/vincentmli/BPFire.git
 
-cd FireBeeOS
+cd BPFire
 
 git checkout ipfire-bpf
 
-wget http://www.99os.org/download/firebeeos/cache.tar
+wget http://www.bpfire.net/download/bpfire/cache.tar
 
 tar xvf cache.tar
 
