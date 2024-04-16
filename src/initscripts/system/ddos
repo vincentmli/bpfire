@@ -3,7 +3,7 @@
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
 # Copyright (C) 2007-2022  IPFire Team  <info@ipfire.org>                     #
-# Copyright (C) 2024  FireBeeOS <vincent.mc.li@gmail.com>                     #
+# Copyright (C) 2024  BPFire <vincent.mc.li@gmail.com>                     #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
@@ -24,6 +24,7 @@
 . $rc_functions
 
 eval $(/usr/local/bin/readhash /var/ipfire/ddos/settings)
+eval $(/usr/local/bin/readhash /var/ipfire/ddos/udp-ddos-settings)
 
 get_ports () {
 # Define an empty variable to store the output
@@ -46,40 +47,84 @@ get_ports () {
 	echo $output
 }
 
+load_syncookie () {
+	sysctl -w net.ipv4.tcp_syncookies=2
+	sysctl -w net.ipv4.tcp_timestamps=1
+	sysctl -w net.netfilter.nf_conntrack_tcp_loose=0
+	/usr/sbin/xdp-loader status red0 | grep 'syncookie_xdp'
+	if [ $? -eq 0 ]; then
+		prog_id=$(xdp-loader status red0 | grep 'syncookie_xdp' | awk '{print $4}')
+		xdp_synproxy --prog $prog_id --ports="$tcp_ports"
+	else
+		xdp-loader load red0 -m skb /usr/lib/bpf/xdp_synproxy.bpf.o
+		evaluate_retval
+		prog_id=$(/usr/sbin/xdp-loader status red0 | grep 'syncookie_xdp' | awk '{print $4}')
+		xdp_synproxy --prog $prog_id --ports="$tcp_ports"
+	fi
+}
+
+load_xdpudp () {
+	/usr/sbin/xdp-loader status red0 | grep 'xdp_udp'
+	if [ $? -eq 0 ]; then
+		prog_id=$(xdp-loader status red0 | grep 'xdp_udp' | awk '{print $4}')
+		xdp-udp --prog $prog_id --ports="$udp_ports"
+	else
+		xdp-loader load red0 -m skb -P 90 -p /sys/fs/bpf/xdp-udp -n xdp_udp /usr/lib/bpf/xdp_udp.bpf.o
+		evaluate_retval
+		prog_id=$(/usr/sbin/xdp-loader status red0 | grep 'xdp_udp' | awk '{print $4}')
+		xdp-udp --prog $prog_id --ports="$udp_ports"
+	fi
+}
+
+unload_syncookie () {
+	sysctl -w net.ipv4.tcp_syncookies=1
+	/usr/sbin/xdp-loader status red0 | grep 'syncookie_xdp'
+	if [ $? -eq 0 ]; then
+		prog_id=$(xdp-loader status red0 | grep 'syncookie_xdp' | awk '{print $4}')
+		/usr/sbin/xdp-loader unload -i $prog_id red0
+	else
+		boot_mesg "Error syncookie_xdp not loaded!"
+	fi
+}
+
+unload_xdpudp () {
+	/usr/sbin/xdp-loader status red0 | grep 'xdp_udp'
+	if [ $? -eq 0 ]; then
+		prog_id=$(xdp-loader status red0 | grep 'xdp_udp' | awk '{print $4}')
+		/usr/sbin/xdp-loader unload -i $prog_id red0
+		/bin/rm -rf /sys/fs/bpf/xdp-udp
+	else
+		boot_mesg "Error xdp_udp not loaded!"
+	fi
+}
+
 tcp_ports="$(get_ports /var/ipfire/ddos/settings)"
+udp_ports="$(get_ports /var/ipfire/ddos/udp-ddos-settings)"
 
 case "$1" in
 	start)
+		if [ ! -e /var/ipfire/red/active ]; then
+			boot_mesg " ERROR! Red0 interface not online!"
+			echo_warning
+			exit 1
+		fi
 		boot_mesg -n "Starting ddos..."
 		if [ "$ENABLE_DDOS" == "on" ]; then
-			if [ -e /var/ipfire/red/active ]; then
-				sysctl -w net.ipv4.tcp_syncookies=2
-				sysctl -w net.ipv4.tcp_timestamps=1
-				sysctl -w net.netfilter.nf_conntrack_tcp_loose=0
-				/usr/sbin/xdp-loader status red0 | grep 'syncookie_xdp'
-				if [ $? -eq 0 ]; then
-					prog_id=$(xdp-loader status red0 | grep 'syncookie_xdp' | awk '{print $4}')
-					xdp_synproxy --prog $prog_id --ports="$tcp_ports"
-				else
-					xdp-loader load red0 -m skb /usr/lib/bpf/xdp_synproxy.bpf.o
-					evaluate_retval
-					prog_id=$(/usr/sbin/xdp-loader status red0 | grep 'syncookie_xdp' | awk '{print $4}')
-					xdp_synproxy --prog $prog_id --ports="$tcp_ports"
-				fi
-			else
-				boot_mesg " ERROR! Red0 interface not online!"
-				echo_warning
-			fi
+			load_syncookie
+		fi
+		if [ "$ENABLE_UDP_DDOS" == "on" ]; then
+			load_xdpudp
 		fi
 		;;
 
 	stop)
 		boot_mesg "Stopping ddos..."
-		sysctl -w net.ipv4.tcp_syncookies=1
-		/usr/sbin/xdp-loader unload red0 -a
-		evaluate_retval
-		/bin/rm -rf /sys/fs/bpf/*
-		evaluate_retval
+		if [ "$ENABLE_DDOS" == "off" ]; then
+			unload_syncookie
+		fi
+		if [ "$ENABLE_UDP_DDOS" == "off" ]; then
+			unload_xdpudp
+		fi
 		;;
 
 	restart)
