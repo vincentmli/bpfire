@@ -56,10 +56,16 @@ load_syncookie () {
 		prog_id=$(xdp-loader status red0 | grep 'syncookie_xdp' | awk '{print $4}')
 		xdp_synproxy --prog $prog_id --ports="$tcp_ports"
 	else
-		xdp-loader load red0 -m skb /usr/lib/bpf/xdp_synproxy.bpf.o
-		evaluate_retval
-		prog_id=$(/usr/sbin/xdp-loader status red0 | grep 'syncookie_xdp' | awk '{print $4}')
-		xdp_synproxy --prog $prog_id --ports="$tcp_ports"
+		xdp-loader load red0 /usr/lib/bpf/xdp_synproxy.bpf.o
+		if [ $? -ge 1 ]; then
+			boot_mesg "Native mode not supported, try SKB"
+			xdp-loader load red0 -m skb /usr/lib/bpf/xdp_synproxy.bpf.o
+			prog_id=$(/usr/sbin/xdp-loader status red0 | grep 'syncookie_xdp' | awk '{print $4}')
+			xdp_synproxy --prog $prog_id --ports="$tcp_ports"
+		else
+			prog_id=$(/usr/sbin/xdp-loader status red0 | grep 'syncookie_xdp' | awk '{print $4}')
+			xdp_synproxy --prog $prog_id --ports="$tcp_ports"
+		fi
 	fi
 }
 
@@ -69,10 +75,16 @@ load_xdpudp () {
 		prog_id=$(xdp-loader status red0 | grep 'xdp_udp' | awk '{print $4}')
 		xdp-udp --prog $prog_id --ports="$udp_ports"
 	else
-		xdp-loader load red0 -m skb -P 90 -p /sys/fs/bpf/xdp-udp -n xdp_udp /usr/lib/bpf/xdp_udp.bpf.o
-		evaluate_retval
-		prog_id=$(/usr/sbin/xdp-loader status red0 | grep 'xdp_udp' | awk '{print $4}')
-		xdp-udp --prog $prog_id --ports="$udp_ports"
+		xdp-loader load red0 -P 90 -p /sys/fs/bpf/xdp-udp -n xdp_udp /usr/lib/bpf/xdp_udp.bpf.o
+		if [ $? -ge 1 ]; then
+			boot_mesg "Native mode not supported, try SKB"
+			xdp-loader load red0 -m skb -P 90 -p /sys/fs/bpf/xdp-udp -n xdp_udp /usr/lib/bpf/xdp_udp.bpf.o
+			prog_id=$(/usr/sbin/xdp-loader status red0 | grep 'xdp_udp' | awk '{print $4}')
+			xdp-udp --prog $prog_id --ports="$udp_ports"
+		else
+			prog_id=$(/usr/sbin/xdp-loader status red0 | grep 'xdp_udp' | awk '{print $4}')
+			xdp-udp --prog $prog_id --ports="$udp_ports"
+		fi
 	fi
 }
 
