@@ -1254,7 +1254,7 @@
 'fwdfw toggle' => 'Activate or deactivate',
 'fwdfw togglelog' => 'Activate or deactivate logging',
 'fwdfw use nat' => 'Use Network Address Translation (NAT)',
-'fwdfw use synproxy' => 'Use XDP SYNPROXY acceleration',
+'fwdfw use synproxy' => 'Use XDP TCP SYNPROXY acceleration:',
 'fwdfw use srcport' => 'Source port:',
 'fwdfw use srv' => 'Destination port:',
 'fwdfw useless rule' => 'This rule is useless.',

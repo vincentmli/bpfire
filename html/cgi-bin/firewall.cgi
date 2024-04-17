@@ -130,9 +130,15 @@ print<<END;
 
 		// Check if we are dealing with a protocol, that knows ports.
 		if (\$.inArray(protocol, PROTOCOLS_WITH_PORTS) >= 0) {
+			if (protocol === "TCP") {
+				\$("#XDP_SYNPROXY").show();
+			} else {
+				\$("#XDP_SYNPROXY").hide();
+			}
 			\$("#PROTOCOL_PORTS").show();
 		} else {
 			\$("#PROTOCOL_PORTS").hide();
+			\$("#XDP_SYNPROXY").hide();
 		}
 
 		// Handle ICMP.
@@ -1928,7 +1934,7 @@ END
 							</tr>
 						</table>
 
-						<table width="100%" border="0" id="PROTOCOL_PORTS">
+						<table width="40%" border="0" id="XDP_SYNPROXY">
 							<tr>
 								<!-- #USE_SYNPROXY -->
 								<td>
@@ -1939,6 +1945,8 @@ END
 									<input type='checkbox' name='USE_SYNPROXY' id='USE_SYNPROXY' value="ON" $checked{'USE_SYNPROXY'}{'ON'}>
 								</td>
 							</tr>
+						</table>
+						<table width="100%" border="0" id="PROTOCOL_PORTS">
 							<tr>
 								<!-- #SOURCEPORT -->
 								<td>
