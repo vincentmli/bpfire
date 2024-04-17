@@ -142,7 +142,7 @@ print <<END
 			<div id="logo">
 				<h1>
 					<a href="https://www.ipfire.org">
-						IPFire_
+						BPFire_
 					</a>
 END
 ;
