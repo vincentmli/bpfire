@@ -37,6 +37,7 @@ my %color = ();
 my %mainsettings = ();
 my %ddossettings=();
 my %udpddossettings=();
+my %dnsddossettings=();
 my %checked=();
 my $errormessage='';
 my $counter = 0;
@@ -46,6 +47,7 @@ my $tcp_portfile = "${General::swroot}/ddos/tcp_ports";
 my $udp_portfile = "${General::swroot}/ddos/udp_ports";
 my $ddossettingfile = "${General::swroot}/ddos/settings";
 my $udpddossettingfile = "${General::swroot}/ddos/udp-ddos-settings";
+my $dnsddossettingfile = "${General::swroot}/ddos/dns-ddos-settings";
 
 &get_tcp_ports();
 &get_udp_ports();
@@ -59,8 +61,10 @@ my $udpddossettingfile = "${General::swroot}/ddos/udp-ddos-settings";
 
 $ddossettings{'ENABLE_DDOS'} = 'off';
 $udpddossettings{'ENABLE_UDP_DDOS'} = 'off';
+$dnsddossettings{'ENABLE_DNS_DDOS'} = 'off';
 $ddossettings{'ACTION'} = '';
 $udpddossettings{'UDP_ACTION'} = '';
+$udpddossettings{'DNS_ACTION'} = '';
 
 &Header::getcgihash(\%ddossettings);
 
@@ -111,6 +115,25 @@ if ($udpddossettings{'UDP_ACTION'} eq $Lang::tr{'save'})
 	&General::writehash("$udpddossettingfile", \%udpddossettings);
 
 	if ($udpddossettings{'ENABLE_UDP_DDOS'} eq 'on') {
+		&General::log($Lang::tr{'ddos is enabled'});
+		&General::system('/usr/bin/touch', "${General::swroot}/ddos/enableddos");
+		&General::system('/usr/local/bin/ddosctrl', 'start');
+	} else {
+		&General::log($Lang::tr{'ddos is disabled'});
+		&General::system('/usr/local/bin/ddosctrl', 'stop');
+		unlink "${General::swroot}/ddos/enableddos";
+	}
+
+}
+
+&Header::getcgihash(\%dnsddossettings);
+
+if ($udpddossettings{'DNS_ACTION'} eq $Lang::tr{'save'})
+{
+
+	&General::writehash("$dnsddossettingfile", \%dnsddossettings);
+
+	if ($dnsddossettings{'ENABLE_DNS_DDOS'} eq 'on') {
 		&General::log($Lang::tr{'ddos is enabled'});
 		&General::system('/usr/bin/touch', "${General::swroot}/ddos/enableddos");
 		&General::system('/usr/local/bin/ddosctrl', 'start');
@@ -237,6 +260,34 @@ $lines2++;
 
 print <<END;
 </table>
+
+END
+
+&Header::closebox();
+
+print "</form>\n";
+#
+# Read configuration file.
+&General::readhash("$dnsddossettingfile", \%dnsddossettings);
+
+# Checkbox pre-selection.
+my $dns_checked;
+if ($dnsddossettings{'ENABLE_DNS_DDOS'} eq "on") {
+        $dns_checked = "checked='checked'";
+}
+
+# Print box to enable/disable locationblock.
+print"<form method='POST' action='$ENV{'SCRIPT_NAME'}'>\n";
+
+&Header::openbox('100%', 'center', $Lang::tr{'xdp dns'});
+print <<END;
+        <table width='95%'>
+                <tr>
+                        <td width='50%' class='base'>$Lang::tr{'xdp enable'}
+                        <td><input type='checkbox' name='ENABLE_DNS_DDOS' $dns_checked></td>
+                        <td align='center'><input type='submit' name='DNS_ACTION' value='$Lang::tr{'save'}'></td>
+                </tr>
+        </table>
 
 END
 

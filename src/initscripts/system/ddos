@@ -25,6 +25,7 @@
 
 eval $(/usr/local/bin/readhash /var/ipfire/ddos/settings)
 eval $(/usr/local/bin/readhash /var/ipfire/ddos/udp-ddos-settings)
+eval $(/usr/local/bin/readhash /var/ipfire/ddos/dns-ddos-settings)
 
 get_ports () {
 # Define an empty variable to store the output
@@ -88,6 +89,17 @@ load_xdpudp () {
 	fi
 }
 
+load_xdpdns () {
+	/usr/sbin/xdp-loader status red0 | grep 'xdp_dns'
+	if [ $? -ne 0 ]; then
+		xdp-loader load red0 -P 80 -p /sys/fs/bpf/xdp-dns -n xdp_dns /usr/lib/bpf/xdp_dnsrrl.bpf.o
+		if [ $? -ge 1 ]; then
+			boot_mesg "Native mode not supported, try SKB"
+			xdp-loader load red0 -m skb -P 80 -p /sys/fs/bpf/xdp-dns -n xdp_dns /usr/lib/bpf/xdp_dnsrrl.bpf.o
+		fi
+	fi
+}
+
 unload_syncookie () {
 	sysctl -w net.ipv4.tcp_syncookies=1
 	/usr/sbin/xdp-loader status red0 | grep 'syncookie_xdp'
@@ -110,6 +122,17 @@ unload_xdpudp () {
 	fi
 }
 
+unload_xdpdns () {
+	/usr/sbin/xdp-loader status red0 | grep 'xdp_dns'
+	if [ $? -eq 0 ]; then
+		prog_id=$(xdp-loader status red0 | grep 'xdp_dns' | awk '{print $4}')
+		/usr/sbin/xdp-loader unload -i $prog_id red0
+		/bin/rm -rf /sys/fs/bpf/xdp-dns
+	else
+		boot_mesg "Error xdp_dns not loaded!"
+	fi
+}
+
 tcp_ports="$(get_ports /var/ipfire/ddos/settings)"
 udp_ports="$(get_ports /var/ipfire/ddos/udp-ddos-settings)"
 
@@ -127,6 +150,9 @@ case "$1" in
 		if [ "$ENABLE_UDP_DDOS" == "on" ]; then
 			load_xdpudp
 		fi
+		if [ "$ENABLE_DNS_DDOS" == "on" ]; then
+			load_xdpdns
+		fi
 		;;
 
 	stop)
@@ -136,6 +162,9 @@ case "$1" in
 		fi
 		if [ "$ENABLE_UDP_DDOS" == "off" ]; then
 			unload_xdpudp
+		fi
+		if [ "$ENABLE_DNS_DDOS" == "off" ]; then
+			unload_xdpdns
 		fi
 		;;
 

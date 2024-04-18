@@ -1515,6 +1515,7 @@
 'ebpf xdp ddos system' => 'eBPF XDP DDoS Protection System',
 'xdp tcp' => 'XDP TCP',
 'xdp udp' => 'XDP UDP',
+'xdp dns' => 'XDP DNS',
 'xdp enable' => 'Enable DDoS',
 'xdp tcp port' => 'TCP Ports',
 'xdp udp port' => 'UDP Ports',
