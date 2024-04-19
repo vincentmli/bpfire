@@ -21,6 +21,20 @@ BPFire XDP DDoS feature demo:
 IPFire have a long and detailed wiki located [here](https://wiki.ipfire.org/) which
 should answers most of your questions for IPFire.
 
+# BPFire WebUI screenshot:
+
+English:
+
+![](./images/en-1.png)
+
+![](./images/en-2.png)
+
+Chinese:
+
+![](./images/cn-1.png)
+
+![](./images/cn-2.png)
+
 # But I have some questions left. Where can I get support?
 
 You can ask your question by open github issue report or discussion or
