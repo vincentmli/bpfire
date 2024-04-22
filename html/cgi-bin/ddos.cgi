@@ -198,6 +198,10 @@ print <<END;
                         <td><input type='checkbox' name='ENABLE_DNS_DDOS' $dns_checked></td>
                         <td align='center'><input type='submit' name='DNS_ACTION' value='$Lang::tr{'save'}'></td>
                 </tr>
+		<tr>
+                        <td width='50%' class='base'>$Lang::tr{'xdp dns ratelimit'}
+                        <td><input type='text' name='DNS_RATELIMIT' value='$dnsddossettings{'DNS_RATELIMIT'}'</td>
+		</tr>
         </table>
 
 END
@@ -226,6 +230,10 @@ print <<END;
                         <td><input type='checkbox' name='ENABLE_UDP_DDOS' $udp_checked></td>
                         <td align='center'><input type='submit' name='UDP_ACTION' value='$Lang::tr{'save'}'></td>
                 </tr>
+		<tr>
+                        <td width='50%' class='base'>$Lang::tr{'xdp udp ratelimit'}
+                        <td><input type='text' name='UDP_RATELIMIT' value='$udpddossettings{'UDP_RATELIMIT'}'</td>
+		</tr>
         </table>
 
 END

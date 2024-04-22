@@ -1511,6 +1511,8 @@
 'xdp enable' => '启动XDP DDoS 分布式攻击防御功能',
 'xdp tcp port' => 'XDP DDoS 分布式攻击防御TCP端口',
 'xdp udp port' => 'XDP DDoS 分布式攻击防御UDP端口',
+'xdp dns ratelimit' => 'DNS 网络包每秒接收速率:',
+'xdp udp ratelimit' => 'UDP 网络包每秒接收速率:',
 'xdp status' => 'XDP 程序加载状态',
 'xdp interface' => '网络接口',
 'xdp prio' => '优先级',
