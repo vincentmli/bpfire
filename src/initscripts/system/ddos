@@ -133,6 +133,15 @@ unload_xdpdns () {
 	fi
 }
 
+set_ratelimit () {
+	local rate=$1
+	local map=$2
+	hex=$(printf '%08x' "$rate")  # Convert decimal to hexadecimal
+	bytes=$(echo "$hex" | fold -w2 | tac)   # Split the hexadecimal into pairs of bytes and reverse the order
+	hex_le=$(echo "$bytes" | sed 's/^/0x/' | tr '\n' ' ')  # Add prefix "0x" to each byte and concatenate them
+	bpftool map update name $map key hex 00 00 00 00 value $hex_le
+}
+
 tcp_ports="$(get_ports /var/ipfire/ddos/settings)"
 udp_ports="$(get_ports /var/ipfire/ddos/udp-ddos-settings)"
 
@@ -162,9 +171,15 @@ case "$1" in
 		fi
 		if [ "$ENABLE_UDP_DDOS" == "off" ]; then
 			unload_xdpudp
+			if [ -n "$UDP_RATELIMIT" ]; then
+				set_ratelimit $UDP_RATELIMIT "xdp_udp.data"
+			fi
 		fi
 		if [ "$ENABLE_DNS_DDOS" == "off" ]; then
 			unload_xdpdns
+			if [ -n "$DNS_RATELIMIT" ]; then
+				set_ratelimit $DNS_RATELIMIT "xdp_dnsr.data"
+			fi
 		fi
 		;;
 
