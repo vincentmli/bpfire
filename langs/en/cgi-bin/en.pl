@@ -1519,8 +1519,6 @@
 'xdp enable' => 'Enable DDoS',
 'xdp tcp port' => 'TCP Ports',
 'xdp udp port' => 'UDP Ports',
-'xdp dns ratelimit' => 'DNS Ratelimit:',
-'xdp udp ratelimit' => 'UDP Ratelimit:',
 'xdp status' => 'XDP Program Status',
 'xdp interface' => 'Interface',
 'xdp prio' => 'Prio',
