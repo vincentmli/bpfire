@@ -35,6 +35,16 @@ Chinese:
 
 ![](./images/cn-2.png)
 
+# Does BPFire run in hypervisor virtual environment?
+
+Yes, We have tested in Linux KVM hypervisor, Proxmox, Microsoft Hyper-v, should support Virtualbox, VMware as well.
+
+Microsoft Hyper-v screen shot:
+
+![](./images/hyperv-1.png)
+
+![](./images/hyperv-2.png)
+
 # But I have some questions left. Where can I get support?
 
 You can ask your question by open github issue report or discussion or
