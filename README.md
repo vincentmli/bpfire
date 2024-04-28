@@ -21,6 +21,11 @@ BPFire XDP DDoS feature demo:
 IPFire have a long and detailed wiki located [here](https://wiki.ipfire.org/) which
 should answers most of your questions for IPFire.
 
+# BPFire XDP SYNPROXY throughtput performance demo:
+
+[![Throughput performance](http://img.youtube.com/vi/81Hgoy-x1A4/0.jpg)](https://www.youtube.com/watch?v=81Hgoy-x1A4 "Throughput performance")
+
+
 # BPFire WebUI screenshot:
 
 English:
