@@ -21,7 +21,7 @@ BPFire XDP DDoS feature demo:
 IPFire have a long and detailed wiki located [here](https://wiki.ipfire.org/) which
 should answers most of your questions for IPFire.
 
-# BPFire XDP SYNPROXY throughtput performance demo:
+# BPFire SYNPROXY throughput with and without XDP acceleration under 10Gbit DDoS SYN flood:
 
 [![Throughput performance](http://img.youtube.com/vi/81Hgoy-x1A4/0.jpg)](https://www.youtube.com/watch?v=81Hgoy-x1A4 "Throughput performance")
 
@@ -63,9 +63,9 @@ git clone https://github.com/vincentmli/BPFire.git
 
 cd BPFire
 
-git checkout ipfire-bpf
+git checkout bpfire
 
-wget http://www.bpfire.net/download/bpfire/cache.tar
+get BPFire source tar balls https://drive.google.com/file/d/1YjTzik4xw0JxFDldLZdVw1GthXG5QrS_/view?usp=drive_link
 
 tar xvf cache.tar
 
