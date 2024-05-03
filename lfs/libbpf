@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 1.3.0
+VER        = 0.8.3
 
 THISAPP    = libbpf-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
@@ -40,7 +40,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_BLAKE2 = 5ee0a45cd06be482c9523ec2a9bb26cf12b89df23f515b037badda868770069d5ffb751c011222b86b1d43034a1cdd537cb263883ed0645641548adc9c9896eb
+$(DL_FILE)_BLAKE2 = abee71b4ae0d3a7d0cdf4c108091821d915d4712820dae3debe84b897e7fb84a2c763df508eb539bb74e7461ca2b6836325b7a3c08c6bc8aafe1ac4097614f31
 
 install : $(TARGET)
 

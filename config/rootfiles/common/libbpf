@@ -1,4 +1,3 @@
-usr/lib/libbpf.a
-usr/lib/libbpf.so
-usr/lib/libbpf.so.1
-usr/lib/libbpf.so.1.3.0
+usr/include/bpf/xsk.h
+usr/lib/libbpf.so.0
+usr/lib/libbpf.so.0.8.3
