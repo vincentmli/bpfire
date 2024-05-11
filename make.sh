@@ -1716,6 +1716,10 @@ buildipfire() {
   lfsmake2 perl-URI-Encode
   lfsmake2 rsnapshot
   lfsmake2 mympd
+  lfsmake2 libmd
+  lfsmake2 libbsd
+  lfsmake2 loxilb-tc
+
 
   # Kernelbuild ... current we have no platform that need
   # multi kernel builds so KCFG is empty

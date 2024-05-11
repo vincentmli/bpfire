@@ -1,0 +1,9 @@
+usr/lib/libbsd-ctor.a
+usr/lib/libbsd.a
+usr/lib/libbsd.la
+usr/lib/libbsd.so
+usr/lib/libbsd.so.0
+usr/lib/libbsd.so.0.12.2
+usr/lib/pkgconfig/libbsd-ctor.pc
+usr/lib/pkgconfig/libbsd-overlay.pc
+usr/lib/pkgconfig/libbsd.pc
