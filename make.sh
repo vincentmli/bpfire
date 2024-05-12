@@ -1719,6 +1719,7 @@ buildipfire() {
   lfsmake2 libmd
   lfsmake2 libbsd
   lfsmake2 loxilb-tc
+  lfsmake2 loxicmd
 
 
   # Kernelbuild ... current we have no platform that need
