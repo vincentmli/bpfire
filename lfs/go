@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 1.20.4
+VER        = 1.22.0
 
 THISAPP    = go-$(VER)
 DL_FILE    = go$(VER).$(GOOS)-$(GOARCH).tar.gz
@@ -42,7 +42,7 @@ objects = $(DL_FILE)
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
 go$(VER).$(GOOS)-arm64.tar.gz_BLAKE2 = 330336e36ebc7cb8666159256ff6dce965465195db84e29467fe0ffa79b1fa1b698d8751df73bec1cd7d04b528d9d6a9cad259f6ad5036eb89212ebc3e91b686
-go$(VER).$(GOOS)-amd64.tar.gz_BLAKE2 = 38cca2ef6d5b9f2ef8c3cef6726930be790bde5ee8693a22f15cad2d96212967c52de9361c996f0a7a91f3b28de83e40a9eca3618167bb1340978daf5e104cdf
+go$(VER).$(GOOS)-amd64.tar.gz_BLAKE2 = 018b9dd68d12ed0f2859993b6496d95bec946031353da022eb7fff2337c6082aadabbb4f858987d854599c1c2491e7ca404a7273bde01d61a2491097b24ce1b6
 
 install : $(TARGET)
 
