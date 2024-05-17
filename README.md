@@ -1,12 +1,11 @@
-# BPFire - The Open Source Firewall
+# BPFire - eBPF Network Firewall and Load Balancer
 
 # What is BPFire?
 
-BPFire is fork of IPFire 2.x, a hardened, versatile, state-of-the-art Open Source firewall based on Linux, BPFire extended IPFire 2.x with kernel eBPF support, allow packet filtering in kernel XDP/TC hook, which could bypass the Linux iptables packet filtering to speed up packet processing. Its ease of use, high performance in any scenario and extensibility make it usable for everyone. IPFire has a full list of features have a look [here](https://www.ipfire.org/features).
+BPFire is fork of IPFire 2.x, a hardened, versatile, state-of-the-art Open Source firewall based on Linux. BPFire is an eBPF networking centric Linux OS distribution that is easy for users to install and use. Current supported eBPF network application features:
 
-This repository contains the source code of BPFire which is used to build
-the whole distribution from scratch, since BPFire is based on IPFire which is not based on any other
-distribution.
+1. XDP DDoS protection, See XDP SYNPROXY stops 10G DDoS SYN flood [here](https://www.youtube.com/watch?v=81Hgoy-x1A4)
+2. eBPF based LoxiLB load balancer, overall load balancer features located [here](https://loxilb-io.github.io/loxilbdocs/#overall-features-of-loxilb)
 
 # Where can I get BPFire installation image?
 
