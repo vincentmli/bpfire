@@ -92,6 +92,7 @@ etc/rc.d/init.d/vnstat
 etc/rc.d/init.d/waitdrives
 etc/rc.d/init.d/wlanclient
 etc/rc.d/init.d/ddos
+etc/rc.d/init.d/loxilb
 #etc/rc.d/rc0.d
 #etc/rc.d/rc0.d/K01imspetor
 #etc/rc.d/rc0.d/K01motion

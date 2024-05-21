@@ -68,7 +68,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	done
 	chown -R root:root /srv/web/ipfire
 	chmod -R 755 /srv/web/ipfire/cgi-bin
-	chmod -R 644 /srv/web/ipfire/html
+	#chmod -R 644 /srv/web/ipfire/html
 	chmod 755 /srv/web/ipfire/html /srv/web/ipfire/html/{index.cgi,redirect.cgi,images,include,themes,themes/*,themes/*/*}
 
 	# Reset permissions of redirect templates and theme directories

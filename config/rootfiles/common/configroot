@@ -200,3 +200,4 @@ var/ipfire/wireless
 #var/ipfire/wireless/config
 #var/ipfire/wireless/settings
 var/ipfire/ddos
+var/ipfire/loxilb
