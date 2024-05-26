@@ -63,6 +63,12 @@
 				 'title' => "$Lang::tr{'static routes'}",
 				 'enabled' => 1,
 				 };
+    $subnetwork->{'63.loxilb'} = {
+				 'caption' => $Lang::tr{'loxilb'},
+				 'uri' => '/cgi-bin/loxilb.cgi',
+				 'title' => "$Lang::tr{'loxilb'}",
+				 'enabled' => 1,
+				 };
     $subnetwork->{'70.aliases'} = {
 				  'caption' => $Lang::tr{'aliases'},
 				  'uri' => '/cgi-bin/aliases.cgi',

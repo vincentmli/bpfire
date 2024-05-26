@@ -2420,6 +2420,7 @@
 'state or province' => '州或省',
 'static ip' => '静态IP',
 'static routes' => '静态路由',
+'loxilb' => 'eBPF 负载均衡',
 'status' => '状态',
 'status information' => '状态信息',
 'status ovpn' => 'OpenVPN',

@@ -2452,6 +2452,7 @@
 'state or province' => 'State or Province',
 'static ip' => 'Static IP',
 'static routes' => 'Static Routes',
+'loxilb' => 'eBPF Load Balancer',
 'status' => 'Status',
 'status information' => 'Status information',
 'status ovpn' => 'OpenVPN',
