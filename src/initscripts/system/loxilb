@@ -37,7 +37,7 @@ case "$1" in
 			mkdir -p /opt/loxilb/dp/
 			mount -t bpf bpf /opt/loxilb/dp/
 
-			loadproc -b loxilb
+			loadproc -b loxilb --blacklist="eth[0-9]"
 		fi
 		;;
 
