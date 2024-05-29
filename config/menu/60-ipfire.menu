@@ -1,4 +1,15 @@
-    $subipfire->{'10.pakfire'} = {'caption' => 'Pakfire',
+    $subipfire->{'10.ddos'} = {'caption' => $Lang::tr{'ebpf xdp ddos'},
+                                'uri' => '/cgi-bin/ddos.cgi',
+                                'title' => "$Lang::tr{'ebpf xdp ddos system'}",
+                                'enabled' => 1,
+                                };
+    $subipfire->{'20.loxilb'} = {
+                                 'caption' => $Lang::tr{'loxilb'},
+                                 'uri' => '/cgi-bin/loxilb.cgi',
+                                 'title' => "$Lang::tr{'loxilb'}",
+                                 'enabled' => 1,
+                                 };
+    $subipfire->{'80.pakfire'} = {'caption' => 'Pakfire',
 				  'uri' => '/cgi-bin/pakfire.cgi',
 				  'title' => "Pakfire",
 				  'enabled' => 1,

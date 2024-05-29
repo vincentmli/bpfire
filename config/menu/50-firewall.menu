@@ -44,8 +44,3 @@
 				'title' => "$Lang::tr{'ipts'}",
 				'enabled' => 1,
 				};
-	$subfirewall->{'100.ids'} = {'caption' => $Lang::tr{'ebpf xdp ddos'},
-				'uri' => '/cgi-bin/ddos.cgi',
-				'title' => "$Lang::tr{'ebpf xdp ddos system'}",
-				'enabled' => 1,
-				};

@@ -22,7 +22,7 @@
 			   	'enabled' => 1,
 			   	'subMenu' => $subproxy
 			   	};
-    $menu->{'07.ipfire'} = {'caption' => 'IPFire',
+    $menu->{'07.ipfire'} = {'caption' => 'BPFire',
 				'enabled' => 1,
 				'subMenu' => $subipfire
 			 	};
