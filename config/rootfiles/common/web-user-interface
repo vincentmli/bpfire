@@ -92,6 +92,7 @@ srv/web/ipfire/cgi-bin/wlanap.cgi
 srv/web/ipfire/cgi-bin/zoneconf.cgi
 srv/web/ipfire/cgi-bin/ddos.cgi
 srv/web/ipfire/cgi-bin/loxilb.cgi
+srv/web/ipfire/cgi-bin/loxilbconfig.cgi
 #srv/web/ipfire/html
 srv/web/ipfire/html/blob.gif
 #srv/web/ipfire/html/captive
