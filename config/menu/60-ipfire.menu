@@ -4,9 +4,15 @@
                                 'enabled' => 1,
                                 };
     $subipfire->{'20.loxilb'} = {
-                                 'caption' => $Lang::tr{'loxilb'},
+                                 'caption' => $Lang::tr{'loxilb enable'},
                                  'uri' => '/cgi-bin/loxilb.cgi',
-                                 'title' => "$Lang::tr{'loxilb'}",
+                                 'title' => "$Lang::tr{'loxilb enable'}",
+                                 'enabled' => 1,
+                                 };
+    $subipfire->{'30.loxilbconfig'} = {
+                                 'caption' => $Lang::tr{'loxilb config'},
+                                 'uri' => '/cgi-bin/loxilbconfig.cgi',
+                                 'title' => "$Lang::tr{'loxilb config'}",
                                  'enabled' => 1,
                                  };
     $subipfire->{'80.pakfire'} = {'caption' => 'Pakfire',

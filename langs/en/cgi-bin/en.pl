@@ -2456,6 +2456,7 @@
 'loxilb' => 'eBPF LoxiLB Load Balancer',
 'loxilb status' => 'Status',
 'loxilb enable' => 'Enable Load Balancer',
+'loxilb config' => 'LoxiLB Load Balancer Configuration',
 'loxilb lb config changed' => 'LoxiLB LB configuration is changed',
 'loxilb lb config added' => 'LoxiLB LB configuration is added',
 'loxilb lb config entries' => 'LoxiLB Loadbalaner configuration entries',
