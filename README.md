@@ -29,11 +29,15 @@ should answers most of your questions for IPFire.
 
 English:
 
+![](./images/bpfire-lb-en.png)
+
 ![](./images/en-1.png)
 
 ![](./images/en-2.png)
 
 Chinese:
+
+![](./images/bpfire-lb-zh.png)
 
 ![](./images/cn-1.png)
 
