@@ -54,7 +54,8 @@ $settings{'SEL'} = '';
 $settings{'MODE'} = '';
 $settings{'ENDPOINTS'} = '';
 $settings{'EPORT'} = '';
-my @nosaved=('EN','NAME','EXTIP','PORT','PROTO','SEL','MODE','ENDPOINTS','EPORT');	# List here ALL setting2 fields. Mandatory
+$settings{'MONITOR'} = '';
+my @nosaved=('EN','NAME','EXTIP','PORT','PROTO','SEL','MODE','ENDPOINTS','EPORT','MONITOR');	# List here ALL setting2 fields. Mandatory
 
 $settings{'ACTION'} = '';		# add/edit/remove
 $settings{'KEY1'} = '';			# point record for ACTION
@@ -147,6 +148,7 @@ if ($settings{'ACTION'} eq $Lang::tr{'add'}) {
 		$temp[6] ='' unless defined $temp[5]; # not always populated
 		$temp[7] ='' unless defined $temp[6]; # not always populated
 		$temp[8] ='' unless defined $temp[7]; # not always populated
+		$temp[9] ='' unless defined $temp[8]; # not always populated
 		#Same ip already used?
 		if($temp[1] eq $settings{'NAME'} && $settings{'KEY1'} eq ''){
 			$errormessage = $Lang::tr{'ccd err loxilbconfigeexist'};
@@ -156,10 +158,10 @@ if ($settings{'ACTION'} eq $Lang::tr{'add'}) {
 
     unless ($errormessage) {
 	if ($settings{'KEY1'} eq '') { #add or edit ?
-	    unshift (@current, "$settings{'EN'},$settings{'NAME'},$settings{'EXTIP'},$settings{'PORT'},$settings{'PROTO'},$settings{'SEL'},$settings{'MODE'},$settings{'ENDPOINTS'},$settings{'EPORT'}\n");
+	    unshift (@current, "$settings{'EN'},$settings{'NAME'},$settings{'EXTIP'},$settings{'PORT'},$settings{'PROTO'},$settings{'SEL'},$settings{'MODE'},$settings{'ENDPOINTS'},$settings{'EPORT'},$settings{'MONITOR'}\n");
 	    &General::log($Lang::tr{'loxilb lb config added'});
 	} else {
-	    @current[$settings{'KEY1'}] = "$settings{'EN'},$settings{'NAME'},$settings{'EXTIP'},$settings{'PORT'},$settings{'PROTO'},$settings{'SEL'},$settings{'MODE'},$settings{'ENDPOINTS'},$settings{'EPORT'}\n";
+	    @current[$settings{'KEY1'}] = "$settings{'EN'},$settings{'NAME'},$settings{'EXTIP'},$settings{'PORT'},$settings{'PROTO'},$settings{'SEL'},$settings{'MODE'},$settings{'ENDPOINTS'},$settings{'EPORT'},$settings{'MONITOR'}\n";
 	    $settings{'KEY1'} = '';       # End edit mode
 	    &General::log($Lang::tr{'loxilb lb config changed'});
 	}
@@ -189,6 +191,7 @@ if ($settings{'ACTION'} eq $Lang::tr{'edit'}) {
     $settings{'MODE'}=$temp[6];
     $settings{'ENDPOINTS'}=$temp[7];
     $settings{'EPORT'}=$temp[8];
+    $settings{'MONITOR'}=$temp[9];
     if ($settings{'EN'} eq 'on') {
 	&CreateLB(%settings);
     }
@@ -208,6 +211,7 @@ if ($settings{'ACTION'} eq $Lang::tr{'remove'}) {
     $settings{'MODE'}=$temp[6];
     $settings{'ENDPOINTS'}=$temp[7];
     $settings{'EPORT'}=$temp[8];
+    $settings{'MONITOR'}=$temp[9];
     &DeleteLB(%settings);
 
     splice (@current,$settings{'KEY1'},1);		# Delete line
@@ -252,6 +256,7 @@ if ($settings{'ACTION'} eq '' ) { # First launch from GUI
     $settings{'MODE'} = '';
     $settings{'ENDPOINTS'} = '';
     $settings{'EPORT'} = '';
+    $settings{'MONITOR'} = '';
 }
 
 &Header::openpage($Lang::tr{'loxilb lb config entries'}, 1, '');
@@ -279,6 +284,7 @@ if ($settings{'KEY1'} ne '') {
 my @PROTOCOLS = ("tcp", "udp");
 my @ALGO = ("rr", "hash", "priority", "persist", "lc");
 my @MODE = ("default", "onearm", "fullnat", "dsr");
+my @MONITOR = ("on", "off");
 
 #Edited line number (KEY1) passed until cleared by 'save' or 'remove' or 'new sort order'
 print <<END;
@@ -367,6 +373,27 @@ print <<END;
     <td class='base'>$Lang::tr{'loxilb lb eport'}:&nbsp;</td>
     <td><input type='text' name='EPORT' value='$settings{'EPORT'}' size='25'/></td>
 </tr>
+<tr>
+    <td class='base'>$Lang::tr{'loxilb lb monitor'}:&nbsp;</td>
+    <td>
+        <select name='MONITOR' id='monitor' style="width: 95px;">
+
+END
+
+  foreach (@MONITOR) {
+    print "<option value=\"$_\"";
+    if ($_ eq $settings{'MONITOR'}) {
+        print " selected=\"selected\"";
+    }
+    print ">$_</option>";
+  }
+
+print <<END;
+
+     </select>
+     </td>
+
+</tr>
 </table>
 <br>
 <table width='100%'>
@@ -392,6 +419,7 @@ print <<END
     <th width='10%' align='center'><a href='$ENV{'SCRIPT_NAME'}?MODE'><b>$Lang::tr{'loxilb lb mode'}</b></a></th>
     <th width='10%' align='center'><a href='$ENV{'SCRIPT_NAME'}?ENDPOINTS'><b>$Lang::tr{'loxilb lb endpoints'}</b></a></th>
     <th width='10%' align='center'><a href='$ENV{'SCRIPT_NAME'}?EPORT'><b>$Lang::tr{'loxilb lb eport'}</b></a></th>
+    <th width='10%' align='center'><a href='$ENV{'SCRIPT_NAME'}?MONITOR'><b>$Lang::tr{'loxilb lb monitor'}</b></a></th>
     <th width='10%' colspan='3' class='boldbase' align='center'><b>$Lang::tr{'action'}</b></th>
 </tr>
 END
@@ -413,6 +441,7 @@ foreach my $line (@current) {
     $temp[6] ='' unless defined $temp[5]; # not always populated
     $temp[7] ='' unless defined $temp[6]; # not always populated
     $temp[8] ='' unless defined $temp[7]; # not always populated
+    $temp[9] ='' unless defined $temp[8]; # not always populated
 
     #Choose icon for checkbox
     my $gif = '';
@@ -444,6 +473,7 @@ foreach my $line (@current) {
 <td align='center' $col>$temp[6]</td>
 <td align='center' $col>$temp[7]</td>
 <td align='center' $col>$temp[8]</td>
+<td align='center' $col>$temp[9]</td>
 <td align='center' $col>
 <form method='post' action='$ENV{'SCRIPT_NAME'}'>
 <input type='hidden' name='ACTION' value='$Lang::tr{'toggle enable disable'}' />
@@ -553,7 +583,7 @@ sub SortDataFile
 	# Each SORTABLE field must have is pair.
 	# Other data fields (non sortable) can be grouped in one
 
-	my @record = ('KEY',$key++,'EN',$temp[0],'NAME',$temp[1],'EXTIP',$temp[2],'PORT',$temp[3],'PROTO',$temp[4],'SEL',$temp[5],'MODE',$temp[6],'ENDPOINTS',$temp[7],'EPORT',$temp[8]);
+	my @record = ('KEY',$key++,'EN',$temp[0],'NAME',$temp[1],'EXTIP',$temp[2],'PORT',$temp[3],'PROTO',$temp[4],'SEL',$temp[5],'MODE',$temp[6],'ENDPOINTS',$temp[7],'EPORT',$temp[8],'MONITOR',$temp[9]);
 	my $record = {};                        	# create a reference to empty hash
 	%{$record} = @record;                		# populate that hash with @record
 	$entries{$record->{KEY}} = $record; 		# add this to a hash of hashes
@@ -563,7 +593,7 @@ sub SortDataFile
 
     # Each field value is printed , with the newline ! Don't forget separator and order of them.
     foreach my $entry (sort fixedleasesort keys %entries) {
-	print FILE "$entries{$entry}->{EN},$entries{$entry}->{NAME},$entries{$entry}->{EXTIP},$entries{$entry}->{PORT},$entries{$entry}->{PROTO},$entries{$entry}->{SEL},$entries{$entry}->{MODE},$entries{$entry}->{ENDPOINTS},$entries{$entry}->{EPORT}\n";
+	print FILE "$entries{$entry}->{EN},$entries{$entry}->{NAME},$entries{$entry}->{EXTIP},$entries{$entry}->{PORT},$entries{$entry}->{PROTO},$entries{$entry}->{SEL},$entries{$entry}->{MODE},$entries{$entry}->{ENDPOINTS},$entries{$entry}->{EPORT},$entries{$entry}->{MONITOR}\n";
     }
 
     close(FILE);
@@ -605,6 +635,9 @@ sub CreateLB {
 		push(@loxicmd_options, "$mode");
 	}
 	push(@loxicmd_options, "$endpoints");
+	if ($settings{'MONITOR'} eq 'on') {
+		push(@loxicmd_options, "--monitor");
+	}
 	&General::system($command, @loxicmd_options);
 }
 

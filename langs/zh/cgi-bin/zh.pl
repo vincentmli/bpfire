@@ -2437,6 +2437,7 @@
 'loxilb lb mode' => '模式',
 'loxilb lb endpoints' => '后端服务器',
 'loxilb lb eport' => '前端端口',
+'loxilb lb monitor' => '后端服务监控',
 'status' => '状态',
 'status information' => '状态信息',
 'status ovpn' => 'OpenVPN',

@@ -2470,6 +2470,7 @@
 'loxilb lb mode' => 'MODE',
 'loxilb lb endpoints' => 'ENDPOINTS',
 'loxilb lb eport' => 'EPORT',
+'loxilb lb monitor' => 'MONITOR',
 'status' => 'Status',
 'status information' => 'Status information',
 'status ovpn' => 'OpenVPN',
