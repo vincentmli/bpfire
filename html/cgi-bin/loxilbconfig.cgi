@@ -276,8 +276,12 @@ if ($settings{'KEY1'} ne '') {
     &Header::openbox('100%', 'left', $Lang::tr{'loxilb lb add'});
 }
 
+my @PROTOCOLS = ("tcp", "udp");
+my @ALGO = ("rr", "hash", "priority", "persist", "lc");
+my @MODE = ("default", "onearm", "fullnat", "dsr");
+
 #Edited line number (KEY1) passed until cleared by 'save' or 'remove' or 'new sort order'
-print <<END
+print <<END;
 <form method='post' action='$ENV{'SCRIPT_NAME'}'>
 <input type='hidden' name='KEY1' value='$settings{'KEY1'}' />
 <table width='100%'>
@@ -296,15 +300,64 @@ print <<END
 </tr>
 <tr>
     <td class='base'>$Lang::tr{'loxilb lb proto'}:&nbsp;</td>
-    <td><input type='text' name='PROTO' value='$settings{'PROTO'}' size='25'/></td>
+    <td>
+      <select name='PROTO' id='protocol' style="width: 95px;">
+END
+
+# Insert the dynamic options for the 'PROTO' select element
+  foreach (@PROTOCOLS) {
+    print "<option value=\"$_\"";
+    if ($_ eq $settings{'PROTO'}) {
+        print " selected=\"selected\"";
+    }
+    print ">$_</option>";
+  }
+
+print <<END;
+
+     </select>
+     </td>
 </tr>
 <tr>
     <td class='base'>$Lang::tr{'loxilb lb sel'}:&nbsp;</td>
-    <td><input type='text' name='SEL' value='$settings{'SEL'}' size='25'/></td>
+    <td>
+        <select name='SEL' id='select' style="width: 95px;">
+END
+
+  foreach (@ALGO) {
+    print "<option value=\"$_\"";
+    if ($_ eq $settings{'SEL'}) {
+        print " selected=\"selected\"";
+    }
+    print ">$_</option>";
+  }
+
+print <<END;
+
+     </select>
+     </td>
+
 </tr>
 <tr>
     <td class='base'>$Lang::tr{'loxilb lb mode'}:&nbsp;</td>
-    <td><input type='text' name='MODE' value='$settings{'MODE'}' size='25'/></td>
+    <td>
+        <select name='MODE' id='mode' style="width: 95px;">
+
+END
+
+  foreach (@MODE) {
+    print "<option value=\"$_\"";
+    if ($_ eq $settings{'MODE'}) {
+        print " selected=\"selected\"";
+    }
+    print ">$_</option>";
+  }
+
+print <<END;
+
+     </select>
+     </td>
+
 </tr>
 <tr>
     <td class='base'>$Lang::tr{'loxilb lb endpoints'}:&nbsp;</td>
@@ -323,7 +376,7 @@ print <<END
 </table>
 </form>
 END
-;
+
 &Header::closebox();
 
 &Header::openbox('100%', 'left', $Lang::tr{'loxilb lb config entries'});
@@ -524,12 +577,20 @@ sub SortDataFile
 # Build the configuration file
 #
 sub CreateLB {
-
 	my (%settings) = @_;
+	my $sel;
+	my $mode;
 	my @loxicmd_options;
 	my $command = 'loxicmd';
 	my $name = "--name=" . "$settings{'NAME'}";
 	my $proto = "--" . "$settings{'PROTO'}" . "=" . "$settings{'PORT'}" . ":" . "$settings{'EPORT'}";
+
+	if ($settings{'SEL'}) {
+		$sel = "--select=" . "$settings{'SEL'}";
+	}
+	if ($settings{'MODE'}) {
+		$mode = "--mode=" . "$settings{'MODE'}";
+	}
 	my $tmp = $settings{'ENDPOINTS'};
 	$tmp =~ s/\|/,/g;
 	my $endpoints = "--endpoints=$tmp";
@@ -537,6 +598,12 @@ sub CreateLB {
 	push(@loxicmd_options, "$settings{'EXTIP'}");
 	push(@loxicmd_options, "$name");
 	push(@loxicmd_options, "$proto");
+	if ($sel) {
+		push(@loxicmd_options, "$sel");
+	}
+	if ($mode) {
+		push(@loxicmd_options, "$mode");
+	}
 	push(@loxicmd_options, "$endpoints");
 	&General::system($command, @loxicmd_options);
 }
