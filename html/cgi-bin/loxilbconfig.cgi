@@ -167,6 +167,7 @@ if ($settings{'ACTION'} eq $Lang::tr{'add'}) {
 	}
 
 	if ($settings{'EN'} eq 'on') {
+		&DeleteLB(%settings);
 		&CreateLB(%settings);
 	}
 
