@@ -15,6 +15,12 @@
                                  'title' => "$Lang::tr{'loxilb config'}",
                                  'enabled' => 1,
                                  };
+    $subipfire->{'40.loxilbfw'} = {
+                                 'caption' => $Lang::tr{'loxilb fw'},
+                                 'uri' => '/cgi-bin/loxilbfw.cgi',
+                                 'title' => "$Lang::tr{'loxilb fw'}",
+                                 'enabled' => 1,
+                                 };
     $subipfire->{'80.pakfire'} = {'caption' => 'Pakfire',
 				  'uri' => '/cgi-bin/pakfire.cgi',
 				  'title' => "Pakfire",
