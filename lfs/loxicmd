@@ -25,7 +25,7 @@
 
 include Config
 
-VER        = 0.9.2
+VER        = 0.9.4
 
 THISAPP    = loxicmd-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
@@ -41,7 +41,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_BLAKE2 = aebe20ba8ce29c5302c882d58bd4d66d4f112a88972d55a3e6fff82ea1a12a1da4b8a8c613a76dbd1be539d5a546259c598368e97ef433e45a4e9e8f68ee22e6
+$(DL_FILE)_BLAKE2 = 63c93a20dbc72adf5b70496913e29b3c80739ee3bdb572178fd1a687ace635798ca9948cee2189b106a11bf0ca9fbf952057b09b793e98efcb0a367921bddc04
 
 install : $(TARGET)
 
