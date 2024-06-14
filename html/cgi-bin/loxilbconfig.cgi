@@ -642,13 +642,11 @@ sub CreateLB {
 }
 
 sub DeleteLB {
-
 	my (%settings) = @_;
 	my @loxicmd_options;
 	my $command = 'loxicmd';
-	my $proto = "--" . "$settings{'PROTO'}" . "=" . "$settings{'PORT'}";
+	my $name = "--name=" . "$settings{'NAME'}";
 	push(@loxicmd_options, "delete", "lb");
-	push(@loxicmd_options, "$settings{'EXTIP'}");
-	push(@loxicmd_options, "$proto");
+	push(@loxicmd_options, "$name");
 	&General::system($command, @loxicmd_options);
 }
