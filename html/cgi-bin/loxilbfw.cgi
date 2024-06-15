@@ -281,7 +281,7 @@ my %checked=();     # Checkbox manipulations
 
 if ($errormessage) {
     &Header::openbox('100%', 'left', $Lang::tr{'error messages'});
-    print "<font class='base'>$errormessage&nbsp;</font>";
+    print "<font class='base' color=red>$errormessage&nbsp;</font>";
     &Header::closebox();
 }
 

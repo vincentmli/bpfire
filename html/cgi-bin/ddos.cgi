@@ -151,7 +151,7 @@ if ($udpddossettings{'DNS_ACTION'} eq $Lang::tr{'save'})
 
 if ($errormessage) {
 	&Header::openbox('100%', 'left', $Lang::tr{'error messages'});
-	print "<font class='base'>$errormessage&nbsp;</font>\n";
+	print "<font class='base' color=red>$errormessage&nbsp;</font>\n";
 	&Header::closebox();
 }
 
