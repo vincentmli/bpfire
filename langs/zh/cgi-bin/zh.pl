@@ -2422,6 +2422,7 @@
 'static routes' => '静态路由',
 'loxilb' => 'eBPF LoxiLB 负载均衡',
 'loxilb status' => '负载均衡启用状态',
+'loxilb empty' => '不能空',
 'loxilb enable' => '启用 eBPF LoxiLB 负载均衡',
 'loxilb config' => 'eBPF LoxiLB 负载均衡配置',
 'loxilb lb config changed' => 'LoxiLB 负载均衡 配置修改',

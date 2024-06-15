@@ -133,6 +133,9 @@ if ($settings{'ACTION'} eq $Lang::tr{'add'}) {
 	if ($settings{'EXTIP'} =~ /^0\.0\.0\.0/){
 		$errormessage = $Lang::tr{'invalid ip'}." - 0.0.0.0";
 	}
+	if ($settings{'NAME'} eq ''){
+		$errormessage = "LB Name: ".$Lang::tr{'loxilb empty'};
+	}
 
 	# Escape input in REMARK field
 	$settings{'NAME'} = &Header::escape($settings{'NAME'});
@@ -265,7 +268,7 @@ my %checked=();     # Checkbox manipulations
 
 if ($errormessage) {
     &Header::openbox('100%', 'left', $Lang::tr{'error messages'});
-    print "<font class='base'>$errormessage&nbsp;</font>";
+    print "<font class='base' color=red>$errormessage&nbsp;</font>";
     &Header::closebox();
 }
 
