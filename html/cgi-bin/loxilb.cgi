@@ -87,24 +87,35 @@ if ($loxilbsettings{'ENABLE_LOXILB'} eq "on") {
         $checked = "checked='checked'";
 }
 
-# Print box to enable/disable locationblock.
-print"<form method='POST' action='$ENV{'SCRIPT_NAME'}'>\n";
+my $sactive = "<table cellpadding='2' cellspacing='0' bgcolor='${Header::colourred}' width='50%'><tr><td align='center'><b><font color='#FFFFFF'>$Lang::tr{'stopped'}</font></b></td></tr></table>";
+
+my @status = &General::system_output('/usr/local/bin/loxilbctrl', 'status');
+
+if (grep(/is running/, @status)){
+        $sactive = "<table cellpadding='2' cellspacing='0' bgcolor='${Header::colourgreen}' width='50%'><tr><td align='center'><b><font color='#FFFFFF'>$Lang::tr{'running'}</font></b></td></tr></table>";
+}
 
 &Header::openbox('100%', 'center', $Lang::tr{'loxilb status'});
-print <<END;
-        <table width='95%'>
-                <tr>
-                        <td width='50%' class='base'>$Lang::tr{'loxilb enable'}
-                        <td><input type='checkbox' name='ENABLE_LOXILB' $checked></td>
-                        <td align='center'><input type='submit' name='ACTION' value='$Lang::tr{'save'}'></td>
-                </tr>
-        </table>
 
+print <<END;
+        <table width='100%'>
+	<form method='POST' action='$ENV{'SCRIPT_NAME'}'>
+	<td width='25%'>&nbsp;</td>
+	<td width='25%'>&nbsp;</td>
+	<td width='25%'>&nbsp;</td>
+	<tr><td class='boldbase'>$Lang::tr{'loxilb server status'}</td>
+	<td align='left'>$sactive</td>
+	</tr>
+	<tr>
+	<td width='50%' class='boldbase'>$Lang::tr{'loxilb enable'}
+	<td><input type='checkbox' name='ENABLE_LOXILB' $checked></td>
+	<td align='center'><input type='submit' name='ACTION' value='$Lang::tr{'save'}'></td>
+	</tr>
 END
 
 &Header::closebox();
 
-print "</form>\n";
+print "</form> </table>\n";
 #
 &Header::closebigbox();
 

@@ -48,6 +48,10 @@ case "$1" in
 		fi
 		;;
 
+	status)
+		statusproc /usr/bin/loxilb
+		;;
+
 	restart)
 		$0 stop
 		sleep 1

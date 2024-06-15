@@ -2455,6 +2455,7 @@
 'static routes' => 'Static Routes',
 'loxilb' => 'eBPF LoxiLB Load Balancer',
 'loxilb status' => 'Status',
+'loxilb server status' => 'Current LoxiLB server status:',
 'loxilb empty' => 'Field can not be empty',
 'loxilb enable' => 'Enable Load Balancer',
 'loxilb config' => 'LoxiLB Load Balancer Configuration',

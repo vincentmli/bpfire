@@ -27,6 +27,8 @@ int main(int argc, char *argv[]) {
 		safe_system("/etc/rc.d/init.d/loxilb start");
 	} else if (strcmp(argv[1], "stop") == 0) {
 		safe_system("/etc/rc.d/init.d/loxilb stop");
+	} else if (strcmp(argv[1], "status") == 0) {
+		safe_system("/etc/rc.d/init.d/loxilb status");
 	} else if (strcmp(argv[1], "restart") == 0) {
 		safe_system("/etc/rc.d/init.d/loxilb restart");
 	} else {
