@@ -19,8 +19,8 @@
 #                                                                             #
 ###############################################################################
 
-NAME="BPFire"							# Software name
-SNAME="bpfire"							# Short name
+NAME="IPFire"							# Software name
+SNAME="ipfire"							# Short name
 # If you update the version don't forget to update backupiso and add it to core update
 VERSION="2.29"							# Version number
 CORE="184"							# Core Level (Filename)
