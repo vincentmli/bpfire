@@ -1306,6 +1306,22 @@ sub grab_address_from_file($) {
 	return;
 }
 
+sub get_ipaddresses_from_interface($) {
+	my ($interface) = @_;
+	my @ip_addresses;
+
+	my $output = `ip addr show $interface 2>/dev/null`;
+
+	# Check if the command was successful
+	if ($? == 0) {
+	# Extract IP addresses using regex
+		while ($output =~ /inet (\d+\.\d+\.\d+\.\d+)/g) {
+			push @ip_addresses, $1;
+		}
+	}
+	return @ip_addresses;
+}
+
 # Function to get all configured and enabled nameservers.
 sub get_nameservers () {
 	my %settings;

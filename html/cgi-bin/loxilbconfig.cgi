@@ -288,6 +288,7 @@ my @PROTOCOLS = ("tcp", "udp");
 my @ALGO = ("rr", "hash", "priority", "persist", "lc");
 my @MODE = ("default", "onearm", "fullnat", "dsr");
 my @MONITOR = ("on", "off");
+my @VIP = &General::get_ipaddresses_from_interface("red0");
 
 #Edited line number (KEY1) passed until cleared by 'save' or 'remove' or 'new sort order'
 print <<END;
@@ -297,9 +298,26 @@ print <<END;
 <tr>
     <td class='base'>$Lang::tr{'loxilb lb name'}:&nbsp;</td>
     <td><input type='text' name='NAME' value='$settings{'NAME'}' size='25'/></td>
-</tr><tr>
+</tr>
+<tr>
     <td class='base'>$Lang::tr{'loxilb lb extip'}:&nbsp;</td>
-    <td><input type='text' name='EXTIP' value='$settings{'EXTIP'}' size='25'/></td>
+    <td>
+      <select name='EXTIP' id='extip' style="width: 95px;">
+END
+
+  foreach (@VIP) {
+    print "<option value=\"$_\"";
+    if ($_ eq $settings{'EXTIP'}) {
+        print " selected=\"selected\"";
+    }
+    print ">$_</option>";
+  }
+
+print <<END;
+
+     </select>
+     </td>
+
     <td class='base'>$Lang::tr{'enabled'}</td>
     <td><input type='checkbox' name='EN' $checked{'EN'}{'on'} /></td>
 </tr>
