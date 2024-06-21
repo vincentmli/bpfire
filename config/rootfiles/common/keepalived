@@ -38,3 +38,4 @@ usr/sbin/keepalived
 #usr/share/man/man5/keepalived.conf.5
 #usr/share/man/man8/keepalived.8
 var/ipfire/backup/addons/includes/keepalived
+var/ipfire/keepalived
