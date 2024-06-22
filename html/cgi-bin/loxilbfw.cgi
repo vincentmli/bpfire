@@ -306,10 +306,10 @@ print <<END;
 <input type='hidden' name='KEY1' value='$settings{'KEY1'}' />
 <table width='100%'>
 <tr>
-    <td class='base'>$Lang::tr{'loxilb fw sourceIP'}:&nbsp;</td>
+    <td class='base'>$Lang::tr{'loxilb fw sourceIP'}&nbsp;<img src='/blob.gif' alt='*' /></td>
     <td><input type='text' name='sourceIP' value='$settings{'sourceIP'}' size='25'/></td>
 </tr><tr>
-    <td class='base'>$Lang::tr{'loxilb fw destinationIP'}:&nbsp;</td>
+    <td class='base'>$Lang::tr{'loxilb fw destinationIP'}&nbsp;<img src='/blob.gif' alt='*' /></td>
     <td><input type='text' name='destinationIP' value='$settings{'destinationIP'}' size='25'/></td>
     <td class='base'>$Lang::tr{'enabled'}</td>
     <td><input type='checkbox' name='EN' $checked{'EN'}{'on'} /></td>
@@ -385,6 +385,7 @@ print <<END;
 <br>
 <table width='100%'>
 <tr>
+    <td class='base' width='25%'><img src='/blob.gif' align='top' alt='*' />&nbsp;$Lang::tr{'required field'}</td>
     <td width='50%' align='right'><input type='hidden' name='ACTION' value='$Lang::tr{'add'}' /><input type='submit' name='SUBMIT' value='$buttontext' /></td>
 </tr>
 </table>

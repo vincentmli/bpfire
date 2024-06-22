@@ -296,7 +296,7 @@ print <<END;
 <input type='hidden' name='KEY1' value='$settings{'KEY1'}' />
 <table width='100%'>
 <tr>
-    <td class='base'>$Lang::tr{'loxilb lb name'}:&nbsp;</td>
+    <td class='base'>$Lang::tr{'loxilb lb name'}&nbsp;<img src='/blob.gif' alt='*' /></td>
     <td><input type='text' name='NAME' value='$settings{'NAME'}' size='25'/></td>
 </tr>
 <tr>
@@ -322,7 +322,7 @@ print <<END;
     <td><input type='checkbox' name='EN' $checked{'EN'}{'on'} /></td>
 </tr>
 <tr>
-    <td class='base'>$Lang::tr{'loxilb lb port'}:&nbsp;</td>
+    <td class='base'>$Lang::tr{'loxilb lb port'}&nbsp;<img src='/blob.gif' alt='*' /></td>
     <td><input type='text' name='PORT' value='$settings{'PORT'}' size='25'/></td>
 </tr>
 <tr>
@@ -387,11 +387,11 @@ print <<END;
 
 </tr>
 <tr>
-    <td class='base'>$Lang::tr{'loxilb lb endpoints'}:&nbsp;</td>
+    <td class='base'>$Lang::tr{'loxilb lb endpoints'}&nbsp;<img src='/blob.gif' alt='*' /></td>
     <td><input type='text' name='ENDPOINTS' value='$settings{'ENDPOINTS'}' size='50'/></td>
 </tr>
 <tr>
-    <td class='base'>$Lang::tr{'loxilb lb eport'}:&nbsp;</td>
+    <td class='base'>$Lang::tr{'loxilb lb eport'}&nbsp;<img src='/blob.gif' alt='*' /></td>
     <td><input type='text' name='EPORT' value='$settings{'EPORT'}' size='25'/></td>
 </tr>
 <tr>
@@ -419,6 +419,7 @@ print <<END;
 <br>
 <table width='100%'>
 <tr>
+    <td class='base' width='25%'><img src='/blob.gif' align='top' alt='*' />&nbsp;$Lang::tr{'required field'}</td>
     <td width='50%' align='right'><input type='hidden' name='ACTION' value='$Lang::tr{'add'}' /><input type='submit' name='SUBMIT' value='$buttontext' /></td>
 </tr>
 </table>
