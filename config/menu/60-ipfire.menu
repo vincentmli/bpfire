@@ -21,6 +21,12 @@
                                  'title' => "$Lang::tr{'loxilb fw'}",
                                  'enabled' => 1,
                                  };
+    $subipfire->{'50.keepalived'} = {
+                                 'caption' => $Lang::tr{'keepalived'},
+                                 'uri' => '/cgi-bin/keepalived.cgi',
+                                 'title' => "$Lang::tr{'keepalived'}",
+                                 'enabled' => 1,
+                                 };
     $subipfire->{'80.pakfire'} = {'caption' => 'Pakfire',
 				  'uri' => '/cgi-bin/pakfire.cgi',
 				  'title' => "Pakfire",

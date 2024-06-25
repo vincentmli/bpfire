@@ -366,6 +366,14 @@ sub validip
 	}
 }
 
+sub validnum {
+	my $num = shift;
+	if ($num =~ /^\d+$/) {
+		return 1;
+	}
+	return 0;
+}
+
 sub validmask {
 	my $mask = shift;
 
