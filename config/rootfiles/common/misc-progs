@@ -40,3 +40,4 @@ usr/local/bin/wirelessctrl
 #usr/local/bin/wlanapctrl
 usr/local/bin/ddosctrl
 usr/local/bin/loxilbctrl
+usr/local/bin/keepalivedctrl
