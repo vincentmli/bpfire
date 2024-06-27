@@ -42,10 +42,18 @@ our $filename1 = "${General::swroot}/dhcp/advoptions"; 	# Field separator is TAB
 									# because we need commas in the some data
 our $filename2 = "${General::swroot}/dhcp/fixleases";
 our $filename3 = "${General::swroot}/dhcp/advoptions-list";	# Describe the allowed syntax for dhcp options
+my $loxilbipfile = "${General::swroot}/loxilb/ipconfig";
 my $errormessage = '';
 my $warnNTPmessage = '';
 my @nosaved=();
 my %color = ();
+
+our @IPFILE = ();
+
+if (open(FILE, "$loxilbipfile")) {
+    @IPFILE = <FILE>;
+    close (FILE);
+}
 
 #Basic syntax allowed for new Option definition. Not implemented: RECORDS & array of RECORDS
 our $OptionTypes = 'boolean|((un)?signed )?integer (8|16|32)|ip-address|text|string|encapsulate \w+|array of ip-address';
@@ -58,6 +66,7 @@ if (&Header::blue_used()){push(@ITFs,'BLUE');}
 foreach my $itf (@ITFs) {
     $dhcpsettings{"ENABLE_${itf}"} = 'off';
     $dhcpsettings{"ENABLEBOOTP_${itf}"} = 'off';
+    $dhcpsettings{"ROUTER_ADDR_${itf}"} = '';
     $dhcpsettings{"START_ADDR_${itf}"} = '';
     $dhcpsettings{"END_ADDR_${itf}"} = '';
     $dhcpsettings{"DOMAIN_NAME_${itf}"} = '';
@@ -144,6 +153,12 @@ if ($dhcpsettings{'ACTION'} eq $Lang::tr{'save'}) {
     foreach my $itf (@ITFs) {
 	if ($dhcpsettings{"ENABLE_${itf}"} eq 'on' ) {
 	    # "Start" is defined, need "End" and vice versa
+	    if ($dhcpsettings{"ROUTER_ADDR_${itf}"}) {
+		if (!(&General::validip($dhcpsettings{"ROUTER_ADDR_${itf}"}))) {
+		    $errormessage = "DHCP on ${itf}: " . $Lang::tr{'invalid router address'};
+		    goto ERROR;
+		}
+	    }
 	    if ($dhcpsettings{"START_ADDR_${itf}"}) {
 		if (!(&General::validip($dhcpsettings{"START_ADDR_${itf}"}))) {
 		    $errormessage = "DHCP on ${itf}: " . $Lang::tr{'invalid start address'};
@@ -571,14 +586,45 @@ foreach my $itf (@ITFs) {
 
     if ($netsettings{"${itf}_DEV"} ne '' ) { # Show only defined interface
 	my $lc_itf=lc($itf);
-print <<END
+        my @gwips;
+        my $current_gwip = $dhcpsettings{"ROUTER_ADDR_${itf}"};
+        foreach my $line (@IPFILE) {
+		chomp($line);
+		my @temp = split(/\,/, $line);
+		if ($temp[1] eq $netsettings{"${itf}_DEV"}) {
+			my @tmp = split(/\//, $temp[0]);
+			push(@gwips, $tmp[0]);
+		}
+	}
+	push(@gwips, $netsettings{"${itf}_ADDRESS"}); #add primary ip of $itf/green0 as one of option ip
+
+print <<END;
+
 <table width='100%'>
 <tr>
     <td width='25%' class='boldbase'><b><font color='${lc_itf}'>$Lang::tr{"$lc_itf interface"}</font></b></td>
     <td class='base'>$Lang::tr{'enabled'}
     <input type='checkbox' name='ENABLE_${itf}' $checked{'ENABLE'}{'on'} /></td>
     <td width='25%' class='base'>$Lang::tr{'ip address'}<br />$Lang::tr{'netmask'}:</td><td><b>$netsettings{"${itf}_ADDRESS"}<br />$netsettings{"${itf}_NETMASK"}</b></td>
-</tr><tr>
+</tr>
+<tr>
+    <td width='25%' class='base'>$Lang::tr{'router address'}&nbsp;</td>
+    <td>
+    <select name='ROUTER_ADDR_${itf}' id='router_addr' style="width: 200px;">
+END
+# display selected, tip from chatgpt
+    foreach my $gwip (@gwips) {
+	my $selected = '';
+	if ($gwip eq $current_gwip ) {
+		$selected = 'selected';
+	}
+        print "<option value=\"$gwip\" $selected>$gwip</option>";
+    }
+
+print <<END;
+     </select>
+     </td>
+</tr>
     <td width='25%' class='base'>$Lang::tr{'start address'}&nbsp;<img src='/blob.gif' alt='*' /></td>
     <td width='25%'><input type='text' name='START_ADDR_${itf}' value='$dhcpsettings{"START_ADDR_${itf}"}' /></td>
     <td width='25%' class='base'>$Lang::tr{'end address'}&nbsp;<img src='/blob.gif' alt='*' /></td>
@@ -620,10 +666,9 @@ print <<END
 </table>
 <hr />
 END
-;
     }# Show only defined interface
 }#foreach itf
-print <<END
+print <<END;
 <table width='100%'>
 <tr>
     <td class='base' width='25%'><img src='/blob.gif' align='top' alt='*' />&nbsp;$Lang::tr{'required field'}</td>
@@ -632,7 +677,7 @@ print <<END
 </tr>
 </table>
 END
-;
+
 &Header::closebox();
 
 # DHCP DNS update support (RFC2136)
@@ -1321,7 +1366,12 @@ sub buildconf {
 	    }
 	    print FILE "\toption subnet-mask "   . $netsettings{"${itf}_NETMASK"} . ";\n";
 	    print FILE "\toption domain-name \"" . $dhcpsettings{"DOMAIN_NAME_${itf}"} . "\";\n";
-	    print FILE "\toption routers " . $netsettings{"${itf}_ADDRESS"} . ";\n";
+	    if ($dhcpsettings{"ROUTER_ADDR_${itf}"}) {
+		my @temp = split("\/", $dhcpsettings{"ROUTER_ADDR_${itf}"});
+		print FILE "\toption routers " . $temp[0] . ";\n";
+	    } else {
+		print FILE "\toption routers " . $netsettings{"${itf}_ADDRESS"} . ";\n";
+	    }
 	    print FILE "\toption domain-name-servers " . $dhcpsettings{"DNS1_${itf}"}  if ($dhcpsettings{"DNS1_${itf}"});
 	    print FILE ", " . $dhcpsettings{"DNS2_${itf}"}                             if ($dhcpsettings{"DNS2_${itf}"});
 	    print FILE ";\n"                                                           if ($dhcpsettings{"DNS1_${itf}"});
