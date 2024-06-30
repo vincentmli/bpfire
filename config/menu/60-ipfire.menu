@@ -27,11 +27,6 @@
                                  'title' => "$Lang::tr{'keepalived'}",
                                  'enabled' => 1,
                                  };
-    $subipfire->{'80.pakfire'} = {'caption' => 'Pakfire',
-				  'uri' => '/cgi-bin/pakfire.cgi',
-				  'title' => "Pakfire",
-				  'enabled' => 1,
-				  };
     $subipfire->{'99.help'} = {'caption' => $Lang::tr{'help'},
 				  'uri' => '/cgi-bin/help.cgi',
 				  'title' => "$Lang::tr{'help'}",
