@@ -39,3 +39,4 @@ usr/sbin/keepalived
 #usr/share/man/man8/keepalived.8
 var/ipfire/backup/addons/includes/keepalived
 var/ipfire/keepalived
+etc/rc.d/rc3.d/S101keepalived

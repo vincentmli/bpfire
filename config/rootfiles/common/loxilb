@@ -4,3 +4,4 @@ opt/loxilb/llb_kern_sock.o
 opt/loxilb/llb_xdp_main.o
 opt/loxilb/loxilb_libdp.o
 usr/bin/loxilb
+etc/rc.d/rc3.d/S100loxilb
