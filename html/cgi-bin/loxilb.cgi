@@ -59,7 +59,7 @@ $settings{'ACTION'} = '';
 $settings{'KEY1'} = '';                 # point record for ACTION
 $settings{'virtualIP'} = '';
 $settings{'interface'} = '';
-my @nosaved=('virtualIP','interface');
+my @nosaved=('virtualIP','interface', 'KEY1', 'SORT_virtualIPLIST');
 
 #Define each field that can be used to sort columns
 my $sortstring='^virtualIP';
@@ -77,6 +77,7 @@ if (open(FILE, "$loxilbipfile")) {
 if ($settings{'ACTION'} eq $Lang::tr{'save'})
 {
 
+	map (delete ($settings{$_}) ,(@nosaved));
 	&General::writehash("$loxilbsettingfile", \%settings);
 
 	if ($settings{'ENABLE_LOXILB'} eq 'on') {
