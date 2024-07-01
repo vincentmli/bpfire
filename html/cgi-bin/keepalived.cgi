@@ -43,7 +43,8 @@ my $runsetting = "${General::swroot}/keepalived/runsettings";
 my $loxilbipfile = "${General::swroot}/loxilb/ipconfig";
 									# because we need commas in the some data
 my $errormessage = '';
-my @nosaved=();
+#remove 'ENABLE_HA' from '/var/ipfire/keepalived/settings' as it could affect keepalived running state
+my @nosaved=('ENABLE_HA');
 my %color = ();
 
 $hasettings{'ENABLE_HA'} = 'off';
@@ -82,6 +83,11 @@ foreach my $itf (@ITFs) {
 
 if ($hasettings{'ACTION'} eq $Lang::tr{'enable'})
 {
+	#remove @nosaved from $hasettings before writehash to 'runsettings' file since 'runsetting' is only for keepalived running state
+	foreach my $itf (@ITFs) {
+		my @nosaved = ("virtual_router_id_${itf}", "priority_${itf}", "unicast_peer_${itf}", "auth_pass_${itf}", "garp_master_delay_${itf}", "advert_int_${itf}", "virtual_ipaddress_${itf}", "state_${itf}", "ENABLE_${itf}");
+		map (delete ($hasettings{$_}) ,(@nosaved));
+	}
         &General::writehash("$runsetting", \%hasettings);
         if ($hasettings{'ENABLE_HA'} eq 'on') {
                 &General::system('/usr/bin/touch', "${General::swroot}/keepalived/enable_ha");
