@@ -23,6 +23,7 @@ usr/lib/openssh/sftp-server
 usr/lib/openssh/ssh-pkcs11-helper
 usr/lib/openssh/ssh-sk-helper
 usr/sbin/sshd
+usr/lib/openssh/sshd-session
 #usr/share/man/man1/scp.1
 #usr/share/man/man1/sftp.1
 #usr/share/man/man1/ssh-add.1
