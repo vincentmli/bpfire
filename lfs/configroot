@@ -68,7 +68,7 @@ $(TARGET) :
 	    fwhosts/customnetworks fwhosts/customhosts fwhosts/customgroups fwhosts/customservicegrp fwhosts/customlocationgrp fwlogs/ipsettings fwlogs/portsettings ipblocklist/modified \
 	    ipblocklist/settings mac/settings main/hosts main/routing main/security main/settings optionsfw/settings \
 	    ovpn/ccd.conf ovpn/ccdroute ovpn/ccdroute2 pakfire/settings portfw/config ppp/settings-1 ppp/settings-2 ppp/settings-3 ppp/settings-4 \
-	    ppp/settings-5 ppp/settings proxy/settings proxy/squid.conf proxy/advanced/settings proxy/advanced/cre/enable remote/settings ddos/settings ddos/tcp_ports ddos/udp-ddos-settings ddos/udp_ports ddos/dns-ddos-settings loxilb/settings keepalived/keepalived.conf keepalived/runsettings keepalived/settings qos/settings qos/classes qos/subclasses qos/level7config qos/portconfig \
+	    ppp/settings-5 ppp/settings proxy/settings proxy/squid.conf proxy/advanced/settings proxy/advanced/cre/enable remote/settings ddos/settings ddos/tcp_ports ddos/udp-ddos-settings ddos/udp_ports ddos/dns-ddos-settings loxilb/settings keepalived/keepalived.conf keepalived/runsettings keepalived/settings keepalived/configvs keepalived/configrs qos/settings qos/classes qos/subclasses qos/level7config qos/portconfig \
 	    qos/tosconfig suricata/settings vpn/config vpn/settings vpn/ipsec.conf \
 	    vpn/ipsec.secrets vpn/caconfig wakeonlan/clients.conf wireless/config wireless/settings; do \
 	    touch $(CONFIG_ROOT)/$$i; \
