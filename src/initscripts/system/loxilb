@@ -37,13 +37,19 @@ case "$1" in
 			mkdir -p /opt/loxilb/dp/
 			mount -t bpf bpf /opt/loxilb/dp/
 
-			loadproc -b loxilb --blacklist="eth[0-9]"
+			#enable egress firewall SNAT for green network
+			redip=$(< /var/ipfire/red/local-ipaddress)
+			sed -i "s/\"REDIP\"/\"$redip\"/" /var/ipfire/loxilb/FWconfig.txt
+
+			loadproc -b loxilb --config-path="/var/ipfire/loxilb/" --blacklist="eth[0-9]"
 		fi
 		;;
 
 	stop)
 		boot_mesg "Stopping loxilb..."
 		if [ "$ENABLE_LOXILB" == "off" ]; then
+			#remove egress firewall SNAT for green network
+			loxicmd delete firewall --firewallRule="portName:green0"
 			killproc loxilb
 		fi
 		;;

@@ -104,6 +104,7 @@ $(TARGET) :
 	cp $(DIR_SRC)/config/cfgroot/udp_ports			$(CONFIG_ROOT)/ddos/udp_ports
 	cp $(DIR_SRC)/config/cfgroot/dns-ddos-settings		$(CONFIG_ROOT)/ddos/dns-ddos-settings
 	cp $(DIR_SRC)/config/cfgroot/loxilb-settings		$(CONFIG_ROOT)/loxilb/settings
+	cp $(DIR_SRC)/config/cfgroot/loxilb-FWconfig.txt	$(CONFIG_ROOT)/loxilb/FWconfig.txt
 	cp $(DIR_SRC)/config/cfgroot/time-settings		$(CONFIG_ROOT)/time/settings
 	cp $(DIR_SRC)/config/cfgroot/logging-settings		$(CONFIG_ROOT)/logging/settings
 	cp $(DIR_SRC)/config/cfgroot/ethernet-vlans		$(CONFIG_ROOT)/ethernet/vlans
