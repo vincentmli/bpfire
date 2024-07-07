@@ -42,7 +42,7 @@ our $filename1 = "${General::swroot}/dhcp/advoptions"; 	# Field separator is TAB
 									# because we need commas in the some data
 our $filename2 = "${General::swroot}/dhcp/fixleases";
 our $filename3 = "${General::swroot}/dhcp/advoptions-list";	# Describe the allowed syntax for dhcp options
-my $loxilbipfile = "${General::swroot}/loxilb/ipconfig";
+my $loxilbipfile = "${General::swroot}/loxilb/ipconfigfile";
 my $errormessage = '';
 my $warnNTPmessage = '';
 my @nosaved=();

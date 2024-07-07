@@ -40,7 +40,7 @@ my %mainsettings=();
 my %timesettings=();
 my $setting = "${General::swroot}/keepalived/settings";
 my $runsetting = "${General::swroot}/keepalived/runsettings";
-my $loxilbipfile = "${General::swroot}/loxilb/ipconfig";
+my $loxilbipfile = "${General::swroot}/loxilb/ipconfigfile";
 									# because we need commas in the some data
 my $errormessage = '';
 #remove 'ENABLE_HA' from '/var/ipfire/keepalived/settings' as it could affect keepalived running state

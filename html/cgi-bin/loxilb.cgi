@@ -44,7 +44,7 @@ my %checked=();
 my $errormessage='';
 my $setting = "${General::swroot}/main/settings";
 my $loxilbsettingfile = "${General::swroot}/loxilb/settings";
-my $loxilbipfile = "${General::swroot}/loxilb/ipconfig";
+my $loxilbipfile = "${General::swroot}/loxilb/ipconfigfile";
 
 # Read configuration file.
 
