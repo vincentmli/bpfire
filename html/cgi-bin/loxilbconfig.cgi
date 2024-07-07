@@ -37,6 +37,21 @@ undef (@dummy);
 # Files used
 my $setting = "${General::swroot}/main/settings";
 our $datafile = "${General::swroot}/loxilb/lbconfig";		#(our: used in subroutine)
+my $loxilbipfile = "${General::swroot}/loxilb/ipconfigfile";
+my $redfile = "${General::swroot}/red/local-ipaddress";
+
+our @REDIP = ();
+our @IPFILE = ();
+
+if (open(FILE, "$redfile")) {
+    @REDIP = <FILE>;
+    close (FILE);
+}
+
+if (open(FILE, "$loxilbipfile")) {
+    @IPFILE = <FILE>;
+    close (FILE);
+}
 
 my %color = ();
 my %mainsettings = ();
@@ -288,7 +303,17 @@ my @PROTOCOLS = ("tcp", "udp");
 my @ALGO = ("rr", "hash", "priority", "persist", "lc");
 my @MODE = ("default", "onearm", "fullnat", "dsr");
 my @MONITOR = ("on", "off");
-my @VIP = &General::get_ipaddresses_from_interface("red0");
+my @VIP;
+push(@VIP, @REDIP);
+
+foreach my $line (@IPFILE) {
+	chomp($line);
+	my @temp = split(/\,/, $line);
+	if ($temp[1] eq "red0") {
+		my @tmp = split(/\//, $temp[0]);
+		push(@VIP, $tmp[0]);
+	}
+}
 
 #Edited line number (KEY1) passed until cleared by 'save' or 'remove' or 'new sort order'
 print <<END;
