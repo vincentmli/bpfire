@@ -2042,6 +2042,7 @@ lang)
 	$BASEDIR/tools/sort_strings.pl nl
 	$BASEDIR/tools/sort_strings.pl tr
 	$BASEDIR/tools/sort_strings.pl it
+	$BASEDIR/tools/sort_strings.pl zh
 	$BASEDIR/tools/check_strings.pl en > $BASEDIR/doc/language_issues.en
 	$BASEDIR/tools/check_strings.pl de > $BASEDIR/doc/language_issues.de
 	$BASEDIR/tools/check_strings.pl fr > $BASEDIR/doc/language_issues.fr
@@ -2051,6 +2052,7 @@ lang)
 	$BASEDIR/tools/check_strings.pl nl > $BASEDIR/doc/language_issues.nl
 	$BASEDIR/tools/check_strings.pl tr > $BASEDIR/doc/language_issues.tr
 	$BASEDIR/tools/check_strings.pl it > $BASEDIR/doc/language_issues.it
+	$BASEDIR/tools/check_strings.pl zh > $BASEDIR/doc/language_issues.zh
 	$BASEDIR/tools/check_langs.sh > $BASEDIR/doc/language_missings
 	print_status DONE
 
