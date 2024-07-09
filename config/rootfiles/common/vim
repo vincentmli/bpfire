@@ -1,4 +1,5 @@
 etc/vimrc
+root/.vimrc
 usr/bin/ex
 usr/bin/rview
 usr/bin/rvim
