@@ -59,6 +59,7 @@ if (open(FILE, "$loxilbipfile")) {
 &Header::showhttpheaders();
 our @ITFs=('RED', 'GREEN');
 my @STATE= ('MASTER', 'BACKUP');
+my $DUMMY_IP = '192.0.2.1'; #for HA master/backup state tracking
 
 #Settings1 for the first screen box
 foreach my $itf (@ITFs) {
@@ -165,6 +166,14 @@ if ($hasettings{'ENABLE_HA'} eq "on") {
         $checked = "checked='checked'";
 }
 
+my $hastate = "<table cellpadding='2' cellspacing='0' bgcolor='${Header::colourred}' width='50%'><tr><td align='center'><b><font color='#FFFFFF'>$Lang::tr{'standby'}</font></b></td></tr></table>";
+
+my @ips = &General::get_ipaddresses_from_interface("green0");
+
+if (grep { $_ eq $DUMMY_IP } @ips) {
+        $hastate = "<table cellpadding='2' cellspacing='0' bgcolor='${Header::colourgreen}' width='50%'><tr><td align='center'><b><font color='#FFFFFF'>$Lang::tr{'active'}</font></b></td></tr></table>";
+}
+
 my $sactive = "<table cellpadding='2' cellspacing='0' bgcolor='${Header::colourred}' width='50%'><tr><td align='center'><b><font color='#FFFFFF'>$Lang::tr{'stopped'}</font></b></td></tr></table>";
 
 my @status = &General::system_output('/usr/local/bin/keepalivedctrl', 'status');
@@ -183,10 +192,17 @@ print <<END;
         <td width='25%'>&nbsp;</td>
         <tr><td class='boldbase'>$Lang::tr{'keepalived status'}</td>
         <td align='left'>$sactive</td>
+        <td align='center'>$hastate</td>
+	<td align='right'>
+		<input type='submit' value='Refresh'>
+	</td>
         </tr>
+	<tr>
+		<td colspan='4'>&nbsp;</td>
+	</tr>
         <tr>
-        <td width='50%' class='boldbase'>$Lang::tr{'enable'}
-        <td><input type='checkbox' name='ENABLE_HA' $checked></td>
+        <td width='100%' class='boldbase'>$Lang::tr{'enable'}
+        <td align='left'><input type='checkbox' name='ENABLE_HA' $checked></td>
         <td align='center'><input type='submit' name='ACTION' value='$Lang::tr{'enable'}'></td>
         </tr>
 END
@@ -337,6 +353,7 @@ sub buildconf {
 		print FILE "\t}" . "\n";
 		# virtual ipaddress
 		print FILE "\tvirtual_ipaddress {" . "\n";
+		print FILE "\t\t$DUMMY_IP" . "\n";
 		my @vips = split(/\|/, $hasettings{"virtual_ipaddress_${itf}"});
 		foreach my $ip (@vips) {
 			print FILE "\t\t$ip" . "\n";

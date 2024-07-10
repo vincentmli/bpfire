@@ -138,6 +138,7 @@
 'activate' => '激活',
 'activate user' => '激活用户',
 'active' => 'Active',
+'standby' => 'Standby',
 'add' => '添加',
 'add a host' => '添加主机',
 'add a new rule' => '添加规则:',

@@ -141,6 +141,7 @@
 'activate' => 'Activate',
 'activate user' => 'Activate user',
 'active' => 'Active',
+'standby' => 'Standby',
 'add' => 'Add',
 'add a host' => 'Add a host',
 'add a new rule' => 'Add a new rule:',
