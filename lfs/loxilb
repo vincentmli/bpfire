@@ -25,7 +25,7 @@
 
 include Config
 
-VER        = 0.9.5
+VER        = 0.9.6
 
 THISAPP    = loxilb-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
@@ -41,7 +41,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_BLAKE2 = b1c6b3d25543b5a4c1516e1dc35dbe393c1bd10d8b83307a857713e8ee3553690ce64ffb9d611452c68745564afc775363c90d96b53607902afe24a7d72bdcf7
+$(DL_FILE)_BLAKE2 = 3a602213e4f94d239cd1e883ffb21f421b447fa680d360f137e2fbe42f4c04a650f9d96a8941b04e0c313bc85d1aa2b8e7aaeab9a2ed57b45ea54ed97fca1434
 
 install : $(TARGET)
 
