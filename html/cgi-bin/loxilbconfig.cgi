@@ -650,6 +650,16 @@ sub SortDataFile
     close (FILE);
 }
 
+sub SaveLB {
+    my @save_options;
+    my $command = 'loxicmd';
+    my $dir="/var/ipfire/loxilb/";
+    push(@save_options, "save", "--lb", "-c", $dir);
+    &General::system_output($command, @save_options);
+    #my @output = &General::system_output($command, @save_options);
+    #$errormessage = join('', @output);
+}
+
 #
 # Build the configuration file
 #
@@ -686,6 +696,7 @@ sub CreateLB {
 		push(@loxicmd_options, "--monitor");
 	}
 	&General::system($command, @loxicmd_options);
+	&SaveLB;
 }
 
 sub DeleteLB {
@@ -696,4 +707,5 @@ sub DeleteLB {
 	push(@loxicmd_options, "delete", "lb");
 	push(@loxicmd_options, "$name");
 	&General::system($command, @loxicmd_options);
+	&SaveLB;
 }

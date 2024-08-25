@@ -457,13 +457,24 @@ sub manageIP {
 
 }
 
+sub SaveIP {
+    my @save_options;
+    my $command = 'loxicmd';
+    my $dir="/var/ipfire/loxilb/";
+    push(@save_options, "save", "--ip", "-c", $dir);
+    &General::system_output($command, @save_options);
+    #my @output = &General::system_output($command, @save_options);
+    #$errormessage = join('', @output);
+}
+
 sub CreateIP {
     my (%settings) = @_;
     manageIP("create", %settings);
+    &SaveIP;
 }
 
 sub DeleteIP {
     my (%settings) = @_;
     manageIP("delete", %settings);
+    &SaveIP;
 }
-

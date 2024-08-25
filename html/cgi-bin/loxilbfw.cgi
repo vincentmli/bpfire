@@ -630,13 +630,24 @@ sub manageFW {
     }
 }
 
+sub SaveFW {
+    my @save_options;
+    my $command = 'loxicmd';
+    my $dir="/var/ipfire/loxilb/";
+    push(@save_options, "save", "--firewall", "-c", $dir);
+    &General::system_output($command, @save_options);
+    #my @output = &General::system_output($command, @save_options);
+    #$errormessage = join('', @output);
+}
+
 sub CreateFW {
     my (%settings) = @_;
     manageFW("create", %settings);
+    &SaveFW;
 }
 
 sub DeleteFW {
     my (%settings) = @_;
     manageFW("delete", %settings);
+    &SaveFW;
 }
- 
