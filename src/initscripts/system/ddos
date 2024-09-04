@@ -90,12 +90,12 @@ load_xdpudp () {
 }
 
 load_xdpdns () {
-	/usr/sbin/xdp-loader status red0 | grep 'xdp_dns'
+	/usr/sbin/xdp-loader status green0 | grep 'xdp_dns'
 	if [ $? -ne 0 ]; then
-		xdp-loader load red0 -P 80 -p /sys/fs/bpf/xdp-dns -n xdp_dns /usr/lib/bpf/xdp_dnsrrl.bpf.o
+		xdp-loader load green0 -P 80 -p /sys/fs/bpf/xdp-dns -n xdp_dns /usr/lib/bpf/xdp_dnsrrl.bpf.o
 		if [ $? -ge 1 ]; then
 			boot_mesg "Native mode not supported, try SKB"
-			xdp-loader load red0 -m skb -P 80 -p /sys/fs/bpf/xdp-dns -n xdp_dns /usr/lib/bpf/xdp_dnsrrl.bpf.o
+			xdp-loader load green0 -m skb -P 80 -p /sys/fs/bpf/xdp-dns -n xdp_dns /usr/lib/bpf/xdp_dnsrrl.bpf.o
 		fi
 	fi
 }
@@ -123,11 +123,10 @@ unload_xdpudp () {
 }
 
 unload_xdpdns () {
-	/usr/sbin/xdp-loader status red0 | grep 'xdp_dns'
+	/usr/sbin/xdp-loader status green0 | grep 'xdp_dns'
 	if [ $? -eq 0 ]; then
-		prog_id=$(xdp-loader status red0 | grep 'xdp_dns' | awk '{print $4}')
-		/usr/sbin/xdp-loader unload -i $prog_id red0
-		/bin/rm -rf /sys/fs/bpf/xdp-dns
+		prog_id=$(xdp-loader status green0 | grep 'xdp_dns' | awk '{print $4}')
+		/usr/sbin/xdp-loader unload -i $prog_id green0
 	else
 		boot_mesg "Error xdp_dns not loaded!"
 	fi
