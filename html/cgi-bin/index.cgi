@@ -604,11 +604,6 @@ if ($warnmessage) {
 	&Header::closebox();
 }
 
-my %coredb = &Pakfire::coredbinfo();
-if (defined $coredb{'AvailableRelease'}) {
-	print "<br /><br /><br /><a href='pakfire.cgi'>$Lang::tr{'core notice 1'} $coredb{'Release'} $Lang::tr{'core notice 2'} $coredb{'AvailableRelease'} $Lang::tr{'core notice 3'}</a>";
-}
-
 if ( -e "/var/run/need_reboot" ) {
 	print "<div style='text-align:center; color:red;'>";
 	print "<br/><br/>$Lang::tr{'needreboot'}!";
