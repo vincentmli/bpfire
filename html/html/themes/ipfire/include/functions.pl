@@ -212,8 +212,8 @@ print <<END;
 
 	<div id="footer" class='bigbox fixed'>
 		<span class="pull-right">
-			<a href="https://www.ipfire.org/" target="_blank"><strong>IPFire.org</strong></a> &bull;
-			<a href="https://www.ipfire.org/donate" target="_blank">$Lang::tr{'support donation'}</a>
+			<a href="http://www.bpfire.net/" target="_blank"><strong>BPFire.net</strong></a> &bull;
+			<a href="https://www.paypal.com/donate/?business=BL97G8687E5B6&no_recurring=0&item_name=Make+revolutionary+eBPF+technology+available+for+non-tech+savvy+users+for+safe+online+surfing&currency_code=USD" target="_blank">$Lang::tr{'support donation'}</a>
 		</span>
 
 		<strong>$system_release</strong>

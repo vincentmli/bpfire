@@ -2491,7 +2491,7 @@
 'successfully refreshed updates list' => '成功刷新更新列表。.',
 'summaries kept' => '保留摘要',
 'sunday' => '星期日',
-'support donation' => '通过捐款支持IPFire项目',
+'support donation' => '通过捐款支持BPFire项目',
 'swap' => '交换',
 'swap usage per' => 'Swap usage per',
 'system' => '系统状态',
