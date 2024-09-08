@@ -536,11 +536,6 @@ END
 &Header::closebox();
 }
 
-# Fireinfo
-if ( ! -e "/var/ipfire/main/send_profile") {
-	$warnmessage .= "<li><a style='color: white;' href='fireinfo.cgi'>$Lang::tr{'fireinfo please enable'}</a></li>";
-}
-
 # EOL architecture
 my ($sysname, $nodename, $release, $version, $machine) = &POSIX::uname();
 if ($machine =~ m/^arm/) {
