@@ -38,11 +38,17 @@ require "${General::swroot}/header.pl";
 &Header::openbox('100%', 'left', $Lang::tr{'donation'});
 
 print <<END
-<p>$Lang::tr{'donation-text'}</p>
-
+<p>$Lang::tr{'donation-bpfire-text'}</p>
 <div align="center">
-	<a href="https://www.ipfire.org/donate">
-		<strong>$Lang::tr{'donation'}</strong>
+        <a href="https://www.paypal.com/donate/?business=BL97G8687E5B6&no_recurring=0&item_name=Make+revolutionary+eBPF+technology+available+for+non-tech+savvy+users+for+safe+online+surfing&currency_code=USD" target="_blank">
+                <strong>$Lang::tr{'donation-bpfire'}</strong>
+        </a>
+</div>
+<p>$Lang::tr{'donation-ipfire-text'}</p>
+<div align="center">
+
+	<a href="https://www.ipfire.org/donate" target="_blank">
+		<strong>$Lang::tr{'donation-ipfire'}</strong>
 	</a>
 </div>
 END
@@ -54,7 +60,7 @@ END
 print <<END
 <br>
 <center>
-	$Lang::tr{'visit us at'}: <b><a href='https://www.ipfire.org/' target="_blank">https://www.ipfire.org/</a></b>
+	$Lang::tr{'visit us at'}: <b><a href='http://www.bpfire.net/' target="_blank">https://www.bpfire.net/</a></b> <b><a href='https://www.ipfire.org/' target="_blank">https://www.ipfire.org/</a></b>
 </center>
 <br><br>
 
