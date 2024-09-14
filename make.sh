@@ -1721,6 +1721,7 @@ buildipfire() {
   lfsmake2 loxilb-tc
   lfsmake2 loxicmd
   lfsmake2 loxilb
+  lfsmake2 lunatik
 
 
   # Kernelbuild ... current we have no platform that need
