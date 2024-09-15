@@ -1721,7 +1721,6 @@ buildipfire() {
   lfsmake2 loxilb-tc
   lfsmake2 loxicmd
   lfsmake2 loxilb
-  lfsmake2 lunatik
 
 
   # Kernelbuild ... current we have no platform that need
@@ -1729,6 +1728,8 @@ buildipfire() {
   lfsmake2 linux		KCFG=""
   lfsmake2 rtl8812au		KCFG=""
   lfsmake2 linux-initrd		KCFG=""
+  # lunatik kernel module requires linux kernel to be built first
+  lfsmake2 lunatik
 }
 
 buildinstaller() {
