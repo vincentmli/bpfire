@@ -44,3 +44,4 @@ lib/modules/lua/socket/inet.lua
 lib/modules/lua/syscall
 lib/modules/lua/syscall/table.lua
 usr/sbin/lunatik
+usr/lib/bpf/https.o

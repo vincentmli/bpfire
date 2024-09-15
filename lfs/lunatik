@@ -41,7 +41,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_BLAKE2 = ea116236c073b038bedc1c1c3a61b1eff7e4dc9fed105fdf469190002ff54b45216fc84a4a7257bf12e8adb5207c7c93aab32e017d64ab522c91cca131ac86d6
+$(DL_FILE)_BLAKE2 = 96bee0f721e4098cf8523134a325290272cc4e99583bbdd775594b1ff38119e8cafa431987e570994dc69f2a45c2a78d298029eb29da457401e2c5993a0edb6f
 
 install : $(TARGET)
 
@@ -72,11 +72,13 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE)
 
+	#generate lunatik symbols before build
+	cd $(DIR_APP) && ./gensymbols.sh lua/lua.h lua/lauxlib.h lua/lualib.h > lunatik_sym.h
 	cd $(DIR_APP) && make btf_install
 	cd $(DIR_APP) && make
 	cd $(DIR_APP) && make install
-	cd $(DIR_APP) && make examples_install
 	cd $(DIR_APP)/examples/filter && make
+	cd $(DIR_APP) && make examples_install
 
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)
