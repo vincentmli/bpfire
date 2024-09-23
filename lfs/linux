@@ -171,6 +171,9 @@ else
 	cd $(DIR_APP)/tools/bpf/bpftool && sed -i -e 's/^prefix ?= \/usr\/local/prefix ?= \/usr/' Makefile
 	cd $(DIR_APP)/tools/bpf/bpftool && make $(MAKETUNING)
 
+	# Build perf tool
+	cd $(DIR_APP)/tools/perf && NO_JEVENTS=1 NO_LIBTRACEEVENT=1 make $(MAKETUNING)
+
 	# Install the kernel
 	cd $(DIR_APP) && cp -v arch/$(KERNEL_ARCH)/boot/$(KERNEL_TARGET) /boot/vmlinuz-$(VER)-$(VERSUFIX)
 	cd $(DIR_APP) && cp -v System.map /boot/System.map-$(VER)-$(VERSUFIX)
@@ -179,6 +182,9 @@ else
 
 	# Install bpftool
 	cd $(DIR_APP)/tools/bpf/bpftool && make install
+
+	# Install perf tool
+	cd $(DIR_APP)/tools/perf && install -m 755 perf /usr/sbin/
 
 ifneq "$(BUILD_PLATFORM)" "x86"
 	cd $(DIR_APP) && make $(MAKETUNING) dtbs
