@@ -8,7 +8,7 @@ BPFire 基于IPFire 2.x, 一个基于Linux的安全坚固、多功能、先进�
 
 1. XDP DDoS protection, See XDP SYNPROXY stops 10G DDoS SYN flood [here](https://www.youtube.com/watch?v=81Hgoy-x1A4)
 2. XDP DNS domain blocklist, ratelimit protection
-3. Lunatik LuaXDP SSL/TLS server name indication (SNI) blocklist, see [Lunatik](https://github.com/luainkernel/lunatik)
+3. XDP SSL/TLS server name indicator (SNI) blocklist
 4. eBPF based LoxiLB load balancer, Firewall, Proxy, see full features [LoxiLB](https://loxilb-io.github.io/loxilbdocs/#overall-features-of-loxilb)
 
 # Where can I get BPFire installation ISO or flash image?
