@@ -6,6 +6,7 @@ usr/lib/bpf/xdp_dns.bpf.o
 usr/lib/bpf/xdp_sni.bpf.o
 usr/sbin/xdp-udp
 usr/sbin/xdp_dns
+usr/sbin/xdp_dns_log
 usr/sbin/xdp_sni
 usr/lib/bpf/xdpdump_bpf.o
 usr/lib/bpf/xdpdump_xdp.o
