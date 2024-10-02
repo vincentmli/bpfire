@@ -1,0 +1,81 @@
+#!/bin/sh
+###############################################################################
+#                                                                             #
+# IPFire.org - A linux based firewall                                         #
+# Copyright (C) 2007-2022  IPFire Team  <info@ipfire.org>                     #
+# Copyright (C) 2024  BPFire <vincent.mc.li@gmail.com>                     #
+#                                                                             #
+# This program is free software: you can redistribute it and/or modify        #
+# it under the terms of the GNU General Public License as published by        #
+# the Free Software Foundation, either version 3 of the License, or           #
+# (at your option) any later version.                                         #
+#                                                                             #
+# This program is distributed in the hope that it will be useful,             #
+# but WITHOUT ANY WARRANTY; without even the implied warranty of              #
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the               #
+# GNU General Public License for more details.                                #
+#                                                                             #
+# You should have received a copy of the GNU General Public License           #
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.       #
+#                                                                             #
+###############################################################################
+
+. /etc/sysconfig/rc
+. $rc_functions
+
+eval $(/usr/local/bin/readhash /var/ipfire/xdpdns/settings)
+
+load_dnsblock () {
+        /usr/sbin/xdp-loader status green0 | grep -w 'xdp_dns_denylist'
+        if [ $? -ne 0 ]; then
+                xdp-loader load green0 -P 70 -p /sys/fs/bpf/xdp-dns-denylist -n xdp_dns_denylist /usr/lib/bpf/xdp_dns.bpf.o
+                if [ $? -ge 1 ]; then
+                        boot_mesg "Native mode not supported, try SKB"
+                        xdp-loader load green0 -m skb -P 70 -p /sys/fs/bpf/xdp-dns-denylist -n xdp_dns_denylist /usr/lib/bpf/xdp_dns.bpf.o
+                fi
+        fi
+}
+
+unload_dnsblock () {
+        /usr/sbin/xdp-loader status green0 | grep -w 'xdp_dns_denylist'
+        if [ $? -eq 0 ]; then
+                prog_id=$(xdp-loader status green0 | grep 'xdp_dns_denylist' | awk '{print $4}')
+                /usr/sbin/xdp-loader unload -i $prog_id green0
+        else
+                boot_mesg "Error xdp_dns_denylist not loaded!"
+        fi
+}
+
+
+case "$1" in
+	start)
+		boot_mesg -n "Starting xdp-dns-denylist..."
+		if [ "$ENABLE_DNSBLOCK" == "on" ]; then
+			load_dnsblock
+			loadproc -b xdp_dns_log
+		fi
+		;;
+
+	stop)
+		boot_mesg "Stopping xdp-dns-denylist..."
+		if [ "$ENABLE_DNSBLOCK" == "off" ]; then
+			unload_dnsblock
+			killproc xdp_dns_log
+		fi
+		;;
+
+	status)
+		statusproc /usr/sbin/xdp_dns_log
+		;;
+
+	restart)
+		$0 stop
+		sleep 1
+		$0 start
+		;;
+
+	*)
+		echo "Usage: $0 {start|stop|restart}"
+		exit 1
+		;;
+esac
