@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 17.0.6
+VER        = 18.1.0
 
 THISAPP    = llvm-project-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
@@ -40,7 +40,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_BLAKE2 = 779a428c86b5e797a1f2264e33268d69799cf7d9eb9776c38af5efca2b5b6f94248bb48409306fbd61f0d4775ee7ada3cac5490b0bd55d8f56133af1df814b07
+$(DL_FILE)_BLAKE2 = ec1b33b1cb6c00e50e2c7f2c4f3ad13e44e64951c5d78eec41134dbe372a7c13fa52c60244a1c14af3d40f1d452fd2be44ed362df11077cae134d7402674fac2
 
 install : $(TARGET)
 
