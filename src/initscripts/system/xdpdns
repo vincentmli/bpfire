@@ -33,6 +33,8 @@ load_dnsblock () {
                         boot_mesg "Native mode not supported, try SKB"
                         xdp-loader load green0 -m skb -P 70 -p /sys/fs/bpf/xdp-dns-denylist -n xdp_dns_denylist /usr/lib/bpf/xdp_dns.bpf.o
                 fi
+		# allow WUI nobody with permission to update map
+		chown -R nobody /sys/fs/bpf/xdp-dns-denylist
         fi
 }
 
