@@ -25,6 +25,8 @@
 
 eval $(/usr/local/bin/readhash /var/ipfire/xdpdns/settings)
 
+domainfile="/var/ipfire/xdpdns/domainfile"
+
 load_dnsblock () {
         /usr/sbin/xdp-loader status green0 | grep -w 'xdp_dns_denylist'
         if [ $? -ne 0 ]; then
@@ -35,6 +37,11 @@ load_dnsblock () {
                 fi
 		# allow WUI nobody with permission to update map
 		chown -R nobody /sys/fs/bpf/xdp-dns-denylist
+		# add domain to domain_denylist map
+		while IFS= read -r line; do
+			xdp_dns add $line
+		done < $domainfile
+
         fi
 }
 
