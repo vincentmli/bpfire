@@ -2481,6 +2481,8 @@
 'xdpdns domain add' => '添加域名',
 'xdpdns domain name' => '域名',
 'xdpdns domain entries' => '域名过滤列表',
+'xdpdns log' => 'XDP记录的域名解析日志',
+'xdpdns hits' => '域名解析日志总数',
 'status' => '状态',
 'status information' => '状态信息',
 'status ovpn' => 'OpenVPN',

@@ -8,6 +8,11 @@
 				 'title' => "$Lang::tr{'log settings'}",
 				 'enabled' => 1
 				 };
+    $sublogs->{'21.xdpdns'} = {'caption' => $Lang::tr{'xdpdns log'},
+				 'uri' => '/cgi-bin/logs.cgi/xdpdnslog.dat',
+				 'title' => "$Lang::tr{'xdpdns log'}",
+				 'enabled' => 1
+				 };
     $sublogs->{'30.proxy'} = {'caption' => $Lang::tr{'proxy logs'},
 				 'uri' => '/cgi-bin/logs.cgi/proxylog.dat',
 				 'title' => "$Lang::tr{'proxy logs'}",
