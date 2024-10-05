@@ -184,7 +184,7 @@ my $sactive = "<table cellpadding='2' cellspacing='0' bgcolor='${Header::colourr
 
 my @status = &General::system_output('/usr/local/bin/xdpdnsctrl', 'status');
 
-if (grep(/is running/, @status)){
+if (grep(/is attached/, @status)){
         $sactive = "<table cellpadding='2' cellspacing='0' bgcolor='${Header::colourgreen}' width='50%'><tr><td align='center'><b><font color='#FFFFFF'>$Lang::tr{'running'}</font></b></td></tr></table>";
 }
 

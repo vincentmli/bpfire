@@ -55,6 +55,15 @@ unload_dnsblock () {
         fi
 }
 
+is_xdpdns_attached () {
+        /usr/sbin/xdp-loader status green0 | grep -w 'xdp_dns_denylist' >> /dev/null
+        if [ $? -eq 0 ]; then
+		echo "xdp_dns_denylist is attached to green0"
+        else
+		echo "xdp_dns_denylist is not attached to green0"
+        fi
+}
+
 
 case "$1" in
 	start)
@@ -74,7 +83,7 @@ case "$1" in
 		;;
 
 	status)
-		statusproc /usr/sbin/xdp_dns_log
+		is_xdpdns_attached
 		;;
 
 	restart)
