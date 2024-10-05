@@ -2515,7 +2515,7 @@
 'xdpdns domain edit' => 'Edit Domain',
 'xdpdns domain add' => 'Add Domain',
 'xdpdns domain name' => 'Domain Name',
-'xdpdns domain entries' => 'Domain Deny Entries',
+'xdpdns domain entries' => 'Domain Blocklist Entries',
 'xdpdns log' => 'DNS Query Log from XDP',
 'xdpdns hits' => 'Total number of DNS query log from XDP',
 'status' => 'Status',
