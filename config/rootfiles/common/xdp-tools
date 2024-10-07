@@ -9,6 +9,7 @@ usr/sbin/xdp_dns
 etc/rc.d/rc3.d/S102xdpdns
 usr/sbin/xdp_dns_log
 usr/sbin/xdp_sni
+usr/sbin/xdp_sni_log
 usr/lib/bpf/xdpdump_bpf.o
 usr/lib/bpf/xdpdump_xdp.o
 usr/lib/bpf/xdpfilt_alw_all.o
