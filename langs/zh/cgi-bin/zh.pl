@@ -2483,6 +2483,8 @@
 'xdpdns domain entries' => '域名过滤列表',
 'xdpdns log' => 'XDP记录的域名解析日志',
 'xdpdns hits' => '域名解析日志总数',
+'xdpsni log' => 'XDP记录的加密网站访问日志',
+'xdpsni hits' => '加密网站访问日志总数',
 'status' => '状态',
 'status information' => '状态信息',
 'status ovpn' => 'OpenVPN',

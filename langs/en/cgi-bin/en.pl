@@ -2518,6 +2518,8 @@
 'xdpdns domain entries' => 'Domain Blocklist Entries',
 'xdpdns log' => 'DNS Query Log from XDP',
 'xdpdns hits' => 'Total number of DNS query log from XDP',
+'xdpsni log' => 'TLS/SSL Web Access Log from XDP',
+'xdpsni hits' => 'Total number of TLS/SSL Web Access Log from XDP',
 'status' => 'Status',
 'status information' => 'Status information',
 'status ovpn' => 'OpenVPN',
