@@ -203,3 +203,4 @@ var/ipfire/wireless
 var/ipfire/ddos
 var/ipfire/loxilb
 var/ipfire/xdpdns
+var/ipfire/xdpsni

@@ -1,0 +1,99 @@
+#!/bin/sh
+###############################################################################
+#                                                                             #
+# IPFire.org - A linux based firewall                                         #
+# Copyright (C) 2007-2022  IPFire Team  <info@ipfire.org>                     #
+# Copyright (C) 2024  BPFire <vincent.mc.li@gmail.com>                     #
+#                                                                             #
+# This program is free software: you can redistribute it and/or modify        #
+# it under the terms of the GNU General Public License as published by        #
+# the Free Software Foundation, either version 3 of the License, or           #
+# (at your option) any later version.                                         #
+#                                                                             #
+# This program is distributed in the hope that it will be useful,             #
+# but WITHOUT ANY WARRANTY; without even the implied warranty of              #
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the               #
+# GNU General Public License for more details.                                #
+#                                                                             #
+# You should have received a copy of the GNU General Public License           #
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.       #
+#                                                                             #
+###############################################################################
+
+. /etc/sysconfig/rc
+. $rc_functions
+
+eval $(/usr/local/bin/readhash /var/ipfire/xdpsni/settings)
+
+domainfile="/var/ipfire/xdpsni/domainfile"
+
+load_sniblock () {
+        /usr/sbin/xdp-loader status green0 | grep -w 'xdp_tls_sni'
+        if [ $? -ne 0 ]; then
+                xdp-loader load green0 -P 80 -p /sys/fs/bpf/xdp-sni -n xdp_tls_sni /usr/lib/bpf/xdp_sni.bpf.o
+                if [ $? -ge 1 ]; then
+                        boot_mesg "Native mode not supported, try SKB"
+                        xdp-loader load green0 -m skb -P 80 -p /sys/fs/bpf/xdp-sni -n xdp_tls_sni /usr/lib/bpf/xdp_sni.bpf.o
+                fi
+		# allow WUI nobody with permission to update map
+		chown -R nobody /sys/fs/bpf/xdp-sni
+		# add domain to domain_denylist map
+		while IFS= read -r line; do
+			xdp_sni add $line
+		done < $domainfile
+
+        fi
+}
+
+unload_sniblock () {
+        /usr/sbin/xdp-loader status green0 | grep -w 'xdp_tls_sni'
+        if [ $? -eq 0 ]; then
+                prog_id=$(xdp-loader status green0 | grep 'xdp_tls_sni' | awk '{print $4}')
+                /usr/sbin/xdp-loader unload -i $prog_id green0
+        else
+                boot_mesg "Error xdp_tls_sni not loaded!"
+        fi
+}
+
+is_xdpsni_attached () {
+        /usr/sbin/xdp-loader status green0 | grep -w 'xdp_tls_sni' >> /dev/null
+        if [ $? -eq 0 ]; then
+		echo "xdp_tls_sni is attached to green0"
+        else
+		echo "xdp_tls_sni is not attached to green0"
+        fi
+}
+
+
+case "$1" in
+	start)
+		boot_mesg -n "Starting xdp-sni..."
+		if [ "$ENABLE_SNIBLOCK" == "on" ]; then
+			load_sniblock
+			loadproc -b xdp_sni_log
+		fi
+		;;
+
+	stop)
+		boot_mesg "Stopping xdp-sni..."
+		if [ "$ENABLE_SNIBLOCK" == "off" ]; then
+			unload_sniblock
+			killproc xdp_sni_log
+		fi
+		;;
+
+	status)
+		is_xdpsni_attached
+		;;
+
+	restart)
+		$0 stop
+		sleep 1
+		$0 start
+		;;
+
+	*)
+		echo "Usage: $0 {start|stop|restart}"
+		exit 1
+		;;
+esac
