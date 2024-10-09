@@ -96,6 +96,7 @@ srv/web/ipfire/cgi-bin/loxilbconfig.cgi
 srv/web/ipfire/cgi-bin/loxilbfw.cgi
 srv/web/ipfire/cgi-bin/keepalived.cgi
 srv/web/ipfire/cgi-bin/xdpdns.cgi
+srv/web/ipfire/cgi-bin/xdpsni.cgi
 #srv/web/ipfire/html
 srv/web/ipfire/html/blob.gif
 #srv/web/ipfire/html/captive

@@ -8,6 +8,11 @@
                                 'title' => "$Lang::tr{'xdpdns domain'}",
                                 'enabled' => 1,
                                 };
+    $subipfire->{'16.xdpsni'} = {'caption' => $Lang::tr{'xdpsni domain'},
+                                'uri' => '/cgi-bin/xdpsni.cgi',
+                                'title' => "$Lang::tr{'xdpsni domain'}",
+                                'enabled' => 1,
+                                };
     $subipfire->{'20.loxilb'} = {
                                  'caption' => $Lang::tr{'loxilb enable'},
                                  'uri' => '/cgi-bin/loxilb.cgi',
