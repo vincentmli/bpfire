@@ -1,0 +1,109 @@
+#!/bin/sh
+###############################################################################
+#                                                                             #
+# IPFire.org - A linux based firewall                                         #
+# Copyright (C) 2007-2022  IPFire Team  <info@ipfire.org>                     #
+# Copyright (C) 2024  BPFire <vincent.mc.li@gmail.com>                     #
+#                                                                             #
+# This program is free software: you can redistribute it and/or modify        #
+# it under the terms of the GNU General Public License as published by        #
+# the Free Software Foundation, either version 3 of the License, or           #
+# (at your option) any later version.                                         #
+#                                                                             #
+# This program is distributed in the hope that it will be useful,             #
+# but WITHOUT ANY WARRANTY; without even the implied warranty of              #
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the               #
+# GNU General Public License for more details.                                #
+#                                                                             #
+# You should have received a copy of the GNU General Public License           #
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.       #
+#                                                                             #
+###############################################################################
+
+. /etc/sysconfig/rc
+. $rc_functions
+
+eval $(/usr/local/bin/readhash /var/ipfire/firewall/locationblock)
+
+locationsetting="/var/ipfire/firewall/locationblock"
+
+load_geoipblock () {
+    /usr/sbin/xdp-loader status red0 | grep -w 'xdp_geoip'
+    if [ $? -ne 0 ]; then
+        xdp-loader load red0 -P 80 -p /sys/fs/bpf/xdp-geoip -n xdp_geoip /usr/lib/bpf/xdp_geoip.bpf.o
+        if [ $? -ge 1 ]; then
+            boot_mesg "Native mode not supported, try SKB"
+            xdp-loader load red0 -m skb -P 80 -p /sys/fs/bpf/xdp-geoip -n xdp_geoip /usr/lib/bpf/xdp_geoip.bpf.o
+        fi
+
+        # allow WUI nobody with permission to update map
+        chown -R nobody /sys/fs/bpf/xdp-geoip
+
+        # Loop through the /var/ipfire/firewall/locationblock file directly
+        while IFS='=' read -r country status; do
+
+            if [ "$country" = "LOCATIONBLOCK_ENABLED" ]; then
+                continue
+            fi
+
+            if [ "$status" = "on" ]; then
+                # Construct the file path for the IP set
+                file="/var/lib/location/ipset/${country}v4.ipset"
+                # Add the country code to geoip_map using the constructed file path
+		boot_mesg "add $country location block"
+                xdp_geoip add $file $country >> /dev/null
+            fi
+        done < $locationsetting
+    fi
+}
+
+unload_geoipblock () {
+        /usr/sbin/xdp-loader status red0 | grep -w 'xdp_geoip'
+        if [ $? -eq 0 ]; then
+                prog_id=$(xdp-loader status red0 | grep 'xdp_geoip' | awk '{print $4}')
+                /usr/sbin/xdp-loader unload -i $prog_id red0
+        else
+                boot_mesg "Error xdp_geoip not loaded!"
+        fi
+}
+
+is_xdpgeoip_attached () {
+        /usr/sbin/xdp-loader status red0 | grep -w 'xdp_geoip' >> /dev/null
+        if [ $? -eq 0 ]; then
+		echo "xdp_geoip is attached to red0"
+        else
+		echo "xdp_geoip is not attached to red0"
+        fi
+}
+
+
+case "$1" in
+	start)
+		boot_mesg -n "Starting xdp-geoip..."
+		if [ "$LOCATIONBLOCK_ENABLED" == "on" ]; then
+			load_geoipblock
+		fi
+		;;
+
+	stop)
+		boot_mesg "Stopping xdp-geoip..."
+		if [ "$LOCATIONBLOCK_ENABLED" == "off" ]; then
+			unload_geoipblock
+		fi
+		;;
+
+	status)
+		is_xdpgeoip_attached
+		;;
+
+	restart)
+		$0 stop
+		sleep 1
+		$0 start
+		;;
+
+	*)
+		echo "Usage: $0 {start|stop|restart}"
+		exit 1
+		;;
+esac
