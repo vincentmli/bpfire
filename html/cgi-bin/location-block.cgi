@@ -85,6 +85,13 @@ if ($cgiparams{'ACTION'} eq $Lang::tr{'save'}) {
 	}
 
 	&General::writehash("$settingsfile", \%settings);
+
+	# Check if we want to disable locationblock.
+	if ( $settings{'LOCATIONBLOCK_ENABLED'} eq "on" ) {
+                &General::system('/usr/local/bin/xdpgeoipctrl', 'start');
+	} else {
+                &General::system('/usr/local/bin/xdpgeoipctrl', 'stop');
+	}
 }
 
 &Header::openpage($Lang::tr{'locationblock configuration'}, 1, '');

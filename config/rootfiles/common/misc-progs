@@ -43,3 +43,4 @@ usr/local/bin/loxilbctrl
 usr/local/bin/keepalivedctrl
 usr/local/bin/xdpdnsctrl
 usr/local/bin/xdpsnictrl
+usr/local/bin/xdpgeoipctrl
