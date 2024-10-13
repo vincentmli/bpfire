@@ -1681,7 +1681,7 @@
 'locationblock country is allowed' => '允许来自该国家/地区的入站流量',
 'locationblock country is blocked' => '阻止该国家/地区的入站流量',
 'locationblock country name' => '国家名称',
-'locationblock enable feature' => '启用基于位置的阻止：:',
+'locationblock enable feature' => '启用基于XDP加速器位置的阻止：:',
 'locationblock flag' => 'Flag',
 'log' => '日志',
 'log dropped conntrack invalids' => '记录被连接跟踪分类为无效的丢弃数据包',

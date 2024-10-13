@@ -37,6 +37,7 @@ my %color = ();
 my %mainsettings = ();
 my %settings = ();
 my %cgiparams = ();
+my $errormessage='';
 
 # Read configuration file.
 &General::readhash("$settingsfile", \%settings);
@@ -63,30 +64,37 @@ if ($cgiparams{'ACTION'} eq $Lang::tr{'save'}) {
 	# Loop through our locations array to prevent from
 	# non existing countries or code.
 	foreach my $cn (@locations) {
-		# Check if blocking for this country should be enabled/disabled.
-		if (exists $cgiparams{$cn}) {
-			$settings{$cn} = "on";
-		} else {
-			$settings{$cn} = "off";
+		# Get the current setting for the country (on/off)
+		my $current_status = $settings{$cn};
+
+		# Determine if the country should be blocked based on CGI input
+		my $new_status = exists $cgiparams{$cn} ? "on" : "off";
+
+		# Update settings based on the user input
+		$settings{$cn} = $new_status;
+
+		# If the new status is "on" and the current status was "off", add the country's IPs
+		if ($new_status eq "on" && $current_status eq "off") {
+		# Call function to add IPs for this country to the eBPF map
+			&add_country_ips($cn);
+		} # If the new status is "off" and the current status was "on", remove the country's IPs
+		elsif ($new_status eq "off" && $current_status eq "on") {
+		# Call function to remove IPs for this country from the eBPF map
+			&remove_country_ips($cn);
 		}
 	}
 
 	&General::writehash("$settingsfile", \%settings);
-
-	# Mark the firewall config as changed.
-	&General::firewall_config_changed();
-
-	# Assign reload notice.
-	$notice = $Lang::tr{'fw rules reload notice'};
 }
 
 &Header::openpage($Lang::tr{'locationblock configuration'}, 1, '');
 
-# Print notice that a firewall reload is required.
-if ($notice) {
-	&Header::openbox('100%', 'left', $Lang::tr{'notice'});
-	print "<font class='base'>$notice</font>";
-	&Header::closebox();
+&Header::openbigbox('100%', 'left', '', $errormessage);
+
+if ($errormessage) {
+        &Header::openbox('100%', 'left', $Lang::tr{'error messages'});
+        print "<font class='base' color=red>$errormessage&nbsp;</font>\n";
+        &Header::closebox();
 }
 
 # Checkbox pre-selection.
@@ -269,3 +277,50 @@ print"</form>\n";
 
 &Header::closebigbox();
 &Header::closepage();
+
+sub add_country_ips {
+
+        my ($set) = @_;
+
+        # Libloc adds the IP type (v4 or v6) as part of the set and file name.
+        my $loc_set = "$set" . "v4";
+
+        # The bare filename equals the set name.
+        my $filename = $loc_set;
+
+        # Libloc uses "ipset" as file extension.
+        my $file_extension = "ipset";
+
+        # Generate full path and filename for the ipset db file.
+        my $db_file = "$Location::Functions::ipset_db_directory/$filename.$file_extension";
+
+        my @options;
+        my $command = 'xdp_geoip';
+        push(@options, "add", $db_file, $set);
+        &General::system_output($command, @options);
+        #my @output = &General::system_output($command, @options);
+        #$errormessage = join('', @output);
+}
+
+sub remove_country_ips {
+        my ($set) = @_;
+
+        # Libloc adds the IP type (v4 or v6) as part of the set and file name.
+        my $loc_set = "$set" . "v4";
+
+        # The bare filename equals the set name.
+        my $filename = $loc_set;
+
+        # Libloc uses "ipset" as file extension.
+        my $file_extension = "ipset";
+
+        # Generate full path and filename for the ipset db file.
+        my $db_file = "$Location::Functions::ipset_db_directory/$filename.$file_extension";
+
+        my @options;
+        my $command = 'xdp_geoip';
+        push(@options, "delete", $db_file, $set);
+        &General::system_output($command, @options);
+        #my @output = &General::system_output($command, @save_options);
+        #$errormessage = join('', @output);
+}
