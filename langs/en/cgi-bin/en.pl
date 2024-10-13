@@ -1703,7 +1703,7 @@
 'localkey' => 'Localkey',
 'localkeyfile' => 'Localkeyfile',
 'location' => 'Location',
-'locationblock' => 'Location Block',
+'locationblock' => 'XDP Location Block',
 'locationblock block countries' => 'Block countries/regions',
 'locationblock configuration' => 'XDP Location Configuration',
 'locationblock country code' => 'Country Code',

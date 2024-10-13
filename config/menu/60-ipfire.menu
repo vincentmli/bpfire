@@ -13,6 +13,12 @@
                                 'title' => "$Lang::tr{'xdpsni domain'}",
                                 'enabled' => 1,
                                 };
+    $subipfire->{'17.locationblock'} = {
+                                'caption' => $Lang::tr{'locationblock'},
+                                'uri' => '/cgi-bin/location-block.cgi',
+                                'title' => $Lang::tr{'locationblock'},
+                                'enabled' => 1,
+                                };
     $subipfire->{'20.loxilb'} = {
                                  'caption' => $Lang::tr{'loxilb enable'},
                                  'uri' => '/cgi-bin/loxilb.cgi',

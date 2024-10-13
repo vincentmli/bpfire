@@ -26,12 +26,6 @@
 				'title' => "$Lang::tr{'ipblocklist'}",
 				'enabled' => 1,
 				};
-    $subfirewall->{'60.locationblock'} = {
-				'caption' => $Lang::tr{'locationblock'},
-				'uri' => '/cgi-bin/location-block.cgi',
-				'title' => $Lang::tr{'locationblock'},
-				'enabled' => 1,
-				};
     $subfirewall->{'70.wireless'} = {
 				'caption' => $Lang::tr{'blue access'},
 				'uri' => '/cgi-bin/wireless.cgi',
