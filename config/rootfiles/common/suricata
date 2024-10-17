@@ -1,8 +1,10 @@
 etc/suricata
 etc/suricata/suricata.yaml
+etc/suricata/suricata-xdp.yaml
 usr/bin/suricata
 #usr/include/suricata-plugin.h
 usr/sbin/convert-ids-backend-files
+usr/lib/bpf/xdp_filter.bpf
 #usr/share/doc/suricata
 #usr/share/doc/suricata/AUTHORS
 #usr/share/doc/suricata/Basic_Setup.txt
