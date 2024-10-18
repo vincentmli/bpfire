@@ -1399,7 +1399,6 @@ buildipfire() {
   lfsmake2 colm
   lfsmake2 ragel
   lfsmake2 hyperscan
-  lfsmake2 suricata
   lfsmake2 ids-ruleset-sources
   lfsmake2 ipblocklist-sources
   lfsmake2 squid
@@ -1686,6 +1685,7 @@ buildipfire() {
   lfsmake2 bpftool
   lfsmake2 llvm-project
   lfsmake2 xdp-tools
+  lfsmake2 suricata
   lfsmake2 knot
   lfsmake2 spectre-meltdown-checker
   lfsmake2 zabbix_agentd

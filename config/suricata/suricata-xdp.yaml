@@ -600,9 +600,9 @@ asn1-max-frames: 256
 ##
 
 # Run suricata as user and group.
-run-as:
-  user: suricata
-  group: suricata
+#run-as:
+#  user: suricata
+#  group: suricata
 
 # Suricata core dump configuration. Limits the size of the core dump file to
 # approximately max-dump. The actual core dump size will be a multiple of the
