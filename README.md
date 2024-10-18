@@ -10,7 +10,8 @@ BPFire 基于IPFire 2.x, 一个基于Linux的安全坚固、多功能、先进�
 2. XDP DNS domain blocklist, ratelimit protection
 3. XDP SSL/TLS server name indicator (SNI) blocklist
 4. XDP GeoIP/Country blocklist
-5. eBPF based LoxiLB load balancer, Firewall, Proxy, see full features [LoxiLB](https://loxilb-io.github.io/loxilbdocs/#overall-features-of-loxilb)
+5. XDP multi attachment and capture mode for Intrusion Detection System Suricata in IPS mode
+6. eBPF based LoxiLB load balancer, Firewall, Proxy, see full features [LoxiLB](https://loxilb-io.github.io/loxilbdocs/#overall-features-of-loxilb)
 
 # Where can I get BPFire installation ISO or flash image?
 
