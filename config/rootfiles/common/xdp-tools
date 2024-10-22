@@ -1,5 +1,6 @@
 usr/lib/bpf/xdp-dispatcher.o
 usr/lib/bpf/xdp_synproxy.bpf.o
+etc/rc.d/rc3.d/S105ddos
 usr/lib/bpf/xdp_dnsrrl.bpf.o
 usr/lib/bpf/xdp_udp.bpf.o
 usr/lib/bpf/xdp_dns.bpf.o

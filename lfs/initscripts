@@ -140,6 +140,7 @@ $(TARGET) :
 	ln -sf ../init.d/xdpdns			/etc/rc.d/rc3.d/S102xdpdns
 	ln -sf ../init.d/xdpsni			/etc/rc.d/rc3.d/S103xdpsni
 	ln -sf ../init.d/xdpgeoip		/etc/rc.d/rc3.d/S104xdpgeoip
+	ln -sf ../init.d/ddos			/etc/rc.d/rc3.d/S105ddos
 
 	ln -sf ../init.d/imspetor		/etc/rc.d/rc6.d/K01imspetor
 	ln -sf ../init.d/motion			/etc/rc.d/rc6.d/K01motion
