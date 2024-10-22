@@ -53,7 +53,7 @@ my $xdpsnidomainfile = "${General::swroot}/xdpsni/domainfile";
 
 &Header::showhttpheaders();
 
-$settings{'ENABLE_SNIBLOCK'} = 'on';
+$settings{'ENABLE_SNIBLOCK'} = 'off';
 $settings{'ACTION'} = '';
 
 $settings{'KEY1'} = '';                 # point record for ACTION
