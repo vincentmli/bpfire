@@ -96,7 +96,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 
 	-mkdir -pv /etc/haproxy /var/lib/haproxy
 	install -v -m 644 $(DIR_SRC)/config/haproxy/haproxy.cfg \
-		/etc/haproxy/haproxy.cfg
+		/var/ipfire/haproxy/haproxy.cfg
 
 	install -v -m 644 $(DIR_SRC)/config/backup/includes/haproxy \
 		/var/ipfire/backup/addons/includes/haproxy

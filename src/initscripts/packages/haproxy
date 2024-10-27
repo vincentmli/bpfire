@@ -21,12 +21,15 @@
 
 . /etc/sysconfig/rc
 . ${rc_functions}
+eval $(/usr/local/bin/readhash /var/ipfire/haproxy/settings)
 
 case "${1}" in
 	start)
-		boot_mesg "Starting HAProxy..."
-		loadproc /usr/sbin/haproxy -D -f /etc/haproxy/haproxy.cfg \
-			-p /var/run/haproxy.pid
+		if [ "$ENABLE_HAPROXY" == "on" ]; then
+			boot_mesg "Starting HAProxy..."
+			loadproc /usr/sbin/haproxy -D -f /var/ipfire/haproxy/haproxy.cfg \
+				-p /var/run/haproxy.pid
+		fi
 		;;
 
 	stop)
@@ -36,7 +39,7 @@ case "${1}" in
 
 	reload)
 		boot_mesg "Reloading HAProxy..."
-		/usr/sbin/haproxy -D -f /etc/haproxy/haproxy.cfg \
+		/usr/sbin/haproxy -D -f /var/ipfire/haproxy/haproxy.cfg \
 			-p /var/run/haproxy.pid -sf $(cat /var/run/haproxy.pid)
 		evaluate_retval
 		;;

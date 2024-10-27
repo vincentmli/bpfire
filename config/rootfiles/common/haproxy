@@ -1,0 +1,8 @@
+etc/haproxy/haproxy.cfg
+etc/logrotate.d/haproxy
+etc/rc.d/init.d/haproxy
+etc/rc.d/rc3.d/S35haproxy
+usr/sbin/haproxy
+var/ipfire/backup/addons/includes/haproxy
+var/lib/haproxy
+var/ipfire/haproxy
