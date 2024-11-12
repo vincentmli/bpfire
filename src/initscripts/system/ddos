@@ -27,6 +27,10 @@ eval $(/usr/local/bin/readhash /var/ipfire/ddos/settings)
 eval $(/usr/local/bin/readhash /var/ipfire/ddos/udp-ddos-settings)
 eval $(/usr/local/bin/readhash /var/ipfire/ddos/dns-ddos-settings)
 
+MSSOPTS="--mss4 1460 --mss6 1440"
+TTLOPTS="--ttl 64"
+WSCALE="--wscale 0"
+
 get_ports () {
 # Define an empty variable to store the output
 	local output=""
@@ -55,17 +59,17 @@ load_syncookie () {
 	/usr/sbin/xdp-loader status red0 | grep 'syncookie_xdp'
 	if [ $? -eq 0 ]; then
 		prog_id=$(xdp-loader status red0 | grep 'syncookie_xdp' | awk '{print $4}')
-		xdp_synproxy --prog $prog_id --ports="$tcp_ports"
+		xdp_synproxy --prog $prog_id $MSSOPTS $WSCALE $TTLOPTS --ports="$tcp_ports"
 	else
 		xdp-loader load red0 /usr/lib/bpf/xdp_synproxy.bpf.o
 		if [ $? -ge 1 ]; then
 			boot_mesg "Native mode not supported, try SKB"
 			xdp-loader load red0 -m skb /usr/lib/bpf/xdp_synproxy.bpf.o
 			prog_id=$(/usr/sbin/xdp-loader status red0 | grep 'syncookie_xdp' | awk '{print $4}')
-			xdp_synproxy --prog $prog_id --ports="$tcp_ports"
+			xdp_synproxy --prog $prog_id $MSSOPTS $WSCALE $TTLOPTS --ports="$tcp_ports"
 		else
 			prog_id=$(/usr/sbin/xdp-loader status red0 | grep 'syncookie_xdp' | awk '{print $4}')
-			xdp_synproxy --prog $prog_id --ports="$tcp_ports"
+			xdp_synproxy --prog $prog_id $MSSOPTS $WSCALE $TTLOPTS --ports="$tcp_ports"
 		fi
 	fi
 }
