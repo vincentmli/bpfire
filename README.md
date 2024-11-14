@@ -7,17 +7,22 @@ BPFire is fork of [IPFire 2.x](https://github.com/ipfire/ipfire-2.x), a hardened
 BPFire 基于IPFire 2.x, 一个基于Linux的安全坚固、多功能、先进的开源防火墙. BPFire 为普罗大众带来革命创新性的eBPF技术，为家庭用户或任何大小组织企业的网络安全保驾护航. 当前支持的eBPF应用包括：
 
 1. XDP DDoS protection, See XDP SYNPROXY stops 10G DDoS SYN flood [here](https://www.youtube.com/watch?v=81Hgoy-x1A4)
-2. XDP DNS domain blocklist, ratelimit protection
-3. XDP SSL/TLS server name indicator (SNI) blocklist
-4. XDP GeoIP/Country blocklist
-5. XDP multi attachment and capture mode for Intrusion Detection System Suricata in IPS mode
-6. eBPF based LoxiLB load balancer, Firewall, Proxy, see full features [LoxiLB](https://loxilb-io.github.io/loxilbdocs/#overall-features-of-loxilb)
+2. XDP UDP DDoS online game protection
+3. XDP DNS domain blocklist, ratelimit protection
+4. XDP SSL/TLS server name indicator (SNI) blocklist
+5. XDP GeoIP/Country blocklist
+6. XDP multi attachment and capture mode for Intrusion Detection System Suricata in IPS mode
+7. eBPF based LoxiLB load balancer, Firewall, Proxy, see full features [LoxiLB](https://loxilb-io.github.io/loxilbdocs/#overall-features-of-loxilb)
+
+# Where can I get support?
+
+Join discord https://discord.gg/8HvKWxzU or open github issue
 
 # Where can I get BPFire installation ISO or flash image?
 
-http://bpfire.net/download/
+中国大陆用户下载地址: https://www.vcn.bc.ca/~vli/bpfire/
 
-https://drive.google.com/drive/folders/1HPJTWP6wi5gPd5gyiiKvIhWipqguptzZ?usp=drive_link
+http://bpfire.net/download/
 
 # What computer hardwares BPFire requires?
 
@@ -34,15 +39,6 @@ dd if=bpfire-2.29-core184-x86_64.iso of=/dev/sdc status=progress
 BPFire installation on mini industrial PC:
 
 [![BPFire installation on mini industrial PC](http://img.youtube.com/vi/p9iHCe0hXPs/0.jpg)](https://www.youtube.com/watch?v=p9iHCe0hXPs "BPFire installation on mini industrial PC")
-
-# How do I use this software?
-
-BPFire XDP DDoS feature demo:
-
-[![Enable IPFire eBPF XDP DDoS from WebUI](http://img.youtube.com/vi/1pdNgoP-Kho/0.jpg)](https://www.youtube.com/watch?v=1pdNgoP-Kho "Enable IPFire eBPF XDP DDoS from WebUI")
-
-IPFire have a long and detailed wiki located [here](https://wiki.ipfire.org/) which
-should answers most of your questions for IPFire.
 
 # BPFire SYNPROXY throughput with and without XDP acceleration under 10Gbit DDoS SYN flood:
 
@@ -76,11 +72,6 @@ Microsoft Hyper-v screen shot:
 ![](./images/hyperv-1.png)
 
 ![](./images/hyperv-2.png)
-
-# But I have some questions left. Where can I get support?
-
-You can ask your question by open github issue report or discussion or
-You can ask your question at ipfire community located [here](https://community.ipfire.org/) that is IPFire related.
 
 # How to build BPFire?
 
