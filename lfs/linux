@@ -24,7 +24,7 @@
 
 include Config
 
-VER         = 6.10.11
+VER         = 6.12.5
 
 THISAPP    = linux-$(VER)
 DL_FILE    = linux-$(VER).tar.xz
@@ -72,7 +72,7 @@ objects = \
 
 $(DL_FILE) = $(URL_IPFIRE)/$(DL_FILE)
 
-$(DL_FILE)_BLAKE2 = 55380d2af9fc535f6359cdb9b36612d1f81f2f140652f44bf927c320dda382109c9fb9591cc741914d3221e8d8bda954a10dbbeff8c163bf1ed57eff1831c8df
+$(DL_FILE)_BLAKE2 = bca871f8ebc2b2d286c0d2fb8526aeff835aa9eb4af43c307dea08c9da31592310e3e103d3294152a7e011f8539629c0cec925d23cb635191cdd41da86babc29
 
 install : $(TARGET)
 
@@ -116,7 +116,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 
 	# Wlan Patches
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux/linux-4.14_ath_user_regd.patch
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux/linux-4.9.8-iwlwifi-noibss_only_on_radar_chan.patch
+	#cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux/linux-4.9.8-iwlwifi-noibss_only_on_radar_chan.patch
 
 	# Fix igb and e1000e crash
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux/linux-4.14.1-igb-e1000e_fix_lock_at_update_stats.patch
@@ -221,7 +221,7 @@ endif
 	# Install objtool
 	cd $(DIR_APP) && cp -a tools/objtool/objtool \
 		/lib/modules/$(VER)-$(VERSUFIX)/build/tools/objtool/ || :
-	cd $(DIR_APP) && cp -a --parents tools/build/{Build,Build.include,fixdep.c} \
+	cd $(DIR_APP) && cp -a --parents tools/build/{Build.include,fixdep.c} \
 		tools/scripts/utilities.mak /lib/modules/$(VER)-$(VERSUFIX)/build
 
 	# Make sure we can build external modules
