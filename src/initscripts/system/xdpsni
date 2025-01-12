@@ -39,7 +39,7 @@ load_sniblock () {
 		chown -R nobody /sys/fs/bpf/xdp-sni
 		# add domain to domain_denylist map
 		while IFS= read -r line; do
-			xdp_sni add $line
+			xdp_sni /sys/fs/bpf/xdp-sni/sni_denylist add $line
 		done < $domainfile
 
         fi
@@ -70,7 +70,7 @@ case "$1" in
 		boot_mesg -n "Starting xdp-sni..."
 		if [ "$ENABLE_SNIBLOCK" == "on" ]; then
 			load_sniblock
-			loadproc -b xdp_sni_log
+			loadproc -b xdp_sni_log /sys/fs/bpf/xdp-sni/sni_ringbuf
 		fi
 		;;
 

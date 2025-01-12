@@ -39,7 +39,7 @@ load_dnsblock () {
 		chown -R nobody /sys/fs/bpf/xdp-dns-denylist
 		# add domain to domain_denylist map
 		while IFS= read -r line; do
-			xdp_dns add $line
+			xdp_dns /sys/fs/bpf/xdp-dns-denylist/domain_denylist add $line
 		done < $domainfile
 
         fi
@@ -70,7 +70,7 @@ case "$1" in
 		boot_mesg -n "Starting xdp-dns-denylist..."
 		if [ "$ENABLE_DNSBLOCK" == "on" ]; then
 			load_dnsblock
-			loadproc -b xdp_dns_log
+			loadproc -b xdp_dns_log /sys/fs/bpf/xdp-dns-denylist/dns_ringbuf
 		fi
 		;;
 
