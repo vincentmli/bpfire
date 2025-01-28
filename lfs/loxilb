@@ -25,7 +25,7 @@
 
 include Config
 
-VER        = 0.9.x
+VER        = 0.9.8
 
 THISAPP    = loxilb-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
@@ -41,7 +41,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_BLAKE2 = 947e5639fa110c3656ae8c565d1e2ce0fcc5d396bacc6505b41a341a67d6f096a63649668ab567fa1679dee1bb48d9c42002d0e12ee113e47587d2c101a3294c
+$(DL_FILE)_BLAKE2 = b5dd467a2a5303c4a902c49abce844a0d62fbca78b2a209ca5355b3278e9b7b2a11a2c39abba5bf8c1144dd2f51485a17abd0bf96ca19958a48e44bfb636c1ce
 
 install : $(TARGET)
 
@@ -74,6 +74,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@rm -rf /opt/loxilb 
 
 	cd $(DIR_APP) && mkdir -p /opt/loxilb/dp 
+	cd $(DIR_APP) && go clean -cache
 	cd $(DIR_APP) && make
 	cd $(DIR_APP)/loxilb-ebpf/kernel && cp -f *.o /opt/loxilb/
 	cd $(DIR_APP) && cp -f loxilb /usr/bin/loxilb
