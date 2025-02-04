@@ -232,11 +232,6 @@ endif
 	cp /lib/modules/$(VER)-$(VERSUFIX)/build/.config \
 		/lib/modules/$(VER)-$(VERSUFIX)/build/include/config/auto.conf
 
-	# lunatik: copy resolve_btfids to /lib/modules/$(VER)-$(VERSUFIX)/build/tools/bpf/resolve_btfids/
-	# cop.btf.vmlinux.bin.o to vmlinux for lunatik kernel modules build
-	cp -f $(DIR_APP)/tools/bpf/resolve_btfids/resolve_btfids /lib/modules/$(VER)-$(VERSUFIX)/build/tools/bpf/resolve_btfids/
-	cp -f $(DIR_APP)/.tmp_vmlinux1.btf.o /lib/modules/$(VER)-$(VERSUFIX)/build/vmlinux
-
 	# Fix permissions
 	find /lib/modules/$(VER)-$(VERSUFIX) -name "modules.order" \
 		-exec chmod 644 {} \;

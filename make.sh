@@ -1727,8 +1727,6 @@ buildipfire() {
   # multi kernel builds so KCFG is empty
   lfsmake2 linux		KCFG=""
   lfsmake2 linux-initrd		KCFG=""
-  # lunatik kernel module requires linux kernel to be built first
-  lfsmake2 lunatik
 }
 
 buildinstaller() {
