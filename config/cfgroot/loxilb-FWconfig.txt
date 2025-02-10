@@ -1,1 +1,1 @@
-{"fwAttr":[{"opts":{"counter":"0:0","doSnat":true,"toIP":"REDIP"},"ruleArguments":{"destinationIP":"0.0.0.0/0","portName":"green0","sourceIP":"0.0.0.0/0"}}]}
+{"fwAttr":[{"opts":{"counter":"0:0","doSnat":true,"onDefault":true,"toIP":"REDIP"},"ruleArguments":{"destinationIP":"0.0.0.0/0","portName":"green0","sourceIP":"0.0.0.0/0"}}]}
