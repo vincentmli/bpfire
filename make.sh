@@ -1718,7 +1718,6 @@ buildipfire() {
   lfsmake2 mympd
   lfsmake2 libmd
   lfsmake2 libbsd
-  lfsmake2 loxilb-tc
   lfsmake2 loxicmd
   lfsmake2 loxilb
 
