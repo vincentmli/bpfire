@@ -1,4 +1,4 @@
-# BPFire - eBPF Network Firewall and Load Balancer  (eBPF 网络防火墙及负载均衡）
+# BPFire - eBPF Network Firewall OS (eBPF 网络防火墙）
 
 # What is BPFire?
 
@@ -16,25 +16,35 @@ BPFire 基于IPFire 2.x, 一个基于Linux的安全坚固、多功能、先进�
 
 # Where can I get support?
 
-Join discord https://discord.gg/8HvKWxzU or open github issue
+Open github issue or [discord](https://discord.gg/EakRJaU8NG)
 
-# Where can I get BPFire installation ISO or flash image?
+# Where can I get BPFire installation ISO or LoongFire flash image?
 
-中国大陆用户下载地址: https://www.vcn.bc.ca/~vli/bpfire/
+中国大陆用户下载地址:
 
-http://bpfire.net/download/
+[bpfire](https://www.vcn.bc.ca/~vli/bpfire/)
 
-# What computer hardwares BPFire requires?
+[loongfire](https://www.vcn.bc.ca/~vli/loongfire/)
+
+Other download site:
+
+[bpfire.net](http://bpfire.net/download/)
+
+# What computer hardwares BPFire support?
 
 BPFire support commodity computer hardware, small or large, old or new, cheap or expensive.
 
-for example [mini PC](https://www.aliexpress.com/w/wholesale-home-firewall-router.html?spm=a2g0o.best.search.0) I use at home.
+for example:
+
+[X86 mini PC](https://www.aliexpress.com/w/wholesale-home-firewall-router.html?spm=a2g0o.best.search.0)
+
+[LoongArch mini PC](https://www.aliexpress.us/item/3256807861547435.html?spm=a2g0o.order_list.order_list_main.5.6c6c1802f4v4tf&gatewayAdapt=glo2usa)
 
 # How do I install BPFire?
 
 flash the ISO to USB on Linux machine, /dev/sdc is your USB thrumb drive.
 
-dd if=bpfire-2.29-core184-x86_64.iso of=/dev/sdc status=progress
+`dd if=bpfire-2.29-core184-x86_64.iso of=/dev/sdc status=progress`
 
 BPFire installation on mini industrial PC:
 
@@ -77,23 +87,22 @@ Microsoft Hyper-v screen shot:
 
 Build Environment Setup https://www.ipfire.org/docs/devel/ipfire-2-x/build-initial
 
+(It takes a few hours to build image for first build depending on build machine power)
+
+for example on Ubuntu 22.04 LTS:
+
+```
+apt install git-core g++ manpages-pl patch byacc make autoconf automake libltdl-dev
+
 git clone https://github.com/vincentmli/BPFire.git
 
 cd BPFire
 
-git checkout bpfire
-
-get BPFire source tar ball cache.tar https://drive.google.com/drive/folders/15rEoiB9TU4DxYv1qdOFqyJ2DkL6J9lG1?usp=drive_link
-
-tar xvf cache.tar
-
-get all BPFire addon source tar balls from https://drive.google.com/drive/folders/1cDZ0z26td2jVkxBX9cHhz43QxrZn3Aqq?usp=drive_link and move them to cache directory
-
-mv *.tar.gz ./cache/
-
-./make.sh clean
+wget --mirror --convert-links --adjust-extension --page-requisites --no-parent --cut-dirs=2 -nH --reject "index.html*" https://www.vcn.bc.ca/~vli/bpfire/cache/
 
 ./make.sh build
+
+```
 
 # How do I support BPFire development?
 
