@@ -2,7 +2,7 @@
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
 # Copyright (C) 2007-2024  IPFire Team  <info@ipfire.org>                     #
-# Copyright (C) 2024 BPFire
+# Copyright (C) 2024-2025 BPFire
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
@@ -25,7 +25,7 @@
 
 include Config
 
-VER        = 0.9.8.1
+VER        = 0.9.8.3
 
 THISAPP    = loxilb-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
@@ -41,7 +41,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_BLAKE2 = deae5efbf0c57cbfc50ad9f5f65ab74be577d3931d766da3933a3eb97cd9e0ecab451d924d3169ae683f5a81f85310fe2ea833c84870c16fd2f7691065c40c4f
+$(DL_FILE)_BLAKE2 = e59c11a6a401fe63cd6b57974a48c181c1a36ca2374252393dc8b2146d18c90da95fa1a319011e274e2469f16437b1d590257700f4244b614f9b46692cec3c97
 
 install : $(TARGET)
 
