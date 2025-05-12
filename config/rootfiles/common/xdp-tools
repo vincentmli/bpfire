@@ -33,11 +33,13 @@ usr/lib/bpf/xsk_def_xdp_prog_5.3.o
 usr/lib/libxdp.a
 usr/lib/libxdp.so
 usr/lib/libxdp.so.1
-usr/lib/libxdp.so.1.4.0
+usr/lib/libxdp.so.1.5.0
 usr/lib/pkgconfig/libxdp.pc
 usr/sbin/xdp-bench
 usr/sbin/xdp-filter
 usr/sbin/xdp-loader
+usr/sbin/tc-loader
+usr/lib/bpf/tc-dummy.bpf.o
 usr/sbin/xdp-monitor
 usr/sbin/xdp-trafficgen
 usr/sbin/xdp_synproxy
