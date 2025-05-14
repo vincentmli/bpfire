@@ -28,7 +28,7 @@ Open github issue or [discord](https://discord.gg/EakRJaU8NG)
 
 Other download site:
 
-[bpfire.net](http://bpfire.net/download/)
+[bpfire.net](https://bpfire.net/download/)
 
 # What computer hardwares BPFire support?
 
