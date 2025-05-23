@@ -1,0 +1,4 @@
+usr/bin/kprobe
+usr/bin/ksyscall
+usr/bin/profile
+usr/bin/netqtop
