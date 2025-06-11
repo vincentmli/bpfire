@@ -1723,6 +1723,7 @@ buildipfire() {
   lfsmake2 loxicmd
   lfsmake2 loxilb
   lfsmake2 libbpf-bootstrap
+  lfsmake2 pwru
 
 
   # Kernelbuild ... current we have no platform that need
