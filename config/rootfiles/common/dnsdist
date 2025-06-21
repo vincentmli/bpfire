@@ -1,4 +1,5 @@
 etc/dnsdist.conf-dist
+etc/dnsdist-xsk.conf
 etc/rc.d/init.d/dnsdist
 usr/bin/dnsdist
 #usr/share/man/man1/dnsdist.1
