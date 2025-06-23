@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 3.2.4
+VER        = 3.4.7
 
 THISAPP    = knot-$(VER)
 DL_FILE    = $(THISAPP).tar.xz
@@ -40,7 +40,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_BLAKE2 = 1d5fec057898d8cbe73f37cd85aa9d56c7db0215e0fe8ba697f3ee4c38d7554780804b8859d062a824b18f823d6cff1546bd7ce54438ee54c555d068c5f19da1
+$(DL_FILE)_BLAKE2 = 31e0d939847a1fb7538eed371b4e9a4d8dcfb45b9df996fa13b083a6ec32550fc5d90fc528eb43b20a4effbed06353abd0238da3a04fdf48f5139a22d1eced35
 
 install : $(TARGET)
 
@@ -76,14 +76,15 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	cd $(DIR_APP) && ./configure \
 		--prefix=/usr \
 		--enable-static=no \
+		--enable-xdp=yes \
 		--disable-fastparser \
 		--disable-daemon \
 		--disable-modules \
 		--enable-maxminddb=no \
 		--disable-documentation
 
-	cd $(DIR_APP)/src && make $(MAKETUNING) kdig
-	cd $(DIR_APP)/src/.libs && cp -av kdig /usr/bin
+	cd $(DIR_APP)/src && make $(MAKETUNING) kdig kxdpgun
+	cd $(DIR_APP)/src/.libs && cp -av kdig kxdpgun /usr/bin
 	cd $(DIR_APP)/src/.libs && cp -av lib* /usr/lib
 
 	@rm -rf $(DIR_APP)
