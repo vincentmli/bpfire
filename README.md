@@ -94,11 +94,11 @@ for example on Ubuntu 22.04 LTS:
 ```
 apt install git-core g++ manpages-pl patch byacc make autoconf automake libltdl-dev
 
-git clone https://github.com/vincentmli/BPFire.git
+git clone https://github.com/vincentmli/bpfire.git
 
-cd BPFire
+cd bpfire
 
-wget --mirror --convert-links --adjust-extension --page-requisites --no-parent --cut-dirs=2 -nH --reject "index.html*" https://www.vcn.bc.ca/~vli/bpfire/cache/
+wget --mirror --convert-links --adjust-extension --page-requisites --no-parent --cut-dirs=2 -nH --reject "index.html*" --reject "*.gif" https://www.bpfire.net/download/bpfire/cache/
 
 ./make.sh build
 
