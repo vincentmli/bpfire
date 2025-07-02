@@ -1724,6 +1724,7 @@ buildipfire() {
   lfsmake2 loxilb
   lfsmake2 libbpf-bootstrap
   lfsmake2 pwru
+  lfsmake2 wireguard-tools
 
 
   # Kernelbuild ... current we have no platform that need
