@@ -19,11 +19,272 @@
 #                                                                             #
 ###############################################################################
 
-. /etc/sysconfig/rc
-. $rc_functions
-
 eval $(/usr/local/bin/readhash /var/ipfire/ethernet/settings)
 eval $(/usr/local/bin/readhash /var/ipfire/dns/settings)
+
+ip2bin() {
+	local address="${1}"
+
+	local IFS='.'
+	local octet
+
+	local n=0
+
+	for octet in ${address}; do
+		# Shift n
+		(( n <<= 8 ))
+
+		# Apply the octet
+		(( n |= octet ))
+	done
+
+	echo "${n}"
+}
+
+bin2ip() {
+	local n="${1}"
+
+	local IFS='.'
+	local address=()
+
+	for i in {3..0}; do
+		address+=( $(( n >> (8 * i) & 0xff )) )
+	done
+
+	echo "${address[*]}"
+}
+
+network_get_intfs() {
+	local zone="${1}"
+
+	case "${zone^^}" in
+		RED)
+			# For PPPoE, the RED interface is called ppp0 (unless we use QMI)
+			if [ "${RED_TYPE}" = "PPPOE" ] && [ "${RED_DRIVER}" != "qmi_wwan" ]; then
+				echo "ppp0"
+				return 0
+
+			# Otherwise we return RED_DEV
+			elif [ -n "${RED_DEV}" ]; then
+				echo "${RED_DEV}"
+				return 0
+			fi
+			;;
+
+		GREEN)
+			if [ -n "${GREEN_DEV}" ]; then
+				echo "${GREEN_DEV}"
+				return 0
+			fi
+			;;
+
+		ORANGE)
+			if [ -n "${ORANGE_DEV}" ]; then
+				echo "${ORANGE_DEV}"
+				return 0
+			fi
+			;;
+
+		BLUE)
+			if [ -n "${BLUE_DEV}" ]; then
+				echo "${BLUE_DEV}"
+				return 0
+			fi
+			;;
+
+		IPSEC)
+			local VARS=(
+				id status x1 x2 type x3 x4 x5 x6 x7 x8 x9 x10
+				x11 x12 x13 x14 x15 x16 x17 x18 x19 x20
+				x21 x22 x23 x24 x25 x26 x27 x28 x29 x30
+				x31 x32 x33 x34 interface_mode rest
+			)
+
+			while IFS="," read -r "${VARS[@]}"; do
+				# Check if the connection is enabled
+				[ "${status}" = "on" ] || continue
+
+				# Check if this a net-to-net connection
+				[ "${type}" = "net" ] || continue
+
+				# Determine the interface name
+				case "${interface_mode}" in
+					gre|vti)
+						echo "${interface_mode}${id}"
+						;;
+				esac
+			done < /var/ipfire/vpn/config
+
+			return 0
+			;;
+
+		WIREGUARD|WG)
+			echo "wg+"
+			return 0
+			;;
+
+		OPENVPN|OVPN)
+			# OpenVPN is using all tun devices
+			echo "tun+"
+			return 0
+			;;
+	esac
+
+	# Not found
+	return 1
+}
+
+network_get_address() {
+	local network="${1}"
+
+	# Return everything before the slash
+	echo "${network%%/*}"
+}
+
+network_get_prefix() {
+	local network="${1}"
+
+	# Consider everything after the / the prefix
+	local prefix="${network##*/}"
+
+	# If the prefix is valid, return it
+	if network_prefix_is_valid "${prefix}"; then
+		echo "${prefix}"
+
+	# Otherwise it might be a subnet mask
+	else
+		network_netmask_to_prefix "${prefix}"
+	fi
+}
+
+network_get_netmask() {
+	local network="${1}"
+
+	# Consider everything after the / the netmask
+	local netmask="${network##*/}"
+
+	# If we have a prefix, we need to convert
+	if network_prefix_is_valid "${netmask}"; then
+		network_prefix_to_netmask "${netmask}"
+
+	# Otherwise return what we got
+	else
+		echo "${netmask}"
+	fi
+}
+
+network_prefix_is_valid() {
+	local prefix="${1}"
+
+	# The prefix must be numbers only
+	if ! [[ "${prefix}" =~ ^[0-9]+$ ]]; then
+		return 1
+	fi
+
+	# Must be a number between 0 and 32 (inclusive)
+	[ "${prefix}" -ge 0 -a "${prefix}" -le 32 ]
+}
+
+network_prefix_to_netmask() {
+	local prefix="${1}"
+
+	# Set n with all bits set
+	local n=0xffffffff
+
+	# Shift
+	(( n <<= (32 - prefix) ))
+
+	# Convert back
+	bin2ip "${n}"
+}
+
+network_netmask_to_prefix() {
+	local netmask="${1}"
+
+	local prefix=0
+
+	# Convert to binary
+	local n="$(ip2bin "${netmask}")"
+
+	while [ "${n}" -gt 0 ]; do
+		# If the highest bit is not set, we are done
+		[ "$(( n & (1 << 31) ))" -eq 0 ] && break
+
+		# Increment prefix & shift n
+		(( prefix++ ))
+		(( n <<= 1 ))
+	done
+
+	echo "${prefix}"
+}
+
+network_address_in_network() {
+	local address="${1}"
+	local network="${2}"
+
+	# Split the network into its address & mask
+	local netaddr="$(network_get_address "${network}")"
+	local netmask="$(network_get_netmask "${network}")"
+
+	# Abort if we could not parse the network
+	if [ -z "${netaddr}" -o -z "${netmask}" ]; then
+		return 1
+	fi
+
+	# Convert everything to binary
+	address="$(ip2bin "${address}")"
+	netaddr="$(ip2bin "${netaddr}")"
+	netmask="$(ip2bin "${netmask}")"
+
+	# Ensure the network address is the first address
+	(( netaddr &= netmask ))
+
+	# Compute broadcast
+	local broadcast=$(( netaddr | (~netmask & 0xffffffff) ))
+
+	# Return true if address is in the network
+	[ "${address}" -ge "${netaddr}" -a "${address}" -le "${broadcast}" ]
+}
+
+# Takes a network and list of IP addresses and will return the first IP address
+# that is in the given network.
+first_address_in_network() {
+	local network="${1}"
+	shift
+
+	local addr
+	for addr in $@; do
+		if network_address_in_network "${addr}" "${network}"; then
+			echo "${addr}"
+			return 0
+		fi
+	done
+
+	return 1
+}
+
+# Returns the first of IPFire's own IP addresses that is in any of the given networks
+ipfire_address_in_networks() {
+	local addresses=()
+
+	local var
+	for var in GREEN_ADDRESS BLUE_ADDRESS ORANGE_ADDRESS; do
+		if [ -n "${!var}" ]; then
+			addresses+=( "${!var}" )
+		fi
+	done
+
+	local network
+	for network in $@; do
+		# Find and end after the first match
+		if first_address_in_network "${network}" "${addresses[@]}"; then
+			return 0
+		fi
+	done
+
+	# Nothing found
+	return 1
+}
 
 dhcpcd_get_pid() {
 		# This function returns the pid of a dhcpcd by a given
