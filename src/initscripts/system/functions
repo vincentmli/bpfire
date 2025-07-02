@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
@@ -407,7 +407,7 @@ pidofproc()
 # This will ensure compatibility with previous LFS Bootscripts
 getpids()
 {
-	if [ -z "${PIDFILE}" ]; then
+	if [ -n "${PIDFILE}" ]; then
 		pidofproc -s -p "${PIDFILE}" $@
 	else
 		pidofproc -s $@
@@ -446,6 +446,7 @@ loadproc()
 	local pidfile=""
 	local forcestart=""
 	local nicelevel=""
+	local pid
 
 # This will ensure compatibility with previous LFS Bootscripts
 	if [ -n "${PIDFILE}" ];	then
@@ -511,7 +512,7 @@ loadproc()
 		esac
 	fi
 
-	local cmd="${@}"
+	local cmd=( "${@}" )
 
 	if [ -n "${nicelevel}" ]; then
 		cmd="nice -n "${nicelevel}" ${cmd}"
@@ -519,12 +520,18 @@ loadproc()
 
 	if [ -n "${background}" ]; then
 		(
-			${cmd} &>/dev/null
+			${cmd[@]} &>/dev/null
 		) &
+		pid="$!"
 		evaluate_retval
 	else
-		${cmd}
+		${cmd[@]}
 		evaluate_retval # This is "Probably" not LSB compliant, but required to be compatible with older bootscripts
+	fi
+
+	# Write the pidfile
+	if [ -n "${pid}" -a -n "${pidfile}" ]; then
+		echo "${pid}" > "${pidfile}"
 	fi
 
 	return 0
@@ -874,4 +881,72 @@ running_on_oci() {
 
 	# We are not running on OCI
 	return 1
+}
+
+volume_fs_type() {
+	if [ ! -d "${1}" ]; then
+		return
+	fi
+
+	stat -f --format="%T" ${1}
+}
+
+readhash() {
+	local array="${1}"
+	local file="${2}"
+
+	declare -A -g "${array}"
+
+	local line
+	while read -r line; do
+		# Skip Blank Lines
+		if [[ ${line} =~ ^[[:space:]]*$ ]]; then
+			continue
+		fi
+
+		# Skip Comments
+		if [[ ${line} =~ ^#.*$ ]]; then
+			continue
+		fi
+
+		# Check for a valid key followed by =
+		if ! [[ ${line} =~ ^[A-Za-z_][A-Za-z0-9_]*= ]]; then
+			echo "Invalid line '${line}'" >&2
+			continue
+		fi
+
+		local key="${line%%=*}"
+		local val="${line#*=}"
+
+		# Skip lines with invalid values
+		if ! [[ ${val} =~ ^[\'][\ A-Za-z0-9=/,.:%_@#+-]*[\']$ ]] && ! [[ ${val} =~ ^[A-Za-z0-9=/,.:%_@#+-]*$ ]]; then
+			echo "Invalid value '${val}' for key '${key}'" >&2
+			continue
+		fi
+
+		# strip leading and trailing single quotes
+		case "${val}" in
+			'*')
+				val="${val#\'}"
+				val="${val%\'}"
+				;;
+		esac
+
+		printf -v "${array}[${key}]" "%s" "${val}"
+	done < "${file}"
+}
+
+# Returns all enabled aliases
+get_aliases() {
+	local address
+	local enabled
+	local rest
+
+	local IFS=,
+
+	while read -r address enabled rest; do
+		if [ "${enabled}" = "on" ]; then
+			echo "${address}"
+		fi
+	done < /var/ipfire/ethernet/aliases
 }
