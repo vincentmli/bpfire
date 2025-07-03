@@ -16,6 +16,7 @@ use File::Basename;
 use HTML::Entities();
 use Socket;
 use Time::Local;
+use Unicode::Normalize;
 
 our %color = ();
 &General::readhash("/srv/web/ipfire/html/themes/ipfire/include/colors.txt", \%color);
@@ -361,6 +362,18 @@ sub getcgihash {
 sub escape($) {
 	my $s = shift;
 	return HTML::Entities::encode_entities($s);
+}
+
+sub normalize($) {
+	my $s = shift;
+
+	# Remove any special characters
+	$s = &Unicode::Normalize::NFKD($s);
+
+	# Remove any whitespace and replace with dash
+	$s =~ s/\s+/\-/g;
+
+	return $s;
 }
 
 sub cleanhtml {
