@@ -118,6 +118,29 @@ iframe {
 	float: right !important;
 }
 
+/*
+	Text Alignment
+*/
+
+.text-left {
+	text-align: left;
+}
+
+.text-center {
+	text-align: center;
+}
+
+.text-right {
+	text-align: right;
+}
+
+/*
+	Text Colors
+*/
+.text-error {
+	color: var(--color-red);
+}
+
 /* Header */
 
 #header {
