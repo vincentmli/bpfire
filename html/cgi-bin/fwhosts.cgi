@@ -1965,6 +1965,13 @@ sub getcolor
 			}
 		}
 
+		# WireGuard Roadwarrior
+		if ($Wireguard::settings{'CLIENT_POOL'}) {
+			if (&Network::ip_address_in_network($sip, $Wireguard::settings{'CLIENT_POOL'})) {
+				return "<font style='color: $Header::colourwg;'>$c</font>"
+			}
+		}
+
 		#Check if IP is part of OpenVPN dynamic subnet
 		my ($a,$b) = split("/",$ovpnsettings{'DOVPN_SUBNET'});
 		if (&General::IpInSubnet($sip,$a,$b)){
@@ -3035,6 +3042,9 @@ sub getipforgroup
 			my %hash=();
 			&General::readhash("${General::swroot}/ethernet/settings",\%hash);
 			return $hash{'ORANGE_NETADDRESS'}."/".&Network::convert_netmask2prefix($hash{'ORANGE_NETMASK'}) || $hash{'ORANGE_NETMASK'};
+		}
+		if ($name eq "WGRW") {
+			return $Wireguard::settings{'CLIENT_POOL'};
 		}
 		if ($name eq 'ALL'){
 			return "0.0.0.0/0";

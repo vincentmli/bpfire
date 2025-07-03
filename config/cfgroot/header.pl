@@ -35,6 +35,7 @@ $Header::colouryellow = '#FFFF00';
 $Header::colourgreen = '#339933';
 $Header::colourblue = '#333399';
 $Header::colourovpn = '#339999';
+$Header::colourwg = '#ff007f';
 $Header::colourfw = '#000000';
 $Header::colourvpn = '#990099';
 $Header::colourerr = '#FF0000';
