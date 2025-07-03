@@ -291,6 +291,18 @@ sub get_broadcast($) {
 	return &bin2ip($network_bin ^ ~$netmask_bin);
 }
 
+sub normalize_network($) {
+	my $network = shift;
+	my $address = &get_netaddress($network);
+	my $prefix  = &get_prefix($network);
+
+	unless (defined $address && defined $prefix) {
+		return undef;
+	}
+
+	return "${address}/${prefix}";
+}
+
 # Returns True if $address is in $network.
 sub ip_address_in_network($$) {
 	my $address = shift;
