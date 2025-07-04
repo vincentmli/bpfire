@@ -3172,6 +3172,7 @@
 'winbind daemon' => 'Winbind Daemon',
 'wins server' => 'Wins Server',
 'wins support' => 'Wins Support',
+'wireguard' => 'WireGuard',
 'wireless' => 'Wireless',
 'wireless config added' => 'Wireless config added',
 'wireless config changed' => 'Wireless config changed',
