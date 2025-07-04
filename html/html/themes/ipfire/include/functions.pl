@@ -265,3 +265,41 @@ sub openbox {
 sub closebox {
 	print "</div>";
 }
+
+sub errorbox($) {
+        my @errors = grep { $_ ne "" } @_;
+
+        # Do nothing if there are no errors
+        return unless (@errors);
+
+        # Open a new box
+        &openbox('100%', 'left', "Oops something went wrong");
+
+        # Print all error messages
+        print "<ul>\n";
+        foreach my $error (@errors) {
+                print "<li>$error</li>\n";
+        }
+        print "</ul>\n";
+
+        # Close the box again
+        &closebox();
+}
+
+# Sections
+
+sub opensection($) {
+        my $title = shift;
+
+        # Open the section
+        print "<section class=\"section\">";
+
+        # Show the title if set
+        if ($title) {
+                print " <h2 class=\"title\">${title}</h2>\n";
+        }
+}
+
+sub closesection() {
+        print "</section>";
+}
