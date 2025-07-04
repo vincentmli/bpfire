@@ -291,6 +291,43 @@ sub get_broadcast($) {
 	return &bin2ip($network_bin ^ ~$netmask_bin);
 }
 
+sub get_prefix($) {
+        my $network = shift;
+
+        # Convert to binary
+        my ($network_bin, $netmask_bin) = &network2bin($network);
+
+        if (defined $netmask_bin) {
+                my $prefix = 0;
+
+                while (1) {
+                        # End the loop if we have consumed all ones
+                        last if ($netmask_bin == 0);
+
+                        # Increment prefix
+                        $prefix++;
+
+                        # Remove the most-significant one
+                        $netmask_bin <<= 1;
+                        $netmask_bin &= 0xffffffff;
+                }
+
+                return $prefix;
+        }
+
+        return undef;
+}
+
+sub get_netmask($) {
+        my $network = shift;
+
+        # Fetch the prefix
+        my $prefix = &get_prefix($network);
+
+        # Convert to netmask
+        return &convert_prefix2netmask($prefix);
+}
+
 sub normalize_network($) {
 	my $network = shift;
 	my $address = &get_netaddress($network);
