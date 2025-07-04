@@ -30,6 +30,7 @@ use Sort::Naturally;
 require '/var/ipfire/general-functions.pl';
 require "${General::swroot}/lang.pl";
 require "${General::swroot}/header.pl";
+require "${General::swroot}/wireguard-functions.pl";
 require "/opt/pakfire/lib/functions.pl";
 
 my %cgiparams=();
@@ -342,7 +343,7 @@ if (&Header::orange_used()) {
 				<a href='/cgi-bin/firewall.cgi' style='color:white'><b>$Lang::tr{'dmz'}</b></a>
 			</td>
 			<td style='width:30%; text-align:center;'>$netsettings{'ORANGE_ADDRESS'}/$sub</td>
-			<td style='width:45%; text-align:center; color:$Header::colourgreen;'>Online</td>
+			<td style='width:45%; text-align:center; color:$Header::colourgreen;'>$Lang::tr{'online'}</td>
 		</tr>
 END
 	}
@@ -354,7 +355,7 @@ print<<END;
 				<a href='/cgi-bin/vpnmain.cgi' style='color:white'><b>$Lang::tr{'ipsec'}</b></a>
 			</td>
 			<td style='width:30%; text-align:center;'></td>
-			<td style='width:45%; text-align:center; color:$Header::colourgreen;'>Online</td>
+			<td style='width:45%; text-align:center; color:$Header::colourgreen;'>$Lang::tr{'online'}</td>
 		</tr>
 END
 }
@@ -375,10 +376,26 @@ print <<END;
 			<a href='/cgi-bin/ovpnmain.cgi' style='color:white'><b>OpenVPN</b></a>
 		</td>
 		<td style='width:30%; text-align:center;'>$ovpnip</td>
-		<td style='width:45%; text-align:center; color:$Header::colourgreen;'>Online</td>
+		<td style='width:45%; text-align:center; color:$Header::colourgreen;'>$Lang::tr{'online'}</td>
 	</tr>
 END
-	}
+}
+
+# Show WireGuard status
+if (&Wireguard::is_enabled()) {
+	my $network = $Wireguard::settings{'CLIENT_POOL'};
+
+	print<<END;
+		<tr>
+			<td style='width:25%; text-align:center; background-color:$Header::colourwg;'>
+				<a href='/cgi-bin/wireguard.cgi' style='color:white'><b>$Lang::tr{'wireguard'}</b></a>
+			</td>
+			<td style='width:30%; text-align:center;'>$network</td>
+			<td style='width:45%; text-align:center; color:$Header::colourgreen;'>$Lang::tr{'online'}</td>
+		</tr>
+END
+}
+
 print"</table>";
 &Header::closebox();
 
