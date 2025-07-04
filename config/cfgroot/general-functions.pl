@@ -189,6 +189,18 @@ sub setup_default_networks
 		$defaultNetworks->{$name}{'NAME'} = "WGRW";
 	}
 }
+
+sub set_defaults($$) {
+	my $hash = shift;
+	my $defaults = shift;
+
+	foreach my $key (keys %$defaults) {
+		unless (defined($hash->{$key})) {
+			$hash->{$key} = $defaults->{$key};
+		}
+	}
+}
+
 sub get_aliases
 {
 	
