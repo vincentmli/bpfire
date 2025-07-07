@@ -1,3 +1,23 @@
+:root {
+        --color-green          : #339933;
+        --color-green-invert   : #ffffff;
+        --color-red            : #993333;
+        --color-red-invert     : #ffffff;
+        --color-blue           : #333399;
+        --color-blue-invert    : #ffffff;
+        --color-orange         : #ff9933;
+        --color-orange-invert  : #ffffff;
+        --color-yellow         : #ffbe00;
+        --color-yellow-invert  : #ffffff;
+        --color-black          : #363636;
+        --color-black-invert   : #ffffff;
+        --color-grey           : #d6d6d6;
+        --color-light-grey     : #f0f0f0;
+
+        --color-primary        : #ff2e52;
+        --color-primary-invert : #ffffff;
+        --color-text           : #363636;
+}
 
 /* This controls the width of the fixed width layouts */
 
@@ -358,6 +378,21 @@ table {
 
 .tbl tr:last-child td {
 	border-bottom: 1px solid #363636;
+}
+
+.tbl .status {
+	text-align: center;
+	font-weight: bold;
+}
+
+.tbl .status.is-running, .tbl .status.is-connected {
+	background-color: var(--color-green);
+	color: var(--color-green-invert);
+}
+
+.tbl .status.is-stopped, .tbl .status.is-disconnected {
+	background-color: var(--color-red);
+	color: var(--color-red-invert);
 }
 
 table.fw-nat tbody tr td {
