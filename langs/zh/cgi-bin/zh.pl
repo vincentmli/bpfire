@@ -3083,6 +3083,7 @@
 'wg edit host-to-net peer' => '编辑主机对网络节点',
 'wg edit net-to-net peer' => '编辑网络对网络节点',
 'wg edit peer' => '编辑节点',
+'wg endpoint' => '服务器节点',
 'wg host to net client settings' => '主机对网络客户端设置',
 'wg import peer' => '导入节点',
 'wg invalid client dns' => '无效的客户端DNS地址',

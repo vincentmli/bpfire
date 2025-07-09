@@ -805,7 +805,7 @@ MAIN:
 				</tr>
 
 				<tr>
-					<td>$Lang::tr{'endpoint'}</td>
+					<td>$Lang::tr{'wg endpoint'}</td>
 					<td>
 						<input type="text" name="ENDPOINT" value="$Wireguard::settings{'ENDPOINT'}" placeholder="$General::mainsettings{'HOSTNAME'}.$General::mainsettings{'DOMAINNAME'}" />
 					</td>
@@ -1226,7 +1226,7 @@ CREATENET:
 				</tr>
 			</table>
 
-			<h6>$Lang::tr{'endpoint'}</h6>
+			<h6>$Lang::tr{'wg endpoint'}</h6>
 
 			<table class="form">
 				<tr>
@@ -1338,7 +1338,7 @@ EDITNET:
 				</tr>
 			</table>
 
-			<h6>$Lang::tr{'endpoint'}</h6>
+			<h6>$Lang::tr{'wg endpoint'}</h6>
 
 			<table class="form">
 				<tr>

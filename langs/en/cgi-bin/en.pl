@@ -3136,6 +3136,7 @@
 'wg edit host-to-net peer' => 'Edit Host-To-Net Peer',
 'wg edit net-to-net peer' => 'Edit Net-To-Net Peer',
 'wg edit peer' => 'Edit Peer',
+'wg endpoint' => 'Endpoint',
 'wg host to net client settings' => 'Host-To-Net Client Settings',
 'wg import peer' => 'Import Peer',
 'wg invalid client dns' => 'Invalid client DNS address',
