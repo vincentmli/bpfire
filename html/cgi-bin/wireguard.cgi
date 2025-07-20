@@ -87,6 +87,21 @@ if ($cgiparams{"ACTION"} eq $Lang::tr{'save'}) {
 		$Wireguard::settings{'CLIENT_DNS'} = join("|", @client_dns);
 	}
 
+	# Check wg0 ADDRESS - make it optional
+	if (defined $cgiparams{'ADDRESS'}) {
+		if ($cgiparams{'ADDRESS'} ne '') {
+			my $address = $cgiparams{'ADDRESS'};
+			unless (&Network::check_ip_address($address)) {
+				push(@errormessages, "$Lang::tr{'wg invalid wg0 address'}: ${address}");
+			}
+			# Store ADDRESS only if it's valid and not empty
+			$Wireguard::settings{'ADDRESS'} = $address;
+		} else {
+			# Explicitly set to empty string when field is empty
+			$Wireguard::settings{'ADDRESS'} = '';
+		}
+	}
+
 	# Don't continue on error
 	goto MAIN if (scalar @errormessages);
 
@@ -805,14 +820,21 @@ MAIN:
 				</tr>
 
 				<tr>
-					<td>$Lang::tr{'wg endpoint'}</td>
+					<td>$Lang::tr{'wg endpoint'}&nbsp;<img src='/blob.gif' alt='*' /></td>
 					<td>
 						<input type="text" name="ENDPOINT" value="$Wireguard::settings{'ENDPOINT'}" placeholder="$General::mainsettings{'HOSTNAME'}.$General::mainsettings{'DOMAINNAME'}" />
 					</td>
 				</tr>
 
+                                <tr>
+                                        <td>$Lang::tr{'wg address'}</td>
+                                        <td>
+                                                <input type="text" name="ADDRESS" value="$Wireguard::settings{'ADDRESS'}" />
+                                        </td>
+                                </tr>
+
 				<tr>
-					<td>$Lang::tr{'port'}</td>
+					<td>$Lang::tr{'port'}&nbsp;<img src='/blob.gif' alt='*' /></td>
 					<td>
 						<input type="number" name="PORT" value="$Wireguard::settings{'PORT'}"
 							min="1024" max="65535" />
@@ -824,7 +846,7 @@ MAIN:
 
 			<table class="form">
 				<tr>
-					<td>$Lang::tr{'wg client pool'}</td>
+					<td>$Lang::tr{'wg client pool'}&nbsp;<img src='/blob.gif' alt='*' /></td>
 					<td>
 						<input type="text" name="CLIENT_POOL"
 							value="$Wireguard::settings{'CLIENT_POOL'}" $readonly{'CLIENT_POOL'} />
@@ -832,7 +854,7 @@ MAIN:
 				</tr>
 
 				<tr>
-					<td>$Lang::tr{'wg dns'}</td>
+					<td>$Lang::tr{'wg dns'}&nbsp;<img src='/blob.gif' alt='*' /></td>
 					<td>
 						<input type="text" name="CLIENT_DNS"
 							value="$client_dns" />

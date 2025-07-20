@@ -73,6 +73,17 @@ setup_interface() {
 		ip link set "${intf}" mtu "${MTU}" || return $?
 	fi
 
+	# Set up IP on wg0
+	if interface_is_rw "${intf}"; then
+		ip a add "${ADDRESS}" dev "${intf}"
+		# Allow SSH/WUI from VPN road warrior to manage the firewall
+		iptables -A GUIINPUT -i wg0 -p tcp -m tcp --dport 22 -j ACCEPT
+		iptables -A GUIINPUT -i wg0 -p tcp -m tcp --dport 444 -j ACCEPT
+		# Apply MASQUERADE
+		iptables -t nat -A WGNAT -o "${intf}" -j MASQUERADE
+
+	fi
+
 	# Load the configuration into the kernel
 	wg syncconf "${intf}" <(generate_config "${intf}") || return $?
 

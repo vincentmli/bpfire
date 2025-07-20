@@ -344,6 +344,9 @@ sub free_pool_addresses($$) {
 	my @used_addresses = ();
 	my @free_addresses = ();
 
+	# wg0 IP is reserved so put in @used_addresses
+	push(@used_addresses, &Network::ip2bin($settings{'ADDRESS'}));
+
 	# Collect all used addresses
 	foreach my $key (keys %peers) {
 		my $peer = &load_peer($key);
