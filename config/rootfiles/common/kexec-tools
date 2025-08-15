@@ -1,0 +1,6 @@
+usr/lib/kexec-tools
+usr/lib/kexec-tools/kexec_test
+usr/sbin/kexec
+usr/sbin/vmcore-dmesg
+#usr/share/man/man8/kexec.8
+#usr/share/man/man8/vmcore-dmesg.8
