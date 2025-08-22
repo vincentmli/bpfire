@@ -1,0 +1,103 @@
+# kdump-tools configuration
+# ---------------------------------------------------------------------------
+# USE_KDUMP - controls kdump will be configured
+#     0 - kdump kernel will not be loaded
+#     1 - kdump kernel will be loaded and kdump is configured
+#
+USE_KDUMP=1
+
+
+# ---------------------------------------------------------------------------
+# Kdump Kernel:
+# KDUMP_KERNEL - A full pathname to a kdump kernel.
+# KDUMP_INITRD - A full pathname to the kdump initrd (if used).
+#     If these are not set, kdump-config will try to use the current kernel
+#     and initrd if it is relocatable.  Otherwise, you will need to specify
+#     these manually.
+#KDUMP_KERNEL=/var/lib/kdump/vmlinuz
+#KDUMP_INITRD=/var/lib/kdump/initrd.img
+
+
+# ---------------------------------------------------------------------------
+# vmcore Handling:
+# KDUMP_COREDIR - local path to save the vmcore to.
+# KDUMP_FAIL_CMD - This variable can be used to cause a reboot or
+#     start a shell if saving the vmcore fails.  If not set, "reboot -f"
+#     is the default.
+#     Example - start a shell if the vmcore copy fails:
+#         KDUMP_FAIL_CMD="echo 'makedumpfile FAILED.'; /bin/bash; reboot -f"
+# KDUMP_DUMP_DMESG - This variable controls if the dmesg buffer is dumped.
+#     If unset or set to 1, the dmesg buffer is dumped. If set to 0, the dmesg
+#     buffer is not dumped.
+# KDUMP_NUM_DUMPS - This variable controls how many dump files are kept on
+#     the machine to prevent running out of disk space. If set to 0 or unset,
+#     the variable is ignored and no dump files are automatically purged.
+# KDUMP_COMPRESSION - Compress the dumpfile. No compression is used by default.
+#     Supported compressions: bzip2, gzip, lz4, xz
+KDUMP_COREDIR="/var/crash"
+#KDUMP_FAIL_CMD="reboot -f"
+#KDUMP_DUMP_DMESG=
+#KDUMP_NUM_DUMPS=
+#KDUMP_COMPRESSION=
+
+
+# ---------------------------------------------------------------------------
+# Makedumpfile options:
+# MAKEDUMP_ARGS - extra arguments passed to makedumpfile (8).  The default,
+#     if unset, is to pass '-c -d 31' telling makedumpfile to use compression
+#     and reduce the corefile to in-use kernel pages only.
+#MAKEDUMP_ARGS="-c -d 31"
+
+
+# ---------------------------------------------------------------------------
+# Kexec/Kdump args
+# KDUMP_KEXEC_ARGS - Additional arguments to the kexec command used to load
+#     the kdump kernel
+#     Example - Use this option on x86 systems with PAE and more than
+#     4 gig of memory:
+#         KDUMP_KEXEC_ARGS="--elf64-core-headers"
+# KDUMP_CMDLINE - The default is to use the contents of /proc/cmdline.
+#     Set this variable to override /proc/cmdline.
+# KDUMP_CMDLINE_APPEND - Additional arguments to append to the command line
+#     for the kdump kernel.  If unset, it defaults to
+#     "reset_devices systemd.unit=kdump-tools-dump.service nr_cpus=1 irqpoll nousb"
+#KDUMP_KEXEC_ARGS=""
+#KDUMP_CMDLINE=""
+#KDUMP_CMDLINE_APPEND="reset_devices systemd.unit=kdump-tools-dump.service nr_cpus=1 irqpoll nousb"
+
+# ---------------------------------------------------------------------------
+# Architecture specific Overrides:
+
+# ---------------------------------------------------------------------------
+# Remote dump facilities:
+# HOSTTAG - Select if hostname of IP address will be used as a prefix to the
+#           timestamped directory when sending files to the remote server.
+#           'ip' is the default.
+#HOSTTAG="hostname|[ip]"
+
+# NFS -     Hostname and mount point of the NFS server configured to receive
+#           the crash dump. The syntax must be {HOSTNAME}:{MOUNTPOINT}
+#           (e.g. remote:/var/crash)
+# NFS_TIMEO - Timeout before NFS retries a request. See man nfs(5) for details.
+# NFS_RETRANS - Number of times NFS client retries a request. See man nfs(5) for details.
+#NFS="<nfs mount>"
+#NFS_TIMEO="600"
+#NFS_RETRANS="3"
+
+# FTP - Hostname and path of the FTP server configured to receive the crash dump.
+#       The syntax is {HOSTNAME}[:{PATH}] with PATH defaulting to /.
+# FTP_USER - FTP username. A anonomous upload will be used if not set.
+# FTP_PASSWORD - password for the FTP user
+# FTP_PORT=21 - FTP port. Port 21 will be used by default.
+#FTP="<server>:<path>"
+#FTP_USER=""
+#FTP_PASSWORD=""
+#FTP_PORT=21
+
+# SSH - username and hostname of the remote server that will receive the dump
+#       and dmesg files.
+# SSH_KEY - Full path of the ssh private key to be used to login to the remote
+#           server. use kdump-config propagate to send the public key to the
+#           remote server
+#SSH="<user at server>"
+#SSH_KEY="<path>"

@@ -97,6 +97,10 @@ etc/rc.d/init.d/loxilb
 etc/rc.d/init.d/xdpdns
 etc/rc.d/init.d/xdpsni
 etc/rc.d/init.d/xdpgeoip
+etc/rc.d/init.d/kdump-config
+etc/rc.d/init.d/kdump-init-functions
+etc/rc.d/init.d/kdump-tools
+etc/rc.d/init.d/kdump-vars.sh
 #etc/rc.d/rc0.d
 #etc/rc.d/rc0.d/K01imspetor
 #etc/rc.d/rc0.d/K01motion
