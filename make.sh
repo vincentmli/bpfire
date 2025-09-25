@@ -1727,6 +1727,7 @@ buildipfire() {
   lfsmake2 wireguard-tools
   lfsmake2 kexec-tools
   lfsmake2 makedumpfile
+  lfsmake2 arpwatch
 
 
   # Kernelbuild ... current we have no platform that need

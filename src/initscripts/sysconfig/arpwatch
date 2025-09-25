@@ -1,0 +1,8 @@
+# Interface to monitor
+INTERFACES="green0 blue0"
+
+# Email address to send alerts to
+WATCHER=hostmaster@somewhere.example.com
+
+# Sender email address
+WATCHEE=hostmaster@somewhere.example.com
