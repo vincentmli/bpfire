@@ -127,17 +127,19 @@ if (($cgiparams{'SERVERS'} eq $Lang::tr{'save'}) || ($cgiparams{'SERVERS'} eq $L
 		$errormessage = "$Lang::tr{'invalid ip'}: $cgiparams{'NAMESERVER'}";
 	}
 
-	# Check if a TLS is enabled and no TLS_HOSTNAME has benn specified.
-	elsif($settings{'PROTO'} eq "TLS") {
-		unless($cgiparams{"TLS_HOSTNAME"}) {
-			$errormessage = "$Lang::tr{'dns no tls hostname given'}";
-		} else {
-			# Check if the provided domain is valid.
-			unless(&General::validfqdn($cgiparams{"TLS_HOSTNAME"})) {
-				$errormessage = "$Lang::tr{'invalid ip or hostname'}: $cgiparams{'TLS_HOSTNAME'}";
-			}
+	# Check if the provided hostname is valid
+	if ($cgiparams{'TLS_HOSTNAME'} ne "") {
+		unless (&General::validfqdn($cgiparams{"TLS_HOSTNAME"})) {
+			$errormessage = "$Lang::tr{'invalid ip or hostname'}: " . &Header::escape($cgiparams{'TLS_HOSTNAME'});
 		}
 	}
+
+        # Check if a TLS is enabled and no TLS_HOSTNAME has benn specified.
+        if ($settings{'PROTO'} eq "TLS") {
+                unless ($cgiparams{"TLS_HOSTNAME"}) {
+                        $errormessage = "$Lang::tr{'dns no tls hostname given'}";
+                }
+        }
 
 	# Go further if there was no error.
 	if ( ! $errormessage) {
@@ -773,9 +775,9 @@ sub show_add_edit_nameserver() {
 		# Check if an ID has been given.
 		if ($cgiparams{'ID'}) {
 			# Assign cgiparams values.
-			$cgiparams{'NAMESERVER'} = $dns_servers{$cgiparams{'ID'}}[0];
+			$cgiparams{'NAMESERVER'} = &Header::escape($dns_servers{$cgiparams{'ID'}}[0]);
 			$cgiparams{'TLS_HOSTNAME'} = $dns_servers{$cgiparams{'ID'}}[1];
-			$cgiparams{'REMARK'} = $dns_servers{$cgiparams{'ID'}}[3];
+			$cgiparams{'REMARK'} = $Header::escape($dns_servers{$cgiparams{'ID'}}[3]);
 		}
 	} else {
 		&Header::openbox('100%', 'left', $Lang::tr{'dnsforward add a new entry'});
