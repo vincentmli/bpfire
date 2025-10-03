@@ -299,7 +299,7 @@
 'advproxy errmsg invalid proxy port' => '无效的代理端口',
 'advproxy errmsg invalid upstream proxy' => '无效的上游代理IP/主机名',
 'advproxy errmsg invalid upstream proxy username or password setting' => '无效的上游代理用户名或密码设置',
-'advproxy errmsg invalid user' => '用户名不存在',
+'advproxy errmsg invalid user/password' => '无效用户名或密码',
 'advproxy errmsg ldap base dn' => '需要LDAP基本DN',
 'advproxy errmsg ldap bind dn' => '需要LDAP绑定DN用户名和密码',
 'advproxy errmsg ldap port' => '无效的LDAP端口号',

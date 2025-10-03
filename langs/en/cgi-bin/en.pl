@@ -304,7 +304,7 @@
 'advproxy errmsg invalid upstream proxy' => 'Invalid upstream proxy IP/hostname',
 'advproxy errmsg invalid upstream proxy username or password setting' => 'Invalid upstream proxy username or password setting',
 'advproxy errmsg invalid url' => 'Invalid URL',
-'advproxy errmsg invalid user' => 'Username does not exist',
+'advproxy errmsg invalid user/password' => 'Error in Username and/or Password',
 'advproxy errmsg ldap base dn' => 'LDAP base DN required',
 'advproxy errmsg ldap bind dn' => 'LDAP bind DN username and password required',
 'advproxy errmsg ldap port' => 'Invalid LDAP port number',
