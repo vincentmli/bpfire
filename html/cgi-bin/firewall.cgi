@@ -2,7 +2,8 @@
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
-# Copyright (C) 2013 Alexander Marx <amarx@ipfire.org>                        #
+# Copyright (C) 2013-2025  IPFire Team  <info@ipfire.org>		      #
+# Copyright (C) 2024-2025  BPFire Team  <vincent.mc.li@gmail.com>	      #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
@@ -2400,6 +2401,7 @@ sub saverule
 		$fwdfwsettings{'ruleremark'}=~ s/,/;/g;
 		utf8::decode($fwdfwsettings{'ruleremark'});
 		$fwdfwsettings{'ruleremark'}=&Header::escape($fwdfwsettings{'ruleremark'});
+		$fwdfwsettings{'PROT'}=&Header::escape($fwdfwsettings{'PROT'});
 		if ($fwdfwsettings{'updatefwrule'} ne 'on'){
 			my $key = &General::findhasharraykey ($hash);
 			$$hash{$key}[0]  = $fwdfwsettings{'RULE_ACTION'};
