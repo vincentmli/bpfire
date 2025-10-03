@@ -2,7 +2,7 @@
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
-# Copyright (C) 2007-2020  IPFire Team  <info@ipfire.org>                     #
+# Copyright (C) 2007-2025  IPFire Team  <info@ipfire.org>                     #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
@@ -218,11 +218,13 @@ END
 		</tr>
 		<tr>
 			<td>$Lang::tr{'email mailuser'}</td>
-			<td><input type='text' name='txt_mailuser' value='$auth{'AUTHNAME'}' style='width:22em;'></td>
+			<td><input type='text' name='txt_mailuser'
+				value='@{[ &Header::escape($auth{'AUTHNAME'}) ]}' style='width:22em;'></td>
 		</tr>
 		<tr>
 			<td>$Lang::tr{'email mailpass'}</td>
-			<td><input type='password' name='txt_mailpass' value='$auth{'AUTHPASS'}' style='width:22em;' ></td>
+			<td><input type='password' name='txt_mailpass'
+				value='@{[ &Header::escape($auth{'AUTHPASS'}) ]}' style='width:22em;' ></td>
 		</tr>
 		<tr>
 			<td>$Lang::tr{'email tls'}</td>
