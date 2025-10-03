@@ -1404,7 +1404,10 @@ print <<END;
 					<td width='50%'><input type='text' name='IGNORE_ENTRY_ADDRESS' value='$entry_address' size='24' /></td>
 
 					<td width='30%'>$Lang::tr{'remark'}: </td>
-					<td wicth='50%'><input type='text' name=IGNORE_ENTRY_REMARK value='$entry_remark' size='24' /></td>
+                                        <td>
+                                                <input type='text' name=IGNORE_ENTRY_REMARK
+                                                        value='@{[ &Header::escape($entry_remark) ]}' size='24' />
+                                        </td>
 					<td align='center' width='20%'><input type='submit' name='WHITELIST' value='$buttontext' /></td>
 				</tr>
 				</form>
