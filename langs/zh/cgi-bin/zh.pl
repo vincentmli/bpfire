@@ -1331,6 +1331,7 @@
 'fwhost hint' => '注意',
 'fwhost hosts' => '防火墙主机',
 'fwhost icmptype' => 'ICMP类型:',
+'fwhost invalid country code' => '无效国家地代码',
 'fwhost ip_mac' => 'IP/MAC地址',
 'fwhost ipadr' => 'IP地址:',
 'fwhost ipsec host' => 'IPsec客户端:',
