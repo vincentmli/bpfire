@@ -523,17 +523,19 @@ print <<END
 		<td><input type='checkbox' name='ENABLED' $checked{'ENABLED'}{'on'} /></td>
 
 		<td class='username'>$Lang::tr{'username'}</td>
-		<td class='username'><input type='text' name='LOGIN' value='$settings{'LOGIN'}' /></td>
+		<td class='username'><input type='text' name='LOGIN'
+			value='@{[ &Header::escape($settings{'LOGIN'}) ]}' /></td>
 
 		<td class='token' style='display:none'>$Lang::tr{'token'}</td>
-		<td class='token' style='display:none'><input type='text' name='TOKEN' value='$settings{'TOKEN'}' /></td>
+		<td class='token' style='display:none'><input type='text' name='TOKEN'
+			value='@{[ &Header::escape($settings{'TOKEN'}) ]}' /></td>
 	</tr>
 
 	<tr class='password'>
 		<td class='base'></td>
 		<td></td>
 		<td class='base'>$Lang::tr{'password'}</td>
-		<td><input type='password' name='PASSWORD' value='$settings{'PASSWORD'}' /></td>
+		<td><input type='password' name='PASSWORD' value='@{[ &Header::escape($settings{'PASSWORD'}) ]}' /></td>
 	</tr>
 </table>
 <br>
