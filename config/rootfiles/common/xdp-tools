@@ -8,6 +8,7 @@ usr/lib/bpf/xdp_sni.bpf.o
 usr/lib/bpf/xdp_geoip.bpf.o
 usr/lib/bpf/xdp_udpddos.bpf.o
 usr/lib/bpf/dnsdist_xdp.bpf.o
+usr/lib/bpf/class_filter.bpf.o
 usr/sbin/xdp-udp
 usr/sbin/xdp_dns
 etc/rc.d/rc3.d/S102xdpdns
@@ -46,5 +47,6 @@ usr/sbin/xdp-trafficgen
 usr/sbin/xdp_synproxy
 usr/sbin/xdp-udp
 usr/sbin/xdpdump
+usr/sbin/class_filter
 usr/share/xdp-tools/xdp_drop.o
 usr/share/xdp-tools/xdp_pass.o
