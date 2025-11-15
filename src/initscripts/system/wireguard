@@ -353,6 +353,9 @@ wg_start() {
 		setup_interface "${intf}" || failed=1
 	done
 
+	# Start wireguard handshake log
+	loadproc -b wg_handshake
+
 	return ${failed}
 }
 
@@ -365,6 +368,9 @@ wg_stop() {
 	for intf in /sys/class/net/wg[0-9]*; do
 		ip link del "${intf##*/}"
 	done
+
+	# Stop wireguard handshake log
+	killproc wg_handshake
 
 	return 0
 }
