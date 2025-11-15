@@ -18,6 +18,11 @@
 				 'title' => "$Lang::tr{'xdpsni log'}",
 				 'enabled' => 1
 				 };
+    $sublogs->{'23.wireguard'} = {'caption' => $Lang::tr{'wg log'},
+				 'uri' => '/cgi-bin/logs.cgi/wireguardlog.dat',
+				 'title' => "$Lang::tr{'wg log'}",
+				 'enabled' => 1
+				 };
     $sublogs->{'30.proxy'} = {'caption' => $Lang::tr{'proxy logs'},
 				 'uri' => '/cgi-bin/logs.cgi/proxylog.dat',
 				 'title' => "$Lang::tr{'proxy logs'}",
