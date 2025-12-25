@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 6.0.9
+VER        = 6.0.20
 
 THISAPP    = suricata-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
@@ -40,7 +40,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_BLAKE2 = eef2500a22d581b37dafe496a57e664e6cb3aed879f138df5708ffd350bc985b4af875907c7e6cd0cf746ad6495e60414beaecf6069ba9d68b963831359362fc
+$(DL_FILE)_BLAKE2 = bff69efe2be9f4609136190c61742f9c0caf044648af40081356194fcbde7caa5db32a58a4e12024040d0e971ffe2511150160c05ceae7bc9c8482715d8d6856
 
 install : $(TARGET)
 
@@ -71,7 +71,6 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE)
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/suricata/suricata-disable-sid-2210059.patch
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/suricata/suricata-5.0.8-fix-level1-cache-line-size-detection.patch
 	cd $(DIR_APP) && CC=clang LDFLAGS="$(LDFLAGS)" ./configure \
 		--prefix=/usr \
 		--sysconfdir=/etc \

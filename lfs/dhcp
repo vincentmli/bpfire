@@ -42,7 +42,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_BLAKE2 = 6cc16f7472efb1e1f6b7a83cafd9a81a16f10af7361da079c48a5eff0d9e310f475dcc82e984c20936c64867183402d00d26e5366e75bf7463ec2aea4a6f68a4
+$(DL_FILE)_BLAKE2 = 1f8c85f801191e706a045f8ecf1a7bd4cb15b13134949e42ce50c9d29812479121dba0a90a9e723e5d2e6cfff6059c7059b7e13bd044302cf704aec6933561e5
 
 install : $(TARGET)
 
@@ -84,6 +84,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 			--sysconfdir=/etc/dhcp \
 			--with-srv-conf-file=/etc/dhcp/dhcpd.conf \
 			--with-srv-lease-file=/var/state/dhcp/dhcpd.leases \
+			--enable-execute \
 			--enable-paranoia \
 			--enable-early-chroot \
 			--disable-dhcpv6

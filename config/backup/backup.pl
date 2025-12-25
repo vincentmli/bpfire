@@ -2,7 +2,7 @@
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
-# Copyright (C) 2007-2022  IPFire Team  <info@ipfire.org>                     #
+# Copyright (C) 2007-2024  IPFire Team  <info@ipfire.org>                     #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
@@ -21,7 +21,7 @@
 
 shopt -s nullglob
 
-NOW="$(date "+%Y-%m-%d-%H:%M")"
+NOW="$(date "+%Y-%m-%d-%H%M")"
 
 list_addons() {
 	local file
@@ -75,10 +75,15 @@ make_backup() {
 restore_backup() {
 	local filename="${1}"
 
+	# remove all openvpn certs to prevent old unusable
+	# certificates being left in directory after a restore
+	rm -f /var/ipfire/ovpn/certs/*
+
 	# Extract backup
 	if ! tar xvzpf "${filename}" -C / \
 			--exclude-from="/var/ipfire/backup/exclude" \
-			--exclude-from="/var/ipfire/backup/exclude.user"; then
+			--exclude-from="/var/ipfire/backup/exclude.user" \
+			--force-local; then
 		echo "Could not extract backup" >&2
 		return 1
 	fi
@@ -189,7 +194,7 @@ restore_backup() {
 
 	# Update OpenVPN CRL
 	/etc/fcron.daily/openvpn-crl-updater
-	
+
 	# Update OpenVPN N2N Client Configs
 	## Add providers legacy default line to n2n client config files
 	# Check if ovpnconfig exists and is not empty
@@ -241,6 +246,17 @@ restore_backup() {
 			-in /etc/httpd/server.csr \
 			-signkey /etc/httpd/server.key \
 			-out /etc/httpd/server.crt &>/dev/null
+	fi
+
+	# Remove any entry for ALIENVAULT or SPAMHAUS_EDROP from the ipblocklist modified file
+	# and the associated ipblocklist files from the /var/lib/ipblocklist directory
+	sed -i '/ALIENVAULT=/d' /var/ipfire/ipblocklist/modified
+	sed -i '/SPAMHAUS_EDROP=/d' /var/ipfire/ipblocklist/modified
+	if [ -e /var/lib/ipblocklist/ALIENVAULT.conf ]; then
+		rm /var/lib/ipblocklist/ALIENVAULT.conf
+	fi
+	if [ -e /var/lib/ipblocklist/SPAMHAUS_EDROP.conf ]; then
+		rm /var/lib/ipblocklist/SPAMHAUS_EDROP.conf
 	fi
 	return 0
 }

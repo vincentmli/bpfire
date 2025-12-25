@@ -76,8 +76,8 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 
 	cd $(DIR_APP) && make $(MAKETUNING)
 	cd $(DIR_APP) && make install
-	touch /var/log/{dhcpcd.log,messages}
-	chmod 664 /var/log/{dhcpcd.log,messages}
-	chown 0:105 /var/log/{dhcpcd.log,messages}
+	touch /var/log/{dhcpcd.log,messages,kern.log}
+	chmod 664 /var/log/{dhcpcd.log,messages,kern.log}
+	chown 0:105 /var/log/{dhcpcd.log,messages,kern.log}
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)

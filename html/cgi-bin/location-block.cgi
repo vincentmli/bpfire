@@ -3,6 +3,7 @@
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
 # Copyright (C) 2007-2020  IPFire Team  <info@ipfire.org>                     #
+# Copyright (C) 2024-2025  LoongFire Team  <vincent.mc.li@gmail.com>          #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
@@ -54,44 +55,44 @@ my $errormessage='';
 my @locations = &Location::Functions::get_locations();
 
 if ($cgiparams{'ACTION'} eq $Lang::tr{'save'}) {
-	# Check if we want to disable locationblock.
-	if (exists $cgiparams{'LOCATIONBLOCK_ENABLED'}) {
-		$settings{'LOCATIONBLOCK_ENABLED'} = "on";
-	} else {
-		$settings{'LOCATIONBLOCK_ENABLED'} = "off";
-	}
+        # Check if we want to disable locationblock.
+        if (exists $cgiparams{'LOCATIONBLOCK_ENABLED'}) {
+                $settings{'LOCATIONBLOCK_ENABLED'} = "on";
+        } else {
+                $settings{'LOCATIONBLOCK_ENABLED'} = "off";
+        }
 
-	# Loop through our locations array to prevent from
-	# non existing countries or code.
-	foreach my $cn (@locations) {
-		# Get the current setting for the country (on/off)
-		my $current_status = $settings{$cn};
+        # Loop through our locations array to prevent from
+        # non existing countries or code.
+        foreach my $cn (@locations) {
+                # Get the current setting for the country (on/off)
+                my $current_status = $settings{$cn};
 
-		# Determine if the country should be blocked based on CGI input
-		my $new_status = exists $cgiparams{$cn} ? "on" : "off";
+                # Determine if the country should be blocked based on CGI input
+                my $new_status = exists $cgiparams{$cn} ? "on" : "off";
 
-		# Update settings based on the user input
-		$settings{$cn} = $new_status;
+                # Update settings based on the user input
+                $settings{$cn} = $new_status;
 
-		# If the new status is "on" and the current status was "off", add the country's IPs
-		if ($new_status eq "on" && $current_status eq "off") {
-		# Call function to add IPs for this country to the eBPF map
-			&add_country_ips($cn);
-		} # If the new status is "off" and the current status was "on", remove the country's IPs
-		elsif ($new_status eq "off" && $current_status eq "on") {
-		# Call function to remove IPs for this country from the eBPF map
-			&remove_country_ips($cn);
-		}
-	}
+                # If the new status is "on" and the current status was "off", add the country's IPs
+                if ($new_status eq "on" && $current_status eq "off") {
+                # Call function to add IPs for this country to the eBPF map
+                        &add_country_ips($cn);
+                } # If the new status is "off" and the current status was "on", remove the country's IPs
+                elsif ($new_status eq "off" && $current_status eq "on") {
+                # Call function to remove IPs for this country from the eBPF map
+                        &remove_country_ips($cn);
+                }
+        }
 
-	&General::writehash("$settingsfile", \%settings);
+        &General::writehash("$settingsfile", \%settings);
 
-	# Check if we want to disable locationblock.
-	if ( $settings{'LOCATIONBLOCK_ENABLED'} eq "on" ) {
+        # Check if we want to disable locationblock.
+        if ( $settings{'LOCATIONBLOCK_ENABLED'} eq "on" ) {
                 &General::system('/usr/local/bin/xdpgeoipctrl', 'start');
-	} else {
+        } else {
                 &General::system('/usr/local/bin/xdpgeoipctrl', 'stop');
-	}
+        }
 }
 
 &Header::openpage($Lang::tr{'locationblock configuration'}, 1, '');

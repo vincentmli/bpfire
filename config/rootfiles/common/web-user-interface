@@ -20,7 +20,6 @@ srv/web/ipfire/cgi-bin/fireinfo.cgi
 srv/web/ipfire/cgi-bin/firewall.cgi
 srv/web/ipfire/cgi-bin/fwhosts.cgi
 srv/web/ipfire/cgi-bin/getrrdimage.cgi
-srv/web/ipfire/cgi-bin/gpl.cgi
 #srv/web/ipfire/cgi-bin/guardian.cgi
 srv/web/ipfire/cgi-bin/gui.cgi
 srv/web/ipfire/cgi-bin/hardwaregraphs.cgi
@@ -56,7 +55,7 @@ srv/web/ipfire/cgi-bin/media.cgi
 srv/web/ipfire/cgi-bin/memory.cgi
 srv/web/ipfire/cgi-bin/modem-status.cgi
 srv/web/ipfire/cgi-bin/modem.cgi
-#srv/web/ipfire/cgi-bin/mpfire.cgi
+#srv/web/ipfire/cgi-bin/mympd.cgi
 srv/web/ipfire/cgi-bin/netexternal.cgi
 srv/web/ipfire/cgi-bin/netinternal.cgi
 srv/web/ipfire/cgi-bin/netother.cgi
@@ -78,8 +77,11 @@ srv/web/ipfire/cgi-bin/system.cgi
 srv/web/ipfire/cgi-bin/time.cgi
 #srv/web/ipfire/cgi-bin/tor.cgi
 srv/web/ipfire/cgi-bin/traffic.cgi
+srv/web/ipfire/cgi-bin/tcp-ddos.cgi
+#srv/web/ipfire/cgi-bin/transmission.cgi
 srv/web/ipfire/cgi-bin/updatexlrator.cgi
 srv/web/ipfire/cgi-bin/urlfilter.cgi
+#srv/web/ipfire/cgi-bin/vdr.cgi
 srv/web/ipfire/cgi-bin/vpnmain.cgi
 srv/web/ipfire/cgi-bin/vulnerabilities.cgi
 srv/web/ipfire/cgi-bin/wakeonlan.cgi
@@ -90,14 +92,9 @@ srv/web/ipfire/cgi-bin/wireguard.cgi
 srv/web/ipfire/cgi-bin/wireless.cgi
 srv/web/ipfire/cgi-bin/wirelessclient.cgi
 srv/web/ipfire/cgi-bin/wlanap.cgi
-srv/web/ipfire/cgi-bin/zoneconf.cgi
-srv/web/ipfire/cgi-bin/ddos.cgi
-srv/web/ipfire/cgi-bin/loxilb.cgi
-srv/web/ipfire/cgi-bin/loxilbconfig.cgi
-srv/web/ipfire/cgi-bin/loxilbfw.cgi
-srv/web/ipfire/cgi-bin/keepalived.cgi
 srv/web/ipfire/cgi-bin/xdpdns.cgi
 srv/web/ipfire/cgi-bin/xdpsni.cgi
+srv/web/ipfire/cgi-bin/zoneconf.cgi
 #srv/web/ipfire/html
 srv/web/ipfire/html/blob.gif
 #srv/web/ipfire/html/captive
@@ -224,8 +221,6 @@ srv/web/ipfire/html/images/media-resume.png
 srv/web/ipfire/html/images/media-shuffle.png
 srv/web/ipfire/html/images/media-skip-backward.png
 srv/web/ipfire/html/images/media-skip-forward.png
-srv/web/ipfire/html/images/mpfire
-srv/web/ipfire/html/images/mpfire/box.png
 srv/web/ipfire/html/images/network-error.png
 srv/web/ipfire/html/images/network-idle.png
 srv/web/ipfire/html/images/network-offline.png
@@ -360,7 +355,6 @@ srv/web/ipfire/html/themes/ipfire/include/css/style.css
 srv/web/ipfire/html/themes/ipfire/include/fonts/Prompt-Bold.ttf
 srv/web/ipfire/html/themes/ipfire/include/fonts/Prompt-Medium.ttf
 srv/web/ipfire/html/themes/ipfire/include/fonts/Prompt-Regular.ttf
-srv/web/ipfire/html/themes/ipfire/include/functions.pl
 srv/web/ipfire/html/themes/ipfire/include/js
 srv/web/ipfire/html/themes/ipfire/include/js/refreshInetInfo.js
 var/updatecache

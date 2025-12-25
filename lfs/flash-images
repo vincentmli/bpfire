@@ -1,7 +1,7 @@
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
-# Copyright (C) 2007-2022  IPFire Team  <info@ipfire.org>                     #
+# Copyright (C) 2007-2024  IPFire Team  <info@ipfire.org>                     #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
@@ -36,7 +36,7 @@ ifeq "$(EFI)" "1"
 endif
 PART_ROOT  = /dev/mapper/$(patsubst /dev/%,%,$(DEVICE))p3
 
-IMAGE_FILE = /install/images/$(SNAME)-$(VERSION)-core$(CORE)-$(BUILD_ARCH).img.xz
+IMAGE_FILE = $(IMAGES_DIR)/$(SNAME)-$(VERSION)-core$(CORE)-$(BUILD_ARCH).img.xz
 
 FSTAB_FMT = UUID=%s %-8s %-4s %-10s %d %d\n
 BPFFS_FMT = %s %-8s %-4s %-10s %d %d\n
@@ -80,9 +80,9 @@ else
 endif
 
 # /boot:  512 MB - OFFSET
-# /    : 1800 MB
+# /    : 2048 MB
 S_BOOT := $(shell echo $$(( 1048576 - $(S_OFFSET) )))
-S_ROOT := 11319876
+S_ROOT := 8388608
 
 ifeq "$(EFI)" "1"
  S_EFI = 65536 # 32 MB
@@ -103,19 +103,21 @@ SFDISK_EFI  = $(shell echo $$(( $(S_OFFSET) + $(S_BOOT) ))),$(S_EFI),U\n
 SFDISK_ROOT = $(shell echo $$(( $(S_OFFSET) + $(S_BOOT) + $(S_EFI) ))),$(S_ROOT),L\n
 
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
-	# Stop if $(MNThdd) is still mounted
-	mountpoint $(MNThdd) && exit 1 || exit 0
-
 	rm -rf $(IMG) $(MNThdd) && mkdir -p $(MNThdd)
 
 	# Allocate image on disk
-	dd if=/dev/zero of=$(IMG) bs=512 count=$$(( $(S_OFFSET) + $(S_BOOT) + $(S_EFI) + $(S_ROOT) ))
+	dd if=/dev/zero of=$(IMG) bs=512 count=0 seek=$$(( $(S_OFFSET) + $(S_BOOT) + $(S_EFI) + $(S_ROOT) ))
 	losetup $(DEVICE) $(IMG)
 
 	# Write Partition table
 	echo -e "$(SFDISK)" | sfdisk -uS $(DEVICE)
 
 	kpartx -v -a $(DEVICE)
+
+	# kpartx trigger a automount on some desktop enviroments
+	# this leads in failing zerofree after build and umount the image
+	# with the sleep 1 prevent this because the image has no fs yet.
+	sleep 1
 
 	# Format them
 ifeq "$(PART_TYPE)" "c"
@@ -144,14 +146,12 @@ ifeq "$(EFI)" "1"
 	mount $(PART_EFI) $(MNThdd)/boot/efi
 endif
 
-	# Install IPFire
-ifneq "$(BUILD_PLATFORM)" "arm"
-	tar $(TAR_OPTIONS) -x --zstd -C $(MNThdd)/ -f $(DIR_TMP)/cdrom/distro.img
-else
-	tar $(TAR_OPTIONS) -x -C $(MNThdd)/ -f $(DIR_TMP)/cdrom/distro.img
-endif
-	-touch $(MNThdd)/lib/modules/$(KVER)-ipfire/modules.dep
-	mkdir $(MNThdd)/proc
+	# Copy all files
+	$(call COPY_FILES,$(DIR_SRC)/config/rootfiles/common,$(MNThdd))
+
+	# Create mount points
+	$(call CREATE_MOUNTPOINTS,$(MNThdd))
+
 	mount --bind /proc $(MNThdd)/proc
 	mount --bind /dev  $(MNThdd)/dev
 	mount --bind /sys  $(MNThdd)/sys
@@ -167,7 +167,6 @@ ifeq "$(EFI)" "1"
 endif
 	printf "$(FSTAB_FMT)" "$$(blkid -o value -s UUID $(PART_ROOT))" "/" \
 		"auto" "defaults" 1 1 >> $(MNThdd)/etc/fstab
-
 	printf "$(BPFFS_FMT)" "bpffs" "/sys/fs/bpf" \
 		"bpf" "defaults" 0 0 >> $(MNThdd)/etc/fstab
 	printf "$(DEBUGFS_FMT)" "debugfs" "/sys/kernel/debug" \
@@ -180,7 +179,6 @@ ifeq "$(BOOTLOADER)" "grub"
 	# Enable also serial console on GRUB
 	echo "GRUB_TERMINAL=\"serial console\"" >> $(MNThdd)/etc/default/grub
 	echo "GRUB_SERIAL_COMMAND=\"serial --unit=0 --speed=115200\"" >> $(MNThdd)/etc/default/grub
-	echo "GRUB_CMDLINE_LINUX=\"console=tty1 console=ttyS0,115200 rd.auto panic=10\"" >> $(MNThdd)/etc/default/grub
 
 	# Add additional entry for Serial console
 	cp $(DIR_SRC)/config/flash-images/grub/11_linux_scon \
@@ -188,7 +186,7 @@ ifeq "$(BOOTLOADER)" "grub"
 
 	# Create configuration
 	mkdir -pv $(MNThdd)/boot/grub
-	GRUB_FIRST_BOOT=true KERNEL_RELEASE="$(KVER)-ipfire" chroot $(MNThdd) \
+	GRUB_FIRST_BOOT=true KERNEL_RELEASE="$(KVER)" chroot $(MNThdd) \
 		grub-mkconfig -o /boot/grub/grub.cfg
 
 	# Boot the first kernel by default
@@ -237,18 +235,17 @@ ifeq "$(EFI)" "1"
 endif
 	umount $(MNThdd)/boot
 	umount $(MNThdd)
-
-	# zerofree the ext2 images to get better compression
+	
+	# zerofree the ext4 images to get better compression
 ifneq "$(PART_TYPE)" "c"
-	zerofree $(PART_BOOT)
+	#zerofree $(PART_BOOT)
 	-fsck.ext2 -f -y $(PART_BOOT)
 	fsck.ext2 -f -y $(PART_BOOT)
 endif
-	zerofree $(PART_ROOT)
+	#zerofree $(PART_ROOT)
 	-fsck.ext4 -f -y $(PART_ROOT)
 	fsck.ext4 -f -y $(PART_ROOT)
 
-	sleep 10     #Ubuntu compiling: allow time to automount/dismount
 	kpartx -d -v $(DEVICE)
 	losetup -d $(DEVICE)
 
@@ -264,3 +261,6 @@ endif
 	# Compress Image
 	xz $(XZ_OPT) < $(IMG) > $(IMAGE_FILE)
 	rm -rf $(IMG) $(MNThdd) $(DIR_TMP)/cdrom
+
+	# Create checksum file
+	cd $(IMAGES_DIR) && b2sum "$(notdir $(IMAGE_FILE))" > "$(notdir $(IMAGE_FILE)).b2"

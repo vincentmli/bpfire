@@ -31,8 +31,6 @@ UVER       = 1.2.10
 CVER       = 1.2.10
 FVER       = 1.2.4
 
-VERSUFIX   = ipfire$(KCFG)
-
 THISAPP    = alsa-lib-$(VER)
 DL_FILE    = $(THISAPP).tar.bz2
 DL_FROM    = $(URL_IPFIRE)
@@ -58,9 +56,9 @@ alsa-utils-$(UVER).tar.bz2 = $(DL_FROM)/alsa-utils-$(UVER).tar.bz2
 alsa-firmware-$(FVER).tar.bz2 = $(DL_FROM)/alsa-firmware-$(FVER).tar.bz2
 alsa-ucm-conf-$(CVER).tar.bz2 = $(DL_FROM)/alsa-ucm-conf-$(CVER).tar.bz2
 
-$(DL_FILE)_BLAKE2 = b2e4f8431e61f5bb56b2b5d124e67d5a68bbca3c647bebfa93f5e5ff092ec9ef3f6cb6315801fcd93e21151784814ff238d357313b8b44f32d4e7c9ee565388f
-alsa-utils-$(UVER).tar.bz2_BLAKE2 = 077b4ad090c1ab40dd4fa22db01ae2a080ca849a5564dfe612654993297c80bd3584541c7e68aaad56c4c05538ba0de449e4677b1c4a9dfe56d8e11706c4ca35
-alsa-firmware-$(FVER).tar.bz2_BLAKE2 = 0f844f6cc4859b72635f24d347b4c790469aee39aa60d9addb2c168dcf06b48e7e3cbba26ff21c7e1f5aa355641eec7ab934cb09bfac8ca116a6ac6a7db9d548
+$(DL_FILE)_BLAKE2 = 2fa4eb2b1df6a583239243e0a8e7b0b76d24d5d290e736723dc5d56fbdc31c447747fe4d2f7147d630bc7648c6adabc2f431dccc241d6e837fbd7a4af02b5f9d
+alsa-utils-$(UVER).tar.bz2_BLAKE2 = d101f6a1f0ed006deb29e844b9e59308c74b094b276896dc992a899ba0980df887ee6959c6f5cb7de514fe3f661e0dcc03b5c7585208913e86c808765124b1d3
+alsa-firmware-$(FVER).tar.bz2_BLAKE2 = 08daa9cbf768755beb966fac55927fd0fa4ccfbb44116c5fa0e6b02ca5eac341570d485787bf5b13a85345f13dc3bf7eeef24aa7950bd246c00b9e2564a9ac44
 alsa-ucm-conf-$(CVER).tar.bz2_BLAKE2 = 215842f1f59c2dea5e3f3fe880dc49d6263998746a50c2591b8a9786ead3afae2c713e179ff6e8caa518b3a8516a1b031872c1fad2a17fbd3afbb0390a803693
 
 install : $(TARGET)

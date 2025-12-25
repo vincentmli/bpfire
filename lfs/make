@@ -51,6 +51,14 @@ ifeq "$(PASS)" "1"
   CFLAGS =
 endif
 
+# Only for TOOLCHAIN == 1 and BUILD_ARCH == loongarch64
+ifeq "$(TOOLCHAIN)" "1"
+ ifeq "$(BUILD_ARCH)" "loongarch64"
+	CFLAGS += -Wl,--dynamic-linker=$(TOOLS_DIR)/lib64/ld-linux-loongarch-lp64d.so.1
+	LDFLAGS += -Wl,--dynamic-linker=$(TOOLS_DIR)/lib64/ld-linux-loongarch-lp64d.so.1
+ endif
+endif
+
 ###############################################################################
 # Top-level Rules
 ###############################################################################

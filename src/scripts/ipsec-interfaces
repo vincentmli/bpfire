@@ -107,10 +107,10 @@ main() {
 	local interfaces=()
 
 	# Flush IPsec routes
-	ip route flush table "${ROUTE_TABLE}"
+	ip route flush table "${ROUTE_TABLE}" >/dev/null 2>&1
 
 	# Remove lookups
-	ip rule del lookup "${ROUTE_TABLE}"
+	ip rule del lookup "${ROUTE_TABLE}" >/dev/null 2>&1
 
 	# We are done when IPsec is not enabled
 	if [ "${ENABLED}" = "on" ]; then

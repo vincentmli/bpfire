@@ -5,3 +5,4 @@ usr/sbin/haproxy
 var/ipfire/backup/addons/includes/haproxy
 var/lib/haproxy
 var/ipfire/haproxy
+var/ipfire/haproxy/haproxy.cfg

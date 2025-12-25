@@ -38,17 +38,19 @@ require "${General::swroot}/header.pl";
 &Header::openbox('100%', 'left', $Lang::tr{'donation'});
 
 print <<END
-<p>$Lang::tr{'donation-bpfire-text'}</p>
-<div align="center">
-        <a href="https://www.paypal.com/donate/?business=BL97G8687E5B6&no_recurring=0&item_name=Make+revolutionary+eBPF+technology+available+for+non-tech+savvy+users+for+safe+online+surfing&currency_code=USD" target="_blank">
-                <strong>$Lang::tr{'donation-bpfire'}</strong>
-        </a>
-</div>
-<p>$Lang::tr{'donation-ipfire-text'}</p>
-<div align="center">
+<p>$Lang::tr{'loongfire-donation-text'}</p>
 
-	<a href="https://www.ipfire.org/donate" target="_blank">
-		<strong>$Lang::tr{'donation-ipfire'}</strong>
+<div align="center">
+	<a href="https://www.bpfire.net/donate.html">
+		<strong>$Lang::tr{'donation'}</strong>
+	</a>
+</div>
+
+<p>$Lang::tr{'donation-text'}</p>
+
+<div align="center">
+	<a href="https://www.ipfire.org/donate">
+		<strong>$Lang::tr{'donation'}</strong>
 	</a>
 </div>
 END
@@ -60,7 +62,7 @@ END
 print <<END
 <br>
 <center>
-	$Lang::tr{'visit us at'}: <b><a href='http://www.bpfire.net/' target="_blank">https://www.bpfire.net/</a></b> <b><a href='https://www.ipfire.org/' target="_blank">https://www.ipfire.org/</a></b>
+	$Lang::tr{'visit us at'}: <b><a href='https://www.ipfire.org/' target="_blank">https://www.ipfire.org/</a></b>
 </center>
 <br><br>
 
@@ -68,29 +70,29 @@ print <<END
 	<!-- CONTRIBUTORS -->
 Michael Tremer,
 Arne Fitzenreiter,
-Peter Müller,
 Adolf Belka,
+Peter Müller,
 Stefan Schantl,
 Matthias Fischer,
 Christian Schmidt,
 Alexander Marx,
-Erik Kapfer,
 Jonatan Schlag,
+Erik Kapfer,
 Jan Paul Tücking,
 Dirk Wagner,
 Marcel Lorenz,
 Leo-Andres Hofmann,
 Alf Høgemark,
+Robin Roevens,
 Timo Eissler,
 Ben Schweikert,
 Daniel Weismüller,
 Peter Pfeiffer,
-Robin Roevens,
 Daniel Glanzmann,
 Heiner Schmeling,
 Stephan Feddersen,
-Stéphane Pautrel,
 Jon Murphy,
+Stéphane Pautrel,
 Tim FitzGeorge,
 Jan Lentfer,
 Marcus Scholz,
@@ -115,6 +117,7 @@ Larsen,
 Ramax Lo,
 Gabriel Rolland,
 Marcel Follert,
+Rico Hoppe,
 Anton D. Seliverstov,
 Bernhard Bittner,
 Daniel Weismueller,

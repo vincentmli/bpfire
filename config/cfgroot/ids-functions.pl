@@ -30,7 +30,7 @@ require "${General::swroot}/network-functions.pl";
 require "${General::swroot}/suricata/ruleset-sources";
 
 # Load perl module to deal with Archives.
-use Archive::Tar;
+use Archive::Peek::Libarchive;
 
 # Load perl module to deal with files and path.
 use File::Basename;
@@ -151,6 +151,9 @@ my @http_ports = ('80', '81');
 
 # Array which contains a list of rulefiles which always will be included if they exist.
 my @static_included_rulefiles = ('local.rules', 'whitelist.rules');
+
+# Log App Layer Events? (Useful for debugging only)
+my $LOG_APP_LAYER_EVENTS = 0;
 
 # Array which contains a list of allways enabled application layer protocols.
 my @static_enabled_app_layer_protos = ('app-layer', 'decoder', 'files', 'stream');
@@ -515,9 +518,6 @@ sub downloadruleset ($) {
 sub extractruleset ($) {
 	my ($provider) = @_;
 
-	# Disable chown functionality when uncompressing files.
-	$Archive::Tar::CHOWN = "0";
-
 	# Get full path and downloaded rulesfile for the given provider.
 	my $tarball = &_get_dl_rulesfile($provider);
 
@@ -547,13 +547,11 @@ sub extractruleset ($) {
 
 	} elsif ( $type eq "archive") {
 		# Initialize the tar module.
-		my $tar = Archive::Tar->new($tarball);
+		my $tar = Archive::Peek::Libarchive->new(filename => $tarball);
 
-		# Get the filelist inside the tarball.
-		my @packed_files = $tar->list_files;
-
-		# Loop through the filelist.
-		foreach my $packed_file (@packed_files) {
+		# Loop through the archive
+		$tar->iterate( sub {
+			my ($packed_file, $content) = @_;
 			my $destination;
 
 			# Splitt the packed file into chunks.
@@ -572,13 +570,13 @@ sub extractruleset ($) {
 			# Handle rules files.
 			} elsif ($file =~ m/\.rules$/) {
 				# Skip rule files which are not located in the rules directory or archive root.
-				next unless(($packed_file =~ /^rules\//) || ($packed_file =~ /^$provider-rules\//) || ($packed_file !~ /\//));
+				return unless(($packed_file =~ /^rules\//) || ($packed_file =~ /^$provider-rules\//) || ($packed_file !~ /\//));
 
 				# Skip deleted.rules.
 				#
 				# Mostly they have been taken out for correctness or performance reasons and therfore
 				# it is not a great idea to enable any of them.
-				next if($file =~ m/deleted.rules$/);
+				return if($file =~ m/deleted.rules$/);
 
 				my $rulesfilename;
 
@@ -615,39 +613,24 @@ sub extractruleset ($) {
 				$destination = "$tmp_rules_directory/$rulesfilename";
 			} else {
 				# Skip all other files.
-				next;
+				return;
 			}
 
 			# Check if the destination file exists.
 			unless(-e "$destination") {
-				# Extract the file to the temporary directory.
-				$tar->extract_file("$packed_file", "$destination");
+				# Open filehandle to write the content to a new file.
+				open(FILE, ">", "$destination") or die "Could not open $destination. $!\n";
 			} else {
-				# Generate temporary file name, located in the temporary rules directory and a suffix of ".tmp".
-				my $tmp = File::Temp->new( SUFFIX => ".tmp", DIR => "$tmp_rules_directory", UNLINK => 0 );
-				my $tmpfile = $tmp->filename();
-
-				# Extract the file to the new temporary file name.
-				$tar->extract_file("$packed_file", "$tmpfile");
-
-				# Open the the existing file.
-				open(DESTFILE, ">>", "$destination") or die "Could not open $destination. $!\n";
-				open(TMPFILE, "<", "$tmpfile") or die "Could not open $tmpfile. $!\n";
-
-				# Loop through the content of the temporary file.
-				while (<TMPFILE>) {
-					# Append the content line by line to the destination file.
-					print DESTFILE "$_";
-				}
-
-				# Close the file handles.
-				close(TMPFILE);
-				close(DESTFILE);
-
-				# Remove the temporary file.
-				unlink("$tmpfile");
+				# Open filehandle to append the content to the existing file.
+				open(FILE, ">>", "$destination") or die "Could not open $destination. $!\n";
 			}
-		}
+
+			# Write the extracted file content to the filehandle.
+			print FILE "$content" if ($content);
+
+			# Close the file handle.
+			close(FILE);
+		});
 	}
 }
 
@@ -1027,11 +1010,14 @@ sub _store_error_message ($) {
 sub _get_dl_rulesfile($) {
 	my ($provider) = @_;
 
-	# Check if the requested provider is known.
-	if ($IDS::Ruleset::Providers{$provider}) {
-		# Gather the download type for the given provider.
-		my $dl_type = $IDS::Ruleset::Providers{$provider}{'dl_type'};
+	# Abort if the requested provider is not known.
+	return unless($IDS::Ruleset::Providers{$provider});
 
+	# Try to gather the download type for the given provider.
+	my $dl_type = $IDS::Ruleset::Providers{$provider}{'dl_type'};
+
+	# Check if a download type could be grabbed.
+	if ($dl_type) {
 		# Obtain the file suffix for the download file type.
 		my $suffix = $dl_type_to_suffix{$dl_type};
 
@@ -1454,31 +1440,33 @@ sub write_used_rulefiles_file (@) {
 		}
 	}
 
-	print FILE "\n#Default rules for used application layer protocols.\n";
-	foreach my $enabled_app_layer_proto (@enabled_app_layer_protos) {
-		# Check if the current processed app layer proto needs to be translated
-		# into an application name.
-		if (exists($tr_app_layer_proto{$enabled_app_layer_proto})) {
-			# Obtain the translated application name for this protocol.
-			$enabled_app_layer_proto = $tr_app_layer_proto{$enabled_app_layer_proto};
-		}
+	if ($LOG_APP_LAYER_EVENTS) {
+		print FILE "\n#Default rules for used application layer protocols.\n";
+		foreach my $enabled_app_layer_proto (@enabled_app_layer_protos) {
+			# Check if the current processed app layer proto needs to be translated
+			# into an application name.
+			if (exists($tr_app_layer_proto{$enabled_app_layer_proto})) {
+				# Obtain the translated application name for this protocol.
+				$enabled_app_layer_proto = $tr_app_layer_proto{$enabled_app_layer_proto};
+			}
 
-		# Generate filename.
-		my $rulesfile = "$default_rulespath/$enabled_app_layer_proto\.rules";
+			# Generate filename.
+			my $rulesfile = "$default_rulespath/$enabled_app_layer_proto\.rules";
 
-		# Check if such a file exists.
-		if (-f "$rulesfile") {
-			# Write the rulesfile name to the file.
-			print FILE " - $rulesfile\n";
-		}
+			# Check if such a file exists.
+			if (-f "$rulesfile") {
+				# Write the rulesfile name to the file.
+				print FILE " - $rulesfile\n";
+			}
 
-		# Generate filename with "events" in filename.
-		$rulesfile = "$default_rulespath/$enabled_app_layer_proto\-events.rules";
+			# Generate filename with "events" in filename.
+			$rulesfile = "$default_rulespath/$enabled_app_layer_proto\-events.rules";
 
-		# Check if this file exists.
-		if (-f "$rulesfile" ) {
-			# Write the rulesfile name to the file.
-			print FILE " - $rulesfile\n";
+			# Check if this file exists.
+			if (-f "$rulesfile" ) {
+				# Write the rulesfile name to the file.
+				print FILE " - $rulesfile\n";
+			}
 		}
 	}
 

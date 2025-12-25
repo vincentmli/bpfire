@@ -1,7 +1,7 @@
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
-# Copyright (C) 2007-2023  IPFire Team  <info@ipfire.org>                     #
+# Copyright (C) 2007-2024  IPFire Team  <info@ipfire.org>                     #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
@@ -34,9 +34,7 @@ DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = dnsdist
-PAK_VER    = 17
-
-SUP_ARCH   = x86_64 aarch64
+PAK_VER    = 24
 
 DEPS       =
 
@@ -105,7 +103,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	install -v -m 644 $(DIR_SRC)/config/backup/includes/dnsdist \
 		 /var/ipfire/backup/addons/includes/dnsdist
 
-	# Install xsk AF_XDP configuration
+        # Install xsk AF_XDP configuration
 	install -v -m 644 $(DIR_SRC)/config/dnsdist/dnsdist-xsk.conf \
 		/etc/dnsdist-xsk.conf
 

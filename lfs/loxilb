@@ -2,7 +2,7 @@
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
 # Copyright (C) 2007-2024  IPFire Team  <info@ipfire.org>                     #
-# Copyright (C) 2024-2025 BPFire
+# Copyright (C) 2024 BPFire
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
@@ -74,7 +74,6 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@rm -rf /opt/loxilb 
 
 	cd $(DIR_APP) && mkdir -p /opt/loxilb/dp 
-	cd $(DIR_APP) && go clean -cache
 	cd $(DIR_APP) && make
 	cd $(DIR_APP)/loxilb-ebpf/kernel && cp -f *.o /opt/loxilb/
 	cd $(DIR_APP) && cp -f loxilb /usr/bin/loxilb

@@ -124,6 +124,7 @@ usr/libexec/git-core/git-read-tree
 usr/libexec/git-core/git-rebase
 usr/libexec/git-core/git-receive-pack
 usr/libexec/git-core/git-reflog
+usr/libexec/git-core/git-refs
 usr/libexec/git-core/git-remote
 usr/libexec/git-core/git-remote-ext
 usr/libexec/git-core/git-remote-fd
@@ -133,6 +134,7 @@ usr/libexec/git-core/git-remote-http
 usr/libexec/git-core/git-remote-https
 usr/libexec/git-core/git-repack
 usr/libexec/git-core/git-replace
+usr/libexec/git-core/git-replay
 usr/libexec/git-core/git-request-pull
 usr/libexec/git-core/git-rerere
 usr/libexec/git-core/git-reset

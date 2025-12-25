@@ -36,7 +36,7 @@ function create_all_routes() {
 	local file=${1}
 	shift
 
-	# Remote all routes.
+	# Remove all routes.
 	ip route flush table static >/dev/null 2>&1
 
 	local status

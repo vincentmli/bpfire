@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 5.4.6
+VER        = 5.4.5
 
 THISAPP    = xz-$(VER)
 DL_FILE    = $(THISAPP).tar.xz
@@ -37,6 +37,14 @@ else
 	TARGET = $(DIR_INFO)/$(THISAPP)-tools
 endif
 
+# Only for TOOLCHAIN == 1 and BUILD_ARCH == loongarch64
+ifeq "$(TOOLCHAIN)" "1"
+ ifeq "$(BUILD_ARCH)" "loongarch64"
+        CFLAGS += -Wl,--dynamic-linker=$(TOOLS_DIR)/lib64/ld-linux-loongarch-lp64d.so.1
+        LDFLAGS += -Wl,--dynamic-linker=$(TOOLS_DIR)/lib64/ld-linux-loongarch-lp64d.so.1
+ endif
+endif
+
 ###############################################################################
 # Top-level Rules
 ###############################################################################
@@ -45,7 +53,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_BLAKE2 = d609590f1e9f13404988050e1bfdc623b996794b603cf2e39d2fd592be1967c97d8beaba9196eae4a0d448a432b1d7499986b7f669e736b65ec67590a04af9f7
+$(DL_FILE)_BLAKE2 = 08d9afebd927ea5d155515a4c9eedda4d1a249f2b1ab6ada11f50e5b7a3c90b389b32378ab1c0872c7f4627de8dff37149d85e49f7f4d30614add37320ec4f3e
 
 install : $(TARGET)
 

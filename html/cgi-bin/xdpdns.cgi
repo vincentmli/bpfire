@@ -405,6 +405,7 @@ sub SortDataFile
 
 sub manageDomain {
     my ($action, %settings) = @_;
+    my $map_path = "/sys/fs/bpf/xdp-dns-denylist/domain_denylist";
 
     # Initialize variables
     my @xdpdns_options;
@@ -412,7 +413,7 @@ sub manageDomain {
 
     my $domain = $settings{'domainName'};
 
-    push(@xdpdns_options, $action, $domain);
+    push(@xdpdns_options, $map_path, $action, $domain);
 
     #debug and display output in UI
     #my @output  = &General::system_output($command, @xdpdns_options);

@@ -22,20 +22,20 @@
 . /etc/sysconfig/rc
 . ${rc_functions}
 
-DAEMONS="zebra bgpd ospfd staticd"
+DAEMONS="mgmtd zebra bgpd ospfd staticd"
 
 case "${1}" in
 	start)
 		# Fix permissions of configuration directory
 		if [ -d "/etc/frr" ]; then
-			chown root.frr /etc/frr
+			chown root:frr /etc/frr
 			chmod 775 /etc/frr
 		fi
 
 		for daemon in ${DAEMONS}; do
 			if [ -f "/etc/frr/${daemon}.conf" ]; then
 				# Set permissions
-				chown frr.frr "/etc/frr/${daemon}.conf"
+				chown frr:frr "/etc/frr/${daemon}.conf"
 
 				boot_mesg "Starting FRRouting ${daemon}..."
 				loadproc "/usr/sbin/${daemon}" --daemon
@@ -51,8 +51,11 @@ case "${1}" in
 		;;
 
 	reload)
-		boot_mesg "Reloading FRRouting..."
-		reloadproc /usr/sbin/frr-reload
+		# Reload all daemons
+		for daemon in ${DAEMONS}; do
+			boot_mesg "Reloading FRRouting ${daemon}..."
+			reloadproc "/usr/sbin/${daemon}"
+		done
 		;;
 
 	restart)

@@ -46,6 +46,7 @@
 < choose media
 < could not connect to www ipfire org
 < cryptographic settings
+< data transfer
 < desired
 < dhcp server disabled on blue interface
 < dhcp server enabled on blue interface
@@ -56,12 +57,14 @@
 < enable
 < error the to date has to be later than the from date
 < extrahd because it it outside the allowed mount path
+< fwdfw syn flood protection
 < g.dtm
 < g.lite
 < hostile networks in
 < hostile networks out
 < hostile networks total
 < ids automatic rules update
+< ids provider eol
 < ids subscription code required
 < insert removable device
 < invalid input for subscription code
@@ -75,10 +78,13 @@
 < no entries
 < notes
 < okay
+< oops something went wrong
 < optional
+< ovpn roadwarrior server
 < quick control
 < random number generator daemon
 < regenerate host certificate
+< reg_file_data_sampling
 < reiserfs warning1
 < reiserfs warning2
 < required
@@ -97,10 +103,15 @@
 < upload fcdsl.o
 < user management
 < vpn configuration main
+< wg
 < winbind daemon
+< wireguard
 < wlanap 802.11w disabled
 < wlanap 802.11w enforced
 < wlanap 802.11w optional
+< wlanap psk
+< wlanap wireless mode
+< wlanap wlan clients
 < wlan client encryption wpa3
 < wlan client management frame protection
 ############################################################################
@@ -110,7 +121,9 @@
 < access point name is invalid
 < access point name is required
 < addon
+< bypassed
 < cpu frequency
+< data transfer
 < dhcp fixed ip address in dynamic range
 < dns servers
 < downfall gather data sampling
@@ -119,22 +132,45 @@
 < extrahd no mount point given
 < extrahd not configured
 < extrahd not mounted
+< fwdfw syn flood protection
 < hardware vulnerabilities
 < hostile networks in
 < hostile networks out
 < hostile networks total
+< ids provider eol
+< ids rulesets
+< ids unsupported provider
 < invalid ip or hostname
+< ips throughput
+< last updated
+< load average
 < log drop hostile in
 < log drop hostile out
+< oops something went wrong
 < openvpn cert expires soon
 < openvpn cert has expired
+< ovpn roadwarrior server
+< processors
 < regenerate host certificate
+< reg_file_data_sampling
 < reiserfs warning1
 < reiserfs warning2
+< scanned
 < service boot setting unavailable
 < spec rstack overflow
+< system time
+< timeformat
+< total
 < transport mode does not support vti
+< warning
+< wg
+< whitelisted
+< wireguard
 < wlanap
+< wlanap hide ssid
+< wlanap psk
+< wlanap wireless mode
+< wlanap wlan clients
 < wlan client configuration
 ############################################################################
 # Checking cgi-bin translations for language: fr                           #
@@ -142,24 +178,36 @@
 < ansi t1.483
 < bewan adsl pci st
 < bewan adsl usb
-< downfall gather data sampling
+< bypassed
+< data transfer
 < extrahd because it it outside the allowed mount path
-< extrahd mounted
-< extrahd no mount point given
-< extrahd not configured
-< extrahd not mounted
+< fwdfw syn flood protection
 < g.dtm
 < g.lite
-< hostile networks in
-< hostile networks out
 < hostile networks total
-< log drop hostile in
-< log drop hostile out
-< regenerate host certificate
-< reiserfs warning1
-< reiserfs warning2
-< spec rstack overflow
+< ids provider eol
+< ids rulesets
+< ids unsupported provider
+< ips throughput
+< last updated
+< load average
+< oops something went wrong
+< ovpn roadwarrior server
+< processors
+< reg_file_data_sampling
+< scanned
+< system time
+< timeformat
+< total
 < upload fcdsl.o
+< warning
+< wg
+< whitelisted
+< wireguard
+< wlanap hide ssid
+< wlanap psk
+< wlanap wireless mode
+< wlanap wlan clients
 ############################################################################
 # Checking cgi-bin translations for language: it                           #
 ############################################################################
@@ -197,6 +245,7 @@
 < available
 < block
 < broken
+< bypassed
 < cake profile bridged-llcsnap 32
 < cake profile bridged-ptm 19
 < cake profile bridged-vcmux 24
@@ -274,6 +323,7 @@
 < crypto warning
 < Daily
 < dangerous
+< data transfer
 < default IP address
 < desired
 < dh
@@ -369,6 +419,7 @@
 < fwdfw maxconcon
 < fwdfw numcon
 < fwdfw ratelimit
+< fwdfw syn flood protection
 < fwhost addlocationgrp
 < fwhost cust location
 < fwhost cust locationgroup
@@ -407,16 +458,19 @@
 < ids no enabled ruleset provider
 < ids no network zone
 < ids provider
+< ids provider eol
 < ids provider settings
 < ids remove rule structures
 < ids reset provider
 < ids ruleset autoupdate in progress
 < ids ruleset is up to date
+< ids rulesets
 < ids ruleset settings
 < ids show
 < ids subscription code required
 < ids the choosen provider is already in use
 < ids unable to download the ruleset
+< ids unsupported provider
 < ids visit provider website
 < ids working
 < incoming compression in bytes per second
@@ -470,9 +524,12 @@
 < ipsec roadwarrior endpoint
 < ipsec routing table entries
 < ipsec settings
+< ips throughput
 < itlb multihit
+< last updated
 < legacy architecture warning
 < link-layer encapsulation
+< load average
 < local ip address
 < location
 < locationblock
@@ -511,6 +568,7 @@
 < one month
 < one week
 < one year
+< oops something went wrong
 < open connections
 < openvpn cert expires soon
 < openvpn cert has expired
@@ -521,6 +579,7 @@
 < ovpn add conf
 < ovpn connection name
 < ovpn error md5
+< ovpn roadwarrior server
 < ovpn rw connection log
 < ovpn tls auth
 < ovpn warning rfc3280
@@ -538,6 +597,7 @@
 < pptp netconfig
 < pptp peer
 < pptp route
+< processors
 < processor vulnerability mitigations
 < ptr
 < random number generator daemon
@@ -546,6 +606,7 @@
 < rebooting ipfire fsck
 < received
 < regenerate host certificate
+< reg_file_data_sampling
 < reiserfs warning1
 < reiserfs warning2
 < release
@@ -557,6 +618,7 @@
 < samba join domain
 < samba server role member
 < samba server role standalone
+< scanned
 < search
 < secret
 < sent
@@ -583,16 +645,19 @@
 < subnet mask
 < subscription code
 < system is offline
+< system time
 < taa zombieload2
 < tcp more reliable
 < ten minutes
 < thirty minutes
+< timeformat
 < token
 < token not set
 < tor guard country
 < tor guard country any
 < tor guard nodes
 < tor use guard nodes
+< total
 < traffic stat in
 < traffic stat out
 < traffic stat title
@@ -626,22 +691,29 @@
 < vpn weak
 < vulnerability
 < vulnerable
+< warning
 < Weekly
+< wg
+< whitelisted
 < whois results from
 < winbind daemon
+< wireguard
 < wireless network
 < wlanap
 < wlanap 802.11w disabled
 < wlanap 802.11w enforced
 < wlanap 802.11w optional
 < wlanap auto
-< wlanap broadcast ssid
 < wlanap client isolation
 < wlanap configuration
+< wlanap hide ssid
 < wlanap management frame protection
 < wlanap neighbor scan
 < wlanap neighbor scan warning
+< wlanap psk
 < wlanap ssid
+< wlanap wireless mode
+< wlanap wlan clients
 < wlan client anonymous identity
 < wlan client auth auto
 < wlan client authentication settings
@@ -716,6 +788,7 @@
 < available
 < block
 < broken
+< bypassed
 < cake profile bridged-llcsnap 32
 < cake profile bridged-ptm 19
 < cake profile bridged-vcmux 24
@@ -794,6 +867,7 @@
 < daemon login script
 < Daily
 < dangerous
+< data transfer
 < default
 < default IP address
 < desired
@@ -894,6 +968,7 @@
 < fwdfw maxconcon
 < fwdfw numcon
 < fwdfw ratelimit
+< fwdfw syn flood protection
 < fwhost addlocationgrp
 < fwhost cust location
 < fwhost cust locationgroup
@@ -931,16 +1006,19 @@
 < ids no enabled ruleset provider
 < ids no network zone
 < ids provider
+< ids provider eol
 < ids provider settings
 < ids remove rule structures
 < ids reset provider
 < ids ruleset autoupdate in progress
 < ids ruleset is up to date
+< ids rulesets
 < ids ruleset settings
 < ids show
 < ids subscription code required
 < ids the choosen provider is already in use
 < ids unable to download the ruleset
+< ids unsupported provider
 < ids visit provider website
 < ids working
 < imei
@@ -996,9 +1074,12 @@
 < ipsec roadwarrior endpoint
 < ipsec routing table entries
 < ipsec settings
+< ips throughput
 < itlb multihit
+< last updated
 < legacy architecture warning
 < link-layer encapsulation
+< load average
 < local ip address
 < location
 < locationblock
@@ -1053,6 +1134,7 @@
 < one month
 < one week
 < one year
+< oops something went wrong
 < open connections
 < openvpn cert expires soon
 < openvpn cert has expired
@@ -1068,6 +1150,7 @@
 < ovpn generating the root and host certificates
 < ovpn ha
 < ovpn reneg sec
+< ovpn roadwarrior server
 < ovpn rw connection log
 < ovpn tls auth
 < ovpn warning rfc3280
@@ -1084,6 +1167,7 @@
 < pptp netconfig
 < pptp peer
 < pptp route
+< processors
 < processor vulnerability mitigations
 < ptr
 < random number generator daemon
@@ -1091,6 +1175,7 @@
 < rebooting ipfire fsck
 < received
 < regenerate host certificate
+< reg_file_data_sampling
 < reiserfs warning1
 < reiserfs warning2
 < required
@@ -1101,6 +1186,7 @@
 < samba join domain
 < samba server role member
 < samba server role standalone
+< scanned
 < search
 < secret
 < sent
@@ -1129,18 +1215,21 @@
 < subnet mask
 < subscription code
 < system is offline
+< system time
 < taa zombieload2
 < ta key
 < tcp more reliable
 < ten minutes
 < teovpn_fragment
 < thirty minutes
+< timeformat
 < token
 < token not set
 < tor guard country
 < tor guard country any
 < tor guard nodes
 < tor use guard nodes
+< total
 < transfers
 < transport mode does not support vti
 < twelve hours
@@ -1171,22 +1260,29 @@
 < vpn weak
 < vulnerability
 < vulnerable
+< warning
 < Weekly
+< wg
+< whitelisted
 < whois results from
 < winbind daemon
+< wireguard
 < wireless network
 < wlanap
 < wlanap 802.11w disabled
 < wlanap 802.11w enforced
 < wlanap 802.11w optional
 < wlanap auto
-< wlanap broadcast ssid
 < wlanap client isolation
 < wlanap configuration
+< wlanap hide ssid
 < wlanap management frame protection
 < wlanap neighbor scan
 < wlanap neighbor scan warning
+< wlanap psk
 < wlanap ssid
+< wlanap wireless mode
+< wlanap wlan clients
 < wlan client anonymous identity
 < wlan client auth auto
 < wlan client authentication settings
@@ -1275,6 +1371,7 @@
 < bit
 < block
 < broken
+< bypassed
 < cake profile bridged-llcsnap 32
 < cake profile bridged-ptm 19
 < cake profile bridged-vcmux 24
@@ -1401,6 +1498,7 @@
 < crypto warning
 < Daily
 < dangerous
+< data transfer
 < dead peer detection
 < default
 < default ip
@@ -1609,6 +1707,7 @@
 < fwdfw source
 < fwdfw sourceip
 < fwdfw std network
+< fwdfw syn flood protection
 < fwdfw target
 < fwdfw targetip
 < fwdfw till
@@ -1760,16 +1859,19 @@
 < ids no enabled ruleset provider
 < ids no network zone
 < ids provider
+< ids provider eol
 < ids provider settings
 < ids remove rule structures
 < ids reset provider
 < ids ruleset autoupdate in progress
 < ids ruleset is up to date
+< ids rulesets
 < ids ruleset settings
 < ids show
 < ids subscription code required
 < ids the choosen provider is already in use
 < ids unable to download the ruleset
+< ids unsupported provider
 < ids visit provider website
 < ids working
 < imei
@@ -1832,12 +1934,15 @@
 < ipsec roadwarrior endpoint
 < ipsec routing table entries
 < ipsec settings
+< ips throughput
 < itlb multihit
 < last
+< last updated
 < least preferred
 < legacy architecture warning
 < lifetime
 < link-layer encapsulation
+< load average
 < local ip address
 < location
 < locationblock
@@ -1901,6 +2006,7 @@
 < one month
 < one week
 < one year
+< oops something went wrong
 < open connections
 < openvpn cert expires soon
 < openvpn cert has expired
@@ -1942,6 +2048,7 @@
 < ovpn no connections
 < ovpn port in root range
 < ovpn reneg sec
+< ovpn roadwarrior server
 < ovpn routes push
 < ovpn routes push options
 < ovpn rw connection log
@@ -1961,6 +2068,7 @@
 < pptp netconfig
 < pptp peer
 < pptp route
+< processors
 < processor vulnerability mitigations
 < proxy reports
 < proxy reports daily
@@ -1976,6 +2084,7 @@
 < received
 < red1
 < regenerate host certificate
+< reg_file_data_sampling
 < reiserfs warning1
 < reiserfs warning2
 < release
@@ -1987,6 +2096,7 @@
 < samba join domain
 < samba server role member
 < samba server role standalone
+< scanned
 < search
 < secret
 < sent
@@ -2021,12 +2131,14 @@
 < subscription code
 < support donation
 < system is offline
+< system time
 < taa zombieload2
 < ta key
 < tcp more reliable
 < ten minutes
 < teovpn_fragment
 < thirty minutes
+< timeformat
 < token
 < token not set
 < tor
@@ -2088,6 +2200,7 @@
 < tor traffic read written
 < tor use exit nodes
 < tor use guard nodes
+< total
 < traffic stat in
 < traffic stat out
 < traffic stat title
@@ -2131,23 +2244,30 @@
 < vpn weak
 < vulnerability
 < vulnerable
+< warning
 < Weekly
+< wg
+< whitelisted
 < whois results from
 < winbind daemon
+< wireguard
 < wireless network
 < wlanap
 < wlanap 802.11w disabled
 < wlanap 802.11w enforced
 < wlanap 802.11w optional
 < wlanap auto
-< wlanap broadcast ssid
 < wlanap client isolation
 < wlanap configuration
 < wlanap country
+< wlanap hide ssid
 < wlanap management frame protection
 < wlanap neighbor scan
 < wlanap neighbor scan warning
+< wlanap psk
 < wlanap ssid
+< wlanap wireless mode
+< wlanap wlan clients
 < wlan client
 < wlan client advanced settings
 < wlan client and
@@ -2267,6 +2387,7 @@
 < bit
 < block
 < broken
+< bypassed
 < cake profile bridged-llcsnap 32
 < cake profile bridged-ptm 19
 < cake profile bridged-vcmux 24
@@ -2393,6 +2514,7 @@
 < crypto warning
 < Daily
 < dangerous
+< data transfer
 < day-graph
 < dead peer detection
 < default
@@ -2605,6 +2727,7 @@
 < fwdfw source
 < fwdfw sourceip
 < fwdfw std network
+< fwdfw syn flood protection
 < fwdfw target
 < fwdfw targetip
 < fwdfw till
@@ -2757,16 +2880,19 @@
 < ids no enabled ruleset provider
 < ids no network zone
 < ids provider
+< ids provider eol
 < ids provider settings
 < ids remove rule structures
 < ids reset provider
 < ids ruleset autoupdate in progress
 < ids ruleset is up to date
+< ids rulesets
 < ids ruleset settings
 < ids show
 < ids subscription code required
 < ids the choosen provider is already in use
 < ids unable to download the ruleset
+< ids unsupported provider
 < ids visit provider website
 < ids working
 < imei
@@ -2830,12 +2956,15 @@
 < ipsec roadwarrior endpoint
 < ipsec routing table entries
 < ipsec settings
+< ips throughput
 < itlb multihit
 < last
+< last updated
 < least preferred
 < legacy architecture warning
 < lifetime
 < link-layer encapsulation
+< load average
 < local ip address
 < location
 < locationblock
@@ -2900,6 +3029,7 @@
 < one month
 < one week
 < one year
+< oops something went wrong
 < open connections
 < openvpn cert expires soon
 < openvpn cert has expired
@@ -2940,6 +3070,7 @@
 < ovpn no connections
 < ovpn port in root range
 < ovpn reneg sec
+< ovpn roadwarrior server
 < ovpn rw connection log
 < ovpn tls auth
 < ovpn warning rfc3280
@@ -2957,6 +3088,7 @@
 < pptp netconfig
 < pptp peer
 < pptp route
+< processors
 < processor vulnerability mitigations
 < proxy reports
 < proxy reports daily
@@ -2972,6 +3104,7 @@
 < received
 < red1
 < regenerate host certificate
+< reg_file_data_sampling
 < reiserfs warning1
 < reiserfs warning2
 < release
@@ -2983,6 +3116,7 @@
 < samba join domain
 < samba server role member
 < samba server role standalone
+< scanned
 < search
 < secret
 < sent
@@ -3017,12 +3151,14 @@
 < subscription code
 < support donation
 < system is offline
+< system time
 < taa zombieload2
 < ta key
 < tcp more reliable
 < ten minutes
 < teovpn_fragment
 < thirty minutes
+< timeformat
 < token
 < token not set
 < tor
@@ -3084,6 +3220,7 @@
 < tor traffic read written
 < tor use exit nodes
 < tor use guard nodes
+< total
 < traffic stat in
 < traffic stat out
 < traffic stat title
@@ -3127,24 +3264,31 @@
 < vpn weak
 < vulnerability
 < vulnerable
+< warning
 < week-graph
 < Weekly
+< wg
+< whitelisted
 < whois results from
 < winbind daemon
+< wireguard
 < wireless network
 < wlanap
 < wlanap 802.11w disabled
 < wlanap 802.11w enforced
 < wlanap 802.11w optional
 < wlanap auto
-< wlanap broadcast ssid
 < wlanap client isolation
 < wlanap configuration
 < wlanap country
+< wlanap hide ssid
 < wlanap management frame protection
 < wlanap neighbor scan
 < wlanap neighbor scan warning
+< wlanap psk
 < wlanap ssid
+< wlanap wireless mode
+< wlanap wlan clients
 < wlan client
 < wlan client advanced settings
 < wlan client and
@@ -3240,6 +3384,7 @@
 < autonomous system
 < available
 < broken
+< bypassed
 < cake profile bridged-llcsnap 32
 < cake profile bridged-ptm 19
 < cake profile bridged-vcmux 24
@@ -3263,6 +3408,7 @@
 < crypto warning
 < Daily
 < dangerous
+< data transfer
 < default IP address
 < desired
 < dh
@@ -3315,6 +3461,7 @@
 < force enable
 < foreshadow
 < fwdfw all subnets
+< fwdfw syn flood protection
 < fw red
 < generate ptr
 < hardware vulnerabilities
@@ -3346,16 +3493,19 @@
 < ids no enabled ruleset provider
 < ids no network zone
 < ids provider
+< ids provider eol
 < ids provider settings
 < ids remove rule structures
 < ids reset provider
 < ids ruleset autoupdate in progress
 < ids ruleset is up to date
+< ids rulesets
 < ids ruleset settings
 < ids show
 < ids subscription code required
 < ids the choosen provider is already in use
 < ids unable to download the ruleset
+< ids unsupported provider
 < ids visit provider website
 < ids working
 < inodes
@@ -3404,9 +3554,12 @@
 < ipsec roadwarrior endpoint
 < ipsec routing table entries
 < ipsec settings
+< ips throughput
 < itlb multihit
+< last updated
 < legacy architecture warning
 < link-layer encapsulation
+< load average
 < local ip address
 < log drop hostile in
 < log drop hostile out
@@ -3420,6 +3573,7 @@
 < not affected
 < not validating
 < okay
+< oops something went wrong
 < open connections
 < openvpn cert expires soon
 < openvpn cert has expired
@@ -3427,6 +3581,7 @@
 < otp qrcode
 < ovpn connection name
 < ovpn error md5
+< ovpn roadwarrior server
 < ovpn rw connection log
 < ovpn tls auth
 < ovpn warning rfc3280
@@ -3441,6 +3596,7 @@
 < pakfire tree unstable
 < pak update
 < please reboot to apply your changes
+< processors
 < processor vulnerability mitigations
 < ptr
 < random number generator daemon
@@ -3448,6 +3604,7 @@
 < rebooting ipfire fsck
 < received
 < regenerate host certificate
+< reg_file_data_sampling
 < reiserfs warning1
 < reiserfs warning2
 < release
@@ -3456,6 +3613,7 @@
 < runmode
 < samba server role member
 < samba server role standalone
+< scanned
 < secret
 < sent
 < service boot setting unavailable
@@ -3481,13 +3639,16 @@
 < subnet mask
 < subscription code
 < system is offline
+< system time
 < taa zombieload2
+< timeformat
 < token
 < token not set
 < tor guard country
 < tor guard country any
 < tor guard nodes
 < tor use guard nodes
+< total
 < traffic stat in
 < traffic stat out
 < traffic stat title
@@ -3502,19 +3663,26 @@
 < vpn wait
 < vulnerability
 < vulnerable
+< warning
 < Weekly
+< wg
+< whitelisted
 < whois results from
 < winbind daemon
+< wireguard
 < wlanap 802.11w disabled
 < wlanap 802.11w enforced
 < wlanap 802.11w optional
 < wlanap auto
-< wlanap broadcast ssid
 < wlanap client isolation
+< wlanap hide ssid
 < wlanap management frame protection
 < wlanap neighbor scan
 < wlanap neighbor scan warning
+< wlanap psk
 < wlanap ssid
+< wlanap wireless mode
+< wlanap wlan clients
 < wlan client encryption wpa3
 < wlan client management frame protection
 < working

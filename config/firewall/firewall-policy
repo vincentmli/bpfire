@@ -131,6 +131,9 @@ case "${POLICY}" in
 				fi
 				iptables -A POLICYFWD -j REJECT --reject-with icmp-host-unreachable -m comment --comment "DROP_FORWARD"
 				;;
+			ACCEPT) # ACCEPT for firewall bridge mode
+				iptables -A POLICYFWD -j ACCEPT -m comment --comment "ACCEPT_FORWARD"
+				;;
 			*) # DROP
 				if [ "${DROPFORWARD}" = "on" ]; then
 					iptables -A POLICYFWD -m limit --limit 10/second -j LOG --log-prefix "DROP_FORWARD "
@@ -174,7 +177,15 @@ case "${POLICY}" in
 		if [ "${DROPFORWARD}" = "on" ]; then
 			iptables -A POLICYFWD -m limit --limit 10/second -j LOG --log-prefix "DROP_FORWARD "
 		fi
-		iptables -A POLICYFWD -m comment --comment "DROP_FORWARD" -j DROP
+
+		case "${FWPOLICY}" in
+                        ACCEPT) # ACCEPT for firewall bridge mode
+                                iptables -A POLICYFWD -j ACCEPT -m comment --comment "ACCEPT_FORWARD"
+                                ;;
+                        *) # DROP
+                                iptables -A POLICYFWD -j DROP -m comment --comment "DROP_FORWARD"
+                                ;;
+                esac
 		;;
 esac
 

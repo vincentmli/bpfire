@@ -98,9 +98,9 @@ var/ipfire/langs
 #var/ipfire/langs/pl.pl
 #var/ipfire/langs/ru.pl
 #var/ipfire/langs/tr.pl
-#var/ipfire/langs/zh.pl
 var/ipfire/logging
 #var/ipfire/logging/settings
+var/ipfire/loxilb
 var/ipfire/mac
 #var/ipfire/mac/settings
 var/ipfire/main
@@ -120,9 +120,11 @@ var/ipfire/menu.d/60-ipfire.menu
 var/ipfire/menu.d/70-log.menu
 #var/ipfire/menu.d/EX-apcupsd.menu
 #var/ipfire/menu.d/EX-guardian.menu
-#var/ipfire/menu.d/EX-mpfire.menu
+#var/ipfire/menu.d/EX-mympd.menu
 #var/ipfire/menu.d/EX-samba.menu
 #var/ipfire/menu.d/EX-tor.menu
+#var/ipfire/menu.d/EX-transmission.menu
+#var/ipfire/menu.d/EX-vdr.menu
 #var/ipfire/menu.d/EX-wio.menu
 #var/ipfire/menu.d/EX-wlanap.menu
 var/ipfire/modem
@@ -204,7 +206,7 @@ var/ipfire/wireguard-functions.pl
 var/ipfire/wireless
 #var/ipfire/wireless/config
 #var/ipfire/wireless/settings
-var/ipfire/ddos
-var/ipfire/loxilb
-var/ipfire/xdpdns
+var/ipfire/xdptailcall
 var/ipfire/xdpsni
+var/ipfire/xdpdns
+var/ipfire/ddos

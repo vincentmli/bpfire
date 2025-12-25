@@ -87,21 +87,20 @@ if ($cgiparams{"ACTION"} eq $Lang::tr{'save'}) {
 		$Wireguard::settings{'CLIENT_DNS'} = join("|", @client_dns);
 	}
 
-	# Check wg0 ADDRESS - make it optional
-	if (defined $cgiparams{'ADDRESS'}) {
-		if ($cgiparams{'ADDRESS'} ne '') {
-			my $address = $cgiparams{'ADDRESS'};
-			unless (&Network::check_ip_address($address)) {
-				push(@errormessages, "$Lang::tr{'wg invalid wg0 address'}: ${address}");
-			}
-			# Store ADDRESS only if it's valid and not empty
-			$Wireguard::settings{'ADDRESS'} = $address;
-		} else {
-			# Explicitly set to empty string when field is empty
-			$Wireguard::settings{'ADDRESS'} = '';
-		}
-	}
-
+# Check wg0 ADDRESS - make it optional
+if (defined $cgiparams{'ADDRESS'}) {
+    if ($cgiparams{'ADDRESS'} ne '') {
+        my $address = $cgiparams{'ADDRESS'};
+        unless (&Network::check_ip_address($address)) {
+            push(@errormessages, "$Lang::tr{'wg invalid wg0 address'}: ${address}");
+        }
+        # Store ADDRESS only if it's valid and not empty
+        $Wireguard::settings{'ADDRESS'} = $address;
+    } else {
+        # Explicitly set to empty string when field is empty
+        $Wireguard::settings{'ADDRESS'} = '';
+    }
+}
 	# Don't continue on error
 	goto MAIN if (scalar @errormessages);
 
@@ -109,7 +108,7 @@ if ($cgiparams{"ACTION"} eq $Lang::tr{'save'}) {
 	&General::writehash("/var/ipfire/wireguard/settings", \%Wireguard::settings);
 
 	# Start if enabled
-	if (&Wireguard::is_enabled()) {
+	if ($Wireguard::settings{'ENABLED'} eq "on") {
 		&General::system("/usr/local/bin/wireguardctrl", "start");
 	} else {
 		&General::system("/usr/local/bin/wireguardctrl", "stop");
@@ -132,7 +131,7 @@ if ($cgiparams{"ACTION"} eq $Lang::tr{'save'}) {
 	&General::writehasharray("/var/ipfire/wireguard/peers", \%Wireguard::peers);
 
 	# Reload if enabled
-	if (&Wireguard::is_enabled()) {
+	if ($Wireguard::settings{'ENABLED'} eq "on") {
 		&General::system("/usr/local/bin/wireguardctrl", "start");
 	}
 
@@ -245,7 +244,7 @@ if ($cgiparams{"ACTION"} eq $Lang::tr{'save'}) {
 	&General::writehasharray("/var/ipfire/wireguard/peers", \%Wireguard::peers);
 
 	# Reload if enabled
-	if (&Wireguard::is_enabled()) {
+	if ($Wireguard::settings{'ENABLED'} eq "on") {
 		&General::system("/usr/local/bin/wireguardctrl", "start");
 	}
 
@@ -364,7 +363,7 @@ if ($cgiparams{"ACTION"} eq $Lang::tr{'save'}) {
 	&General::writehasharray("/var/ipfire/wireguard/peers", \%Wireguard::peers);
 
 	# Reload if enabled
-	if (&Wireguard::is_enabled()) {
+	if ($Wireguard::settings{'ENABLED'} eq "on") {
 		&General::system("/usr/local/bin/wireguardctrl", "start");
 	}
 
@@ -549,7 +548,7 @@ END
 	&General::writehasharray("/var/ipfire/wireguard/peers", \%Wireguard::peers);
 
 	# Reload if enabled
-	if (&Wireguard::is_enabled()) {
+	if ($Wireguard::settings{'ENABLED'} eq "on") {
 		&General::system("/usr/local/bin/wireguardctrl", "start");
 	}
 
@@ -664,7 +663,7 @@ END
 	&General::writehasharray("/var/ipfire/wireguard/peers", \%Wireguard::peers);
 
 	# Reload if enabled
-	if (&Wireguard::is_enabled()) {
+	if ($Wireguard::settings{'ENABLED'} eq "on") {
 		&General::system("/usr/local/bin/wireguardctrl", "start");
 	}
 
@@ -780,7 +779,7 @@ END
 	&General::writehasharray("/var/ipfire/wireguard/peers", \%Wireguard::peers);
 
 	# Reload if enabled
-	if (&Wireguard::is_enabled()) {
+	if ($Wireguard::settings{'ENABLED'} eq "on") {
 		&General::system("/usr/local/bin/wireguardctrl", "start");
 	}
 }
@@ -800,7 +799,7 @@ MAIN:
 	&Header::openbox('100%', '', $Lang::tr{'global settings'});
 
 	my %checked = (
-		"ENABLED" => (&Wireguard::is_enabled()) ? "checked" : "",
+		"ENABLED" => ($Wireguard::settings{'ENABLED'} eq "on") ? "checked" : "",
 	);
 
 	my %readonly = (
@@ -826,12 +825,12 @@ MAIN:
 					</td>
 				</tr>
 
-                                <tr>
-                                        <td>$Lang::tr{'wg address'}</td>
-                                        <td>
-                                                <input type="text" name="ADDRESS" value="$Wireguard::settings{'ADDRESS'}" />
-                                        </td>
-                                </tr>
+				<tr>
+					<td>$Lang::tr{'wg address'}</td>
+					<td>
+						<input type="text" name="ADDRESS" value="$Wireguard::settings{'ADDRESS'}" placeolder="pick one IP from client pool for wg0" />
+					</td>
+				</tr>
 
 				<tr>
 					<td>$Lang::tr{'port'}&nbsp;<img src='/blob.gif' alt='*' /></td>

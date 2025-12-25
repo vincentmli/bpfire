@@ -43,6 +43,13 @@ else
   TARGET = $(DIR_INFO)/$(THISAPP)-tools
 endif
 
+# Only for TOOLCHAIN == 1 and BUILD_ARCH == loongarch64
+ifeq "$(TOOLCHAIN)" "1"
+ ifeq "$(BUILD_ARCH)" "loongarch64"
+        CFLAGS += -Wl,--dynamic-linker=$(TOOLS_DIR)/lib64/ld-linux-loongarch-lp64d.so.1
+        LDFLAGS += -Wl,--dynamic-linker=$(TOOLS_DIR)/lib64/ld-linux-loongarch-lp64d.so.1
+ endif
+endif
 
 ###############################################################################
 # Top-level Rules
@@ -52,7 +59,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_BLAKE2 = c003d4f764f7f4d41e33af7ee28c2af272a9f0aee6ba7c2494ba96722d8d0b18f7a3f745217e9a2cecb43b6863328267a810280670c04464156b3eb3d7ee9d62
+$(DL_FILE)_BLAKE2 = 044266f901e0065a12df934d6c1f6a14e34067be835c224f053c6f57d2c6c7f0ed1d04a7c902ba8258ab05285b84dce8b1199a9ecfd7f317dbf54497b8465cd2
 
 install : $(TARGET)
 

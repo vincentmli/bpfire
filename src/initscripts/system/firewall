@@ -39,12 +39,23 @@ fi
 
 NAT_MASK="0x0f000000"
 
-IPS_REPEAT_MARK="0x80000000"
-IPS_REPEAT_MASK="0x80000000"
-IPS_BYPASS_MARK="0x40000000"
-IPS_BYPASS_MASK="0x40000000"
-
 IPSET_DB_DIR="/var/lib/location/ipset"
+
+SYNPROXY_OPTIONS=(
+	# Allow clients to use Selective ACKs
+	"--sack-perm"
+
+	# Allow TCP Timestamps
+	#"--timestamp"
+
+	# Window Scaling
+	"--wscale" "9"
+
+	# Maximum Segment Size
+	"--mss" "1460"
+)
+
+FWBRIDGE="fwbridge"
 
 function iptables() {
 	/sbin/iptables --wait "$@"
@@ -69,22 +80,6 @@ iptables_init() {
 	# Enable TRACE logging to syslog
 	modprobe nf_log_ipv4
 	sysctl -q -w net.netfilter.nf_log.2=nf_log_ipv4
-
-        # XDP SYNPROXY Chain, needs to be first chain in INPUT as the chain order matters
-        iptables -t raw -N RAWSYNPROXY
-        iptables -t raw -A PREROUTING -j RAWSYNPROXY
-        iptables -N INSYNPROXY
-        iptables -A INPUT -j INSYNPROXY
-
-	# IPS Bypass Chain which stores the BYPASS bit in connection tracking
-	iptables -N IPSBYPASS
-	iptables -A IPSBYPASS -j CONNMARK --save-mark --mask "$(( ~IPS_REPEAT_MASK & 0xffffffff ))"
-
-	# Jump into bypass chain when the BYPASS bit is set
-	for chain in INPUT FORWARD OUTPUT; do
-		iptables -A "${chain}" -m mark \
-			--mark "$(( IPS_REPEAT_MARK | IPS_BYPASS_MARK ))/$(( IPS_REPEAT_MASK | IPS_BYPASS_MASK ))" -j IPSBYPASS
-	done
 
 	# Empty LOG_DROP and LOG_REJECT chains
 	iptables -N LOG_DROP
@@ -155,13 +150,19 @@ iptables_init() {
 	fi
 	iptables -A CTINVALID  -j DROP -m comment --comment "DROP_CTINVALID"
 
-	iptables -N CONNTRACK
-	iptables -A CONNTRACK -m conntrack --ctstate ESTABLISHED -j ACCEPT
-	iptables -A CONNTRACK -m conntrack --ctstate INVALID -j CTINVALID
-	iptables -A CONNTRACK -p icmp -m conntrack --ctstate RELATED -j ACCEPT
+	iptables -N CTINPUT
+	iptables -A CTINPUT -m conntrack --ctstate ESTABLISHED -j ACCEPT
+	iptables -A CTINPUT -m conntrack --ctstate INVALID,UNTRACKED \
+		-p tcp -j SYNPROXY "${SYNPROXY_OPTIONS[@]}"
+	iptables -A CTINPUT -m conntrack --ctstate INVALID -j CTINVALID
+	iptables -A CTINPUT -p icmp -m conntrack --ctstate RELATED -j ACCEPT
+
+	iptables -N CTOUTPUT
+	iptables -A CTOUTPUT -m conntrack --ctstate ESTABLISHED -j ACCEPT
+	iptables -A CTOUTPUT -p icmp -m conntrack --ctstate RELATED -j ACCEPT
 
 	# Restore any connection marks
-	iptables -t mangle -A PREROUTING -j CONNMARK --restore-mark
+	iptables -t mangle -A PREROUTING -m mark --mark 0 -j CONNMARK --restore-mark
 
 	# Fix for braindead ISPs
 	iptables -A FORWARD -p tcp --tcp-flags SYN,RST SYN -j TCPMSS --clamp-mss-to-pmtu
@@ -231,15 +232,6 @@ iptables_init() {
 	iptables -A FORWARD -i tun+ -j OVPNBLOCK
 	iptables -A FORWARD -o tun+ -j OVPNBLOCK
 
-	# IPS (Suricata) chains
-	iptables -N IPS_INPUT
-	iptables -N IPS_FORWARD
-	iptables -N IPS_OUTPUT
-
-	for chain in INPUT FORWARD OUTPUT; do
-		iptables -A "${chain}" -m mark --mark "0x0/$(( IPS_REPEAT_MASK | IPS_BYPASS_MASK ))" -j "IPS_${chain}"
-	done
-
 	# OpenVPN transfer network translation
 	iptables -t nat -N OVPNNAT
 	iptables -t nat -A POSTROUTING -j OVPNNAT
@@ -276,9 +268,9 @@ iptables_init() {
 	done
 
 	# Accept everything connected
-	for i in INPUT FORWARD OUTPUT; do
-		iptables -A ${i} -j CONNTRACK
-	done
+	iptables -A INPUT   -j CTINPUT
+	iptables -A FORWARD -j CTINPUT
+	iptables -A OUTPUT  -j CTOUTPUT
 
 	# Allow DHCP
 	iptables -N DHCPINPUT
@@ -398,6 +390,22 @@ iptables_init() {
 			-m mark --mark "0x04000000/${NAT_MASK}" -j SNAT --to-source "${ORANGE_ADDRESS}"
 	fi
 
+	# IPS (Suricata) chains
+	iptables -t mangle -N IPS
+	iptables -t mangle -N IPS_CLEAR
+	iptables -t mangle -N IPS_SCAN_IN
+	iptables -t mangle -N IPS_SCAN_OUT
+
+	iptables -t mangle -A INPUT   -j IPS_SCAN_IN
+	iptables -t mangle -A FORWARD -j IPS_SCAN_IN
+	iptables -t mangle -A FORWARD -j IPS_SCAN_OUT
+	iptables -t mangle -A OUTPUT  -j IPS_SCAN_OUT
+
+	for chain in INPUT FORWARD OUTPUT; do
+		iptables -t mangle -A "${chain}" -j IPS
+		iptables -t mangle -A "${chain}" -j IPS_CLEAR
+	done
+
 	# RED chain, used for the red interface
 	iptables -N REDINPUT
 	iptables -A INPUT -j REDINPUT
@@ -405,6 +413,14 @@ iptables_init() {
 	iptables -A FORWARD -j REDFORWARD
 	iptables -t nat -N REDNAT
 	iptables -t nat -A POSTROUTING -j REDNAT
+
+	# SYN Flood Protection
+	iptables -t raw -N SYN_FLOOD_PROTECT
+	iptables -t raw -A PREROUTING -p tcp --syn -j SYN_FLOOD_PROTECT
+
+	# XDP SYNPROXY acceleration
+	iptables -N XDP_SYNPROXY
+	iptables -t raw -N XDP_SYNPROXY
 
 	# Populate IPsec chains
 	/usr/lib/firewall/ipsec-policy
@@ -431,6 +447,11 @@ iptables_init() {
 	iptables -N POLICYOUT
 	iptables -A OUTPUT -j POLICYOUT
 
+	# Enable bridge netfilter.
+	if [ "${BRIDGENETFILTER}" = "on" ]; then
+		modprobe br_netfilter
+		sysctl -w net.bridge.bridge-nf-call-iptables=1
+	fi
 	# Initialize firewall policies.
 	/usr/sbin/firewall-policy
 
@@ -441,6 +462,16 @@ iptables_init() {
 	# add the blocking rules for MASQUERADE
 	if [ ! -e "/var/ipfire/red/active" ]; then
 		iptables_red_down
+	fi
+
+	if [ "${FWBRIDGEMODE}" = "on" ]; then
+		ip link add name $FWBRIDGE type bridge
+		ip link set $RED_DEV master $FWBRIDGE
+		ip link set $GREEN_DEV master $FWBRIDGE
+		ip link set $FWBRIDGE up
+		ip a add $FWBRIDGEIP/$FWBRIDGEMASK dev $FWBRIDGE
+		iptables -t filter -A GUIINPUT -i $FWBRIDGE -p tcp -m tcp --dport 444 -j ACCEPT
+		iptables -t filter -A GUIINPUT -i $FWBRIDGE -p tcp -m tcp --dport 22 -j ACCEPT
 	fi
 }
 

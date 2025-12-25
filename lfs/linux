@@ -2,6 +2,7 @@
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
 # Copyright (C) 2007-2024  IPFire Team  <info@ipfire.org>                     #
+# Copyright (C) 2025  LoongFire Team  <vincent.mc.li@gmail.com>               #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
@@ -24,18 +25,22 @@
 
 include Config
 
-VER         = 6.15.6
+VER         = 6.18.1
 
 THISAPP    = linux-$(VER)
 DL_FILE    = linux-$(VER).tar.xz
 DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
-CFLAGS     =
-CXXFLAGS   =
 
 HEADERS_ARCH  = $(BUILD_PLATFORM)
 KERNEL_ARCH   = $(BUILD_ARCH)
 KERNEL_TARGET = bzImage
+
+ifeq "$(BUILD_ARCH)" "loongarch64"
+	HEADERS_ARCH = loongarch
+	KERNEL_ARCH  = loongarch
+	KERNEL_TARGET = vmlinuz
+endif
 
 ifeq "$(BUILD_ARCH)" "aarch64"
 	HEADERS_ARCH = arm64
@@ -48,19 +53,18 @@ ifeq "$(BUILD_ARCH)" "riscv64"
 	KERNEL_TARGET = Image.gz
 endif
 
-VERSUFIX=ipfire$(KCFG)
-
 ifeq "$(TOOLCHAIN)" "1"
-	TARGET = $(DIR_INFO)/linux-$(VER)-$(VERSUFIX)-tools
+	TARGET = $(DIR_INFO)/$(THISAPP)-tools
 	HEADERS_PREFIX = $(TOOLS_DIR)
 	EXTRAMAKE = CROSS_COMPILE=$(CROSSTARGET)-
 else
-	TARGET = $(DIR_INFO)/linux-$(VER)-$(VERSUFIX)
 	HEADERS_PREFIX = /usr
+ifeq "$(HEADERS)" "1"
+	TARGET = $(DIR_INFO)/$(THISAPP)-headers
+	ROOTFILE_APPEND="-headers"
+else
+	TARGET = $(DIR_INFO)/$(THISAPP)
 endif
-
-ifeq "$(KCFG)" ""
-LASTKERNEL=1
 endif
 
 ###############################################################################
@@ -72,7 +76,7 @@ objects = \
 
 $(DL_FILE) = $(URL_IPFIRE)/$(DL_FILE)
 
-$(DL_FILE)_BLAKE2 = 34301ec451141cab53c6017445fb78c6a681095604387b20060e8b2102d9677cf25a3af9f3db56a0b88772434179f730842bce67b718cd28998e5c56178c748a
+$(DL_FILE)_BLAKE2 = 6ea6a7235ee59f876b015c6fda0f2772980c6ea58240689ce581182262387cbef3aed3c95ced66cdb56479cbd83961fbcbdfdff09f049941c3daf047710adb61
 
 install : $(TARGET)
 
@@ -104,12 +108,10 @@ $(subst %,%_BLAKE2,$(objects)) :
 
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
-	@rm -rf $(DIR_APP) $(DIR_SRC)/linux && cd $(DIR_SRC) && tar axf $(DIR_DL)/$(DL_FILE)
-
-	ln -svf linux-$(VER) $(DIR_SRC)/linux
+	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar axf $(DIR_DL)/$(DL_FILE)
 
 	# Layer7-patch
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux/linux-6.6-layer7.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux/linux-6.6.26-layer7.patch
 
 	# DVB Patches
 	cd $(DIR_APP) && patch -Np2 < $(DIR_SRC)/src/patches/v4l-dvb_fix_tua6034_pll.patch
@@ -133,13 +135,23 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	# Fix external module compile
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux/linux-6.0-fix_external_module_build.patch
 
+	# Patch bpf trampoline fixes from loongarch mailing list https://lore.kernel.org/loongarch/20250923085450.140602-1-hengqi.chen@gmail.com/T/#t
+	# b4 am -o . 20250923085450.140602-1-hengqi.chen@gmail.com download and create the patchset mbx file
+	# cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux/v6_20250923_hengqi_chen_loongarch_fix_bpf_trampoline_related_issues.mbx
+
+	# Disable bpf trampoline trace to kernel module functions
+	# cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux/LoongArch-BPF-Disable-bpf-trampoline-kernel-module-f.patch
+
 ifeq "$(BUILD_ARCH)" "aarch64"
 	# Apply Arm kernel patches.
 	cd $(DIR_APP) && cat patch $(DIR_SRC)/src/patches/linux/aarch64/* | patch -Np1
 endif
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux/linux-3.14.79-amba-fix.patch
 
-ifeq "$(KCFG)" "-headers"
+	# Customise the release
+	cd $(DIR_APP) && echo "$(KVER_SUFFIX)" > localversion.10-$(SNAME)
+
+ifeq "$(HEADERS)" "1"
 	# Install the header files
 	cd $(DIR_APP) && make ARCH=$(HEADERS_ARCH) $(EXTRAMAKE) headers
 	-mkdir -pv $(BUILDROOT)/$(HEADERS_PREFIX)/include
@@ -149,25 +161,31 @@ ifeq "$(KCFG)" "-headers"
 else
 
 	# Install ipfire logo
-	cd $(DIR_APP) && cp -vf $(DIR_SRC)/config/kernel/bpfire-logo-ascii.ppm \
+	cd $(DIR_APP) && cp -vf $(DIR_SRC)/config/kernel/loongfire_logo.ppm \
 		drivers/video/logo/logo_linux_clut224.ppm
 
 	# Cleanup kernel source
-	cp $(DIR_SRC)/config/kernel/kernel.config.$(BUILD_ARCH)-$(VERSUFIX) $(DIR_APP)/.config
+	cp $(DIR_SRC)/config/kernel/kernel.config.$(BUILD_ARCH)$(KVER_SUFFIX) $(DIR_APP)/.config
 	cd $(DIR_APP) && make oldconfig
 	cd $(DIR_APP) && make clean
-	cd $(DIR_APP) && sed -i -e 's/EXTRAVERSION\ =.*/EXTRAVERSION\ =\ -$(VERSUFIX)/' Makefile
 
 	# Copy Module signing key configuration
 	cp -f $(DIR_SRC)/config/kernel/x509.genkey $(DIR_APP)/certs/x509.genkey
 
 	# Remove modules folder if exists
-	rm -rf /lib/modules/$(VER)-$(VERSUFIX)
+	rm -rf /lib/modules/$(KVER)
 
 	# Build the kernel
+	# Loongarch64 make requires no argument to build vmlinuz and EFI under arch/loongarch/boot
+ifeq "$(BUILD_ARCH)" "loongarch64"
+	cd $(DIR_APP) && make $(MAKETUNING)
+else
 	cd $(DIR_APP) && make $(MAKETUNING) $(KERNEL_TARGET) modules
+endif
+	# Build objtool
+	cd $(DIR_APP)/tools/objtool && make $(MAKETUNING)
 
-	# Build bpftool
+        # Build bpftool
 	cd $(DIR_APP)/tools/bpf/bpftool && sed -i -e 's/^prefix ?= \/usr\/local/prefix ?= \/usr/' Makefile
 	cd $(DIR_APP)/tools/bpf/bpftool && make $(MAKETUNING)
 
@@ -175,10 +193,48 @@ else
 	cd $(DIR_APP)/tools/perf && NO_JEVENTS=1 NO_LIBTRACEEVENT=1 make $(MAKETUNING)
 
 	# Install the kernel
-	cd $(DIR_APP) && cp -v arch/$(KERNEL_ARCH)/boot/$(KERNEL_TARGET) /boot/vmlinuz-$(VER)-$(VERSUFIX)
-	cd $(DIR_APP) && cp -v System.map /boot/System.map-$(VER)-$(VERSUFIX)
-	cd $(DIR_APP) && cp -v .config /boot/config-$(VER)-$(VERSUFIX)
+	cd $(DIR_APP) && cp -v arch/$(KERNEL_ARCH)/boot/$(KERNEL_TARGET) /boot/vmlinuz-$(KVER)
+	cd $(DIR_APP) && cp -v System.map /boot/System.map-$(KVER)
+	cd $(DIR_APP) && cp -v .config /boot/config-$(KVER)
 	cd $(DIR_APP) && INSTALL_MOD_STRIP=1 make $(MAKETUNING) modules_install
+
+ifneq "$(BUILD_PLATFORM)" "x86"
+	cd $(DIR_APP) && make $(MAKETUNING) dtbs
+	mkdir -p /boot/dtb-$(KVER)
+	cd $(DIR_APP)/arch/$(KERNEL_ARCH)/boot/dts && for f in $$(find -name "*.dtb"); do \
+				cp -v --parents $$f /boot/dtb-$(KVER)/ ; \
+				chmod 644 /boot/dtb-$(KVER)/$$f ; \
+			done
+endif
+
+	# Recreate source and build links
+	rm -rf /lib/modules/$(KVER)/{build,source}
+	mkdir -p /lib/modules/$(KVER)/build
+	ln -sf build /lib/modules/$(KVER)/source
+
+	# Create dirs for extra modules
+	mkdir -p /lib/modules/$(KVER)/extra
+
+	cd $(DIR_APP) && cp --parents $$(find -type f -name "Makefile*" -o -name "Kconfig*") \
+		/lib/modules/$(KVER)/build
+	cd $(DIR_APP) && cp Module.symvers System.map /lib/modules/$(KVER)/build
+	rm -rf /lib/modules/$(KVER)/build/{Documentation,scripts,include}
+
+	cd $(DIR_APP) && cp .config /lib/modules/$(KVER)/build
+	cd $(DIR_APP) && cp -a scripts /lib/modules/$(KVER)/build
+	find /lib/modules/$(KVER)/build/scripts -name "*.o" -exec rm -vf {} \;
+
+	cd $(DIR_APP) && cp -a --parents arch/$(HEADERS_ARCH)/include /lib/modules/$(KVER)/build
+	cd $(DIR_APP) && cp -a include /lib/modules/$(KVER)/build/include
+
+	# Copy module signing key for off tree modules
+	cd $(DIR_APP) && cp -f certs/signing_key.* /lib/modules/$(KVER)/build/certs/
+
+	# Install objtool
+	cd $(DIR_APP) && cp -a tools/objtool/objtool \
+		/lib/modules/$(KVER)/build/tools/objtool/ || :
+	cd $(DIR_APP) && cp -a --parents tools/build/{Build.include,fixdep.c} \
+		tools/scripts/utilities.mak /lib/modules/$(KVER)/build
 
 	# Install bpftool
 	cd $(DIR_APP)/tools/bpf/bpftool && make install
@@ -186,59 +242,20 @@ else
 	# Install perf tool
 	cd $(DIR_APP)/tools/perf && install -m 755 perf /usr/sbin/
 
-ifneq "$(BUILD_PLATFORM)" "x86"
-	cd $(DIR_APP) && make $(MAKETUNING) dtbs
-	mkdir -p /boot/dtb-$(VER)-$(VERSUFIX)
-	cd $(DIR_APP)/arch/$(KERNEL_ARCH)/boot/dts && for f in $$(find -name "*.dtb"); do \
-				cp -v --parents $$f /boot/dtb-$(VER)-$(VERSUFIX)/ ; \
-				chmod 644 /boot/dtb-$(VER)-$(VERSUFIX)/$$f ; \
-			done
-endif
-
-	# Recreate source and build links
-	rm -rf /lib/modules/$(VER)-$(VERSUFIX)/{build,source}
-	mkdir -p /lib/modules/$(VER)-$(VERSUFIX)/build
-	ln -sf build /lib/modules/$(VER)-$(VERSUFIX)/source
-
-	# Create dirs for extra modules
-	mkdir -p /lib/modules/$(VER)-$(VERSUFIX)/extra
-
-	cd $(DIR_APP) && cp --parents $$(find -type f -name "Makefile*" -o -name "Kconfig*") \
-		/lib/modules/$(VER)-$(VERSUFIX)/build
-	cd $(DIR_APP) && cp Module.symvers System.map /lib/modules/$(VER)-$(VERSUFIX)/build
-	rm -rf /lib/modules/$(VER)-$(VERSUFIX)/build/{Documentation,scripts,include}
-
-	cd $(DIR_APP) && cp .config /lib/modules/$(VER)-$(VERSUFIX)/build
-	cd $(DIR_APP) && cp -a scripts /lib/modules/$(VER)-$(VERSUFIX)/build
-	find /lib/modules/$(VER)-$(VERSUFIX)/build/scripts -name "*.o" -exec rm -vf {} \;
-
-	cd $(DIR_APP) && cp -a --parents arch/$(HEADERS_ARCH)/include /lib/modules/$(VER)-$(VERSUFIX)/build
-	cd $(DIR_APP) && cp -a include /lib/modules/$(VER)-$(VERSUFIX)/build/include
-
-	# Copy module signing key for off tree modules
-	cd $(DIR_APP) && cp -f certs/signing_key.* /lib/modules/$(VER)-$(VERSUFIX)/build/certs/
-
-	# Install objtool
-	cd $(DIR_APP) && cp -a tools/objtool/objtool \
-		/lib/modules/$(VER)-$(VERSUFIX)/build/tools/objtool/ || :
-	cd $(DIR_APP) && cp -a --parents tools/build/{Build.include,fixdep.c} \
-		tools/scripts/utilities.mak /lib/modules/$(VER)-$(VERSUFIX)/build
-
 	# Make sure we can build external modules
-	touch -r /lib/modules/$(VER)-$(VERSUFIX)/build/Makefile \
-		/lib/modules/$(VER)-$(VERSUFIX)/build/include/generated/uapi/linux/version.h
-	touch -r /lib/modules/$(VER)-$(VERSUFIX)/build/.config \
-		/lib/modules/$(VER)-$(VERSUFIX)/build/autoconf.h
-	cp /lib/modules/$(VER)-$(VERSUFIX)/build/.config \
-		/lib/modules/$(VER)-$(VERSUFIX)/build/include/config/auto.conf
+	touch -r /lib/modules/$(KVER)/build/Makefile \
+		/lib/modules/$(KVER)/build/include/generated/uapi/linux/version.h
+	touch -r /lib/modules/$(KVER)/build/.config \
+		/lib/modules/$(KVER)/build/autoconf.h
+	cp /lib/modules/$(KVER)/build/.config \
+		/lib/modules/$(KVER)/build/include/config/auto.conf
 
 	# Fix permissions
-	find /lib/modules/$(VER)-$(VERSUFIX) -name "modules.order" \
+	find /lib/modules/$(KVER) -name "modules.order" \
 		-exec chmod 644 {} \;
 
-	find /lib/modules/$(VER)-$(VERSUFIX) -name ".*.cmd" -exec rm -f {} \;
+	find /lib/modules/$(KVER) -name ".*.cmd" -exec rm -f {} \;
 
-ifeq "$(LASTKERNEL)" "1"
 	# Only do this once
 	cd $(DIR_APP) && install -m 755 usr/gen_init_cpio /sbin/
 
@@ -246,23 +263,23 @@ ifeq "$(LASTKERNEL)" "1"
 	echo install drm /bin/false > /etc/modprobe.d/framebuffer.conf
 
 	# Blacklist old framebuffer modules
-	for f in $$(find /lib/modules/$(VER)-$(VERSUFIX)/kernel/drivers/video/fbdev/ -name *.ko.xz); do \
+	for f in $$(find /lib/modules/$(KVER)/kernel/drivers/video/fbdev/ -name *.ko.xz); do \
 		echo "blacklist $$(basename $$f)" >> /etc/modprobe.d/framebuffer.conf ; \
 	done
 	# Blacklist new drm framebuffer modules
-	for f in $$(find /lib/modules/$(VER)-$(VERSUFIX)/kernel/drivers/gpu/drm -name *.ko.xz); do \
+	for f in $$(find /lib/modules/$(KVER)/kernel/drivers/gpu/drm -name *.ko.xz); do \
 		echo "blacklist $$(basename $$f)" >> /etc/modprobe.d/framebuffer.conf ; \
 	done
 	sed -i -e "s|.ko.xz||g" /etc/modprobe.d/framebuffer.conf
 
 	# Disable ipv6 at runtime
 	echo "options ipv6 disable_ipv6=1" > /etc/modprobe.d/ipv6.conf
-endif
+
+	# build cpupower utility
+	cd $(DIR_APP)/tools/power/cpupower && make $(MAKETUNING)
+	cd $(DIR_APP)/tools/power/cpupower && make install
+
 endif
 
-	#force new build of external modules and initrd if the kernel was rebuild
-	-rm -f /usr/src/log/*-kmod-$(VER)-$(VERSUFIX)
-	-rm -f /usr/src/log/linux-initrd-$(VER)-$(VERSUFIX)
-
-	@rm -rf $(DIR_APP) $(DIR_SRC)/linux
+	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)

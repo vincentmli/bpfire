@@ -11,10 +11,10 @@ usr/bin/free
 usr/bin/pgrep
 usr/bin/pidof
 usr/bin/pidwait
-#usr/bin/pkill
-#usr/bin/pmap
+usr/bin/pkill
+usr/bin/pmap
 #usr/bin/pwdx
-#usr/bin/slabtop
+usr/bin/slabtop
 #usr/bin/tload
 usr/bin/top
 usr/bin/vmstat

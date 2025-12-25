@@ -1,7 +1,7 @@
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
-# Copyright (C) 2007-2023  IPFire Team  <info@ipfire.org>                     #
+# Copyright (C) 2007-2024  IPFire Team  <info@ipfire.org>                     #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
@@ -26,19 +26,13 @@ include Config
 
 SUMMARY    = Network tool to concatenate and redirect sockets
 
-VER        = 7.94
+VER        = 7.95
 
 THISAPP    = ncat-$(VER)
 DL_FILE    = nmap-$(VER).tar.bz2
 DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/nmap-$(VER)
 TARGET     = $(DIR_INFO)/$(THISAPP)
-PROG       = ncat
-PAK_VER    = 10
-
-DEPS       =
-
-SERVICES   =
 
 ###############################################################################
 # Top-level Rules
@@ -48,7 +42,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_BLAKE2 = 5819b458b50e33f6a507ad3c32a731c13e730c40d31a61731c3cfcd41fad8e3fdfcbb721ef46b05a80e406d0a646d0966d4b645551711144822551ef374a443a
+$(DL_FILE)_BLAKE2 = 1dec6208a985fbde7cff6d39363788af31b830f5491100ce417c5a67cb1fa89249fe999b69e28f99344ba70f431827c3dad852a72d474fd67b0bad82e5e0216d
 
 install : $(TARGET)
 
@@ -83,15 +77,14 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar jxf $(DIR_DL)/$(DL_FILE)
 	$(UPDATE_AUTOMAKE)
 	cd $(DIR_APP) && mkdir -p build
-	cd $(DIR_APP) && ./configure	\
-		--prefix=/usr		\
-		--without-nmapfe	\
-		--without-zenmap	\
-		--without-ndiff		\
-		--without-nping		\
-		--without-liblua	\
-		--without-nmap-update
-
+	cd $(DIR_APP) && ./configure \
+				--prefix=/usr \
+				--without-nmapfe \
+				--without-zenmap \
+				--without-ndiff \
+				--without-nping \
+				--without-liblua \
+				--without-nmap-update
 	cd $(DIR_APP) && make $(MAKETUNING) $(EXTRA_MAKE)
 	cd $(DIR_APP)/ncat && make install
 	ln -f -s /usr/bin/ncat /usr/bin/nc

@@ -3,7 +3,7 @@
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
 # Copyright (C) 2007-2022  IPFire Team  <info@ipfire.org>                     #
-# Copyright (C) 2024  BPFire <vincent.mc.li@gmail.com>                     #
+# Copyright (C) 2024-2025  BPFire <vincent.mc.li@gmail.com>                     #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
@@ -24,165 +24,43 @@
 . $rc_functions
 
 eval $(/usr/local/bin/readhash /var/ipfire/ddos/settings)
-eval $(/usr/local/bin/readhash /var/ipfire/ddos/udp-ddos-settings)
-eval $(/usr/local/bin/readhash /var/ipfire/ddos/dns-ddos-settings)
 
-MSSOPTS="--mss4 1460 --mss6 1440"
-TTLOPTS="--ttl 64"
-WSCALE="--wscale 0"
 
-get_ports () {
-# Define an empty variable to store the output
-	local output=""
-	local ddos_port_file="$1"
+load_ddos () {
+        /usr/sbin/xdp-loader status red0 | grep -w 'xdp_ddos'
+        if [ $? -ne 0 ]; then
+                xdp-loader load red0 -P 80 -p /sys/fs/bpf/xdp-ddos -n xdp_ddos /usr/lib/bpf/xdp_ddos.bpf.o
+                if [ $? -ge 1 ]; then
+                        boot_mesg "Native mode not supported, try SKB"
+                        xdp-loader load red0 -m skb -P 80 -p /sys/fs/bpf/xdp-ddos -n xdp_ddos /usr/lib/bpf/xdp_ddos.bpf.o
+                fi
 
-# Read the input file line by line
-	while IFS= read -r line; do
-		# Check if the line contains '=on'
-		if [[ "$line" == [0-9]*"=on" ]]; then
-			# Extract the service/port number
-			service=$(echo "$line" | cut -d'=' -f1)
-			# Append the service/port number to the output string
-			output="$output$service,"
-		fi
-	done < $ddos_port_file
-
-	# Remove the trailing comma from the output string
-	output="${output%,}"
-	echo $output
+        fi
 }
 
-load_syncookie () {
-	sysctl -w net.ipv4.tcp_syncookies=1
-	sysctl -w net.ipv4.tcp_timestamps=1
-	sysctl -w net.netfilter.nf_conntrack_tcp_loose=0
-	/usr/sbin/xdp-loader status red0 | grep 'syncookie_xdp'
-	if [ $? -eq 0 ]; then
-		prog_id=$(xdp-loader status red0 | grep 'syncookie_xdp' | awk '{print $4}')
-		xdp_synproxy --prog $prog_id $MSSOPTS $WSCALE $TTLOPTS --ports="$tcp_ports"
-	else
-		xdp-loader load red0 /usr/lib/bpf/xdp_synproxy.bpf.o
-		if [ $? -ge 1 ]; then
-			boot_mesg "Native mode not supported, try SKB"
-			xdp-loader load red0 -m skb /usr/lib/bpf/xdp_synproxy.bpf.o
-			prog_id=$(/usr/sbin/xdp-loader status red0 | grep 'syncookie_xdp' | awk '{print $4}')
-			xdp_synproxy --prog $prog_id $MSSOPTS $WSCALE $TTLOPTS --ports="$tcp_ports"
-		else
-			prog_id=$(/usr/sbin/xdp-loader status red0 | grep 'syncookie_xdp' | awk '{print $4}')
-			xdp_synproxy --prog $prog_id $MSSOPTS $WSCALE $TTLOPTS --ports="$tcp_ports"
-		fi
-	fi
+unload_ddos () {
+        /usr/sbin/xdp-loader status red0 | grep -w 'xdp_ddos'
+        if [ $? -eq 0 ]; then
+                prog_id=$(xdp-loader status red0 | grep 'xdp_ddos' | awk '{print $4}')
+                /usr/sbin/xdp-loader unload -i $prog_id red0
+        else
+                boot_mesg "Error xdp_ddos not loaded!"
+        fi
 }
 
-load_xdpudp () {
-	/usr/sbin/xdp-loader status red0 | grep 'xdp_udp'
-	if [ $? -eq 0 ]; then
-		prog_id=$(xdp-loader status red0 | grep 'xdp_udp' | awk '{print $4}')
-		xdp-udp --prog $prog_id --ports="$udp_ports"
-	else
-		xdp-loader load red0 -P 90 -p /sys/fs/bpf/xdp-udp -n xdp_udp /usr/lib/bpf/xdp_udp.bpf.o
-		if [ $? -ge 1 ]; then
-			boot_mesg "Native mode not supported, try SKB"
-			xdp-loader load red0 -m skb -P 90 -p /sys/fs/bpf/xdp-udp -n xdp_udp /usr/lib/bpf/xdp_udp.bpf.o
-			prog_id=$(/usr/sbin/xdp-loader status red0 | grep 'xdp_udp' | awk '{print $4}')
-			xdp-udp --prog $prog_id --ports="$udp_ports"
-		else
-			prog_id=$(/usr/sbin/xdp-loader status red0 | grep 'xdp_udp' | awk '{print $4}')
-			xdp-udp --prog $prog_id --ports="$udp_ports"
-		fi
-	fi
-}
-
-load_xdpdns () {
-	/usr/sbin/xdp-loader status green0 | grep 'xdp_dns'
-	if [ $? -ne 0 ]; then
-		xdp-loader load green0 -P 80 -p /sys/fs/bpf/xdp-dns -n xdp_dns /usr/lib/bpf/xdp_dnsrrl.bpf.o
-		if [ $? -ge 1 ]; then
-			boot_mesg "Native mode not supported, try SKB"
-			xdp-loader load green0 -m skb -P 80 -p /sys/fs/bpf/xdp-dns -n xdp_dns /usr/lib/bpf/xdp_dnsrrl.bpf.o
-		fi
-	fi
-}
-
-unload_syncookie () {
-	sysctl -w net.ipv4.tcp_syncookies=1
-	/usr/sbin/xdp-loader status red0 | grep 'syncookie_xdp'
-	if [ $? -eq 0 ]; then
-		prog_id=$(xdp-loader status red0 | grep 'syncookie_xdp' | awk '{print $4}')
-		/usr/sbin/xdp-loader unload -i $prog_id red0
-	else
-		boot_mesg "Error syncookie_xdp not loaded!"
-	fi
-}
-
-unload_xdpudp () {
-	/usr/sbin/xdp-loader status red0 | grep 'xdp_udp'
-	if [ $? -eq 0 ]; then
-		prog_id=$(xdp-loader status red0 | grep 'xdp_udp' | awk '{print $4}')
-		/usr/sbin/xdp-loader unload -i $prog_id red0
-		/bin/rm -rf /sys/fs/bpf/xdp-udp
-	else
-		boot_mesg "Error xdp_udp not loaded!"
-	fi
-}
-
-unload_xdpdns () {
-	/usr/sbin/xdp-loader status green0 | grep 'xdp_dns'
-	if [ $? -eq 0 ]; then
-		prog_id=$(xdp-loader status green0 | grep 'xdp_dns' | awk '{print $4}')
-		/usr/sbin/xdp-loader unload -i $prog_id green0
-	else
-		boot_mesg "Error xdp_dns not loaded!"
-	fi
-}
-
-set_ratelimit () {
-	local rate=$1
-	local map=$2
-	hex=$(printf '%08x' "$rate")  # Convert decimal to hexadecimal
-	bytes=$(echo "$hex" | fold -w2 | tac)   # Split the hexadecimal into pairs of bytes and reverse the order
-	hex_le=$(echo "$bytes" | sed 's/^/0x/' | tr '\n' ' ')  # Add prefix "0x" to each byte and concatenate them
-	bpftool map update name $map key hex 00 00 00 00 value $hex_le
-}
-
-tcp_ports="$(get_ports /var/ipfire/ddos/settings)"
-udp_ports="$(get_ports /var/ipfire/ddos/udp-ddos-settings)"
 
 case "$1" in
 	start)
-		if [ ! -e /var/ipfire/red/active ]; then
-			boot_mesg " ERROR! Red0 interface not online!"
-			echo_warning
-			exit 1
-		fi
-		boot_mesg -n "Starting ddos..."
+		boot_mesg -n "Starting xdp-ddos..."
 		if [ "$ENABLE_DDOS" == "on" ]; then
-			load_syncookie
-		fi
-		if [ "$ENABLE_UDP_DDOS" == "on" ]; then
-			load_xdpudp
-		fi
-		if [ "$ENABLE_DNS_DDOS" == "on" ]; then
-			load_xdpdns
+			load_ddos
 		fi
 		;;
 
 	stop)
-		boot_mesg "Stopping ddos..."
+		boot_mesg "Stopping xdp-ddos..."
 		if [ "$ENABLE_DDOS" == "off" ]; then
-			unload_syncookie
-		fi
-		if [ "$ENABLE_UDP_DDOS" == "off" ]; then
-			unload_xdpudp
-			if [ -n "$UDP_RATELIMIT" ]; then
-				set_ratelimit $UDP_RATELIMIT "xdp_udp.data"
-			fi
-		fi
-		if [ "$ENABLE_DNS_DDOS" == "off" ]; then
-			unload_xdpdns
-			if [ -n "$DNS_RATELIMIT" ]; then
-				set_ratelimit $DNS_RATELIMIT "xdp_dnsr.data"
-			fi
+			unload_ddos
 		fi
 		;;
 
@@ -192,12 +70,8 @@ case "$1" in
 		$0 start
 		;;
 
-	status)
-		/usr/sbin/xdp-loader status red0
-		;;
-
 	*)
-		echo "Usage: $0 {start|stop|restart|status}"
+		echo "Usage: $0 {start|stop|restart}"
 		exit 1
 		;;
 esac

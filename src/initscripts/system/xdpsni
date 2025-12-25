@@ -3,7 +3,7 @@
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
 # Copyright (C) 2007-2022  IPFire Team  <info@ipfire.org>                     #
-# Copyright (C) 2024  BPFire <vincent.mc.li@gmail.com>                     #
+# Copyright (C) 2024-2025  LoongFire <vincent.mc.li@gmail.com>                #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
@@ -30,10 +30,10 @@ domainfile="/var/ipfire/xdpsni/domainfile"
 load_sniblock () {
         /usr/sbin/xdp-loader status green0 | grep -w 'xdp_tls_sni'
         if [ $? -ne 0 ]; then
-                xdp-loader load green0 -P 80 -p /sys/fs/bpf/xdp-sni -n xdp_tls_sni /usr/lib/bpf/xdp_sni.bpf.o
+                xdp-loader load green0 -P 70 -p /sys/fs/bpf/xdp-sni -n xdp_tls_sni /usr/lib/bpf/xdp_sni.bpf.o
                 if [ $? -ge 1 ]; then
                         boot_mesg "Native mode not supported, try SKB"
-                        xdp-loader load green0 -m skb -P 80 -p /sys/fs/bpf/xdp-sni -n xdp_tls_sni /usr/lib/bpf/xdp_sni.bpf.o
+                        xdp-loader load green0 -m skb -P 70 -p /sys/fs/bpf/xdp-sni -n xdp_tls_sni /usr/lib/bpf/xdp_sni.bpf.o
                 fi
 		# allow WUI nobody with permission to update map
 		chown -R nobody /sys/fs/bpf/xdp-sni

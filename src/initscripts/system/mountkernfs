@@ -46,6 +46,11 @@ case "${1}" in
 			mount -t cgroup2 none /sys/fs/cgroup || failed=1
 		fi
 
+		if ! mountpoint /sys/kernel/debug &> /dev/null; then
+			boot_mesg -n " /sys/kernel/debug" ${NORMAL}
+			mount -t debugfs none /sys/kernel/debug || failed=1
+		fi
+
 		if ! mountpoint /sys/fs/bpf &> /dev/null; then
 			boot_mesg -n " /sys/fs/bpf" ${NORMAL}
 			mount -t bpf bpffs /sys/fs/bpf || failed=1

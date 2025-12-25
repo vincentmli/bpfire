@@ -26,7 +26,7 @@ include Config
 
 SUMMARY    = The Nagios Plug-Ins
 
-VER        = 2.3.3
+VER        = 2.4.11
 
 THISAPP    = nagios-plugins-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
@@ -34,7 +34,7 @@ DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = nagios-plugins
-PAK_VER    = 9
+PAK_VER    = 10
 
 DEPS       =
 
@@ -48,7 +48,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_BLAKE2 = f02ded0ed6d5c649a82fe7fe06e393b404fc6e9a260365b128c114381d411d93c8980fee6da73c4d03ab73669d5b8754225ff5aa14ef4430ee0c91d8c56cb131
+$(DL_FILE)_BLAKE2 = 80cc63b2e5c5f0d961f8d7d5c98aca78830d5d2584654006012492d300ff894eef973815f181d60db83c84ecccb485b459328ef8f7c0efc11c403b3224d26335
 
 install : $(TARGET)
 

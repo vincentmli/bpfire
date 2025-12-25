@@ -347,7 +347,7 @@ af-packet:
   - interface: red0 
     threads: auto
     cluster-id: 99
-    cluster-type: cluster_qm
+    cluster-type: cluster_flow
     defrag: yes
     copy-mode: ips
     copy-iface: green0 
@@ -355,7 +355,6 @@ af-packet:
     pinned-maps: true
     pinned-maps-name: flow_table_v4
     xdp-filter-file:  /usr/lib/bpf/xdp_filter.bpf
-    xdp-filter-prio: 100
     bypass: yes
     use-mmap: yes
     ring-size: 200000
@@ -372,7 +371,6 @@ af-packet:
     pinned-maps: true
     pinned-maps-name: flow_table_v4
     xdp-filter-file:  /usr/lib/bpf/xdp_filter.bpf
-    xdp-filter-prio: 100
     bypass: yes
     use-mmap: yes
     ring-size: 200000

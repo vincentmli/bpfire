@@ -1,7 +1,7 @@
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
-# Copyright (C) 2007-2023  IPFire Team  <info@ipfire.org>                     #
+# Copyright (C) 2007-2024  IPFire Team  <info@ipfire.org>                     #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
@@ -51,12 +51,12 @@ $(TARGET) :
 
 	# Create all directories
 	for i in addon-lang auth backup ca captive certs connscheduler crls ddns dhcp dhcpc dns dnsforward \
-			ethernet extrahd/bin fwlogs fwhosts firewall ipblocklist key langs logging mac main \
+			ethernet extrahd/bin fwlogs fwhosts firewall haproxy ipblocklist key langs logging loxilb mac main \
 			menu.d modem optionsfw \
 			ovpn patches pakfire portfw ppp private proxy/advanced/cre \
-			proxy/calamaris/bin qos/bin red remote ddos loxilb keepalived haproxy xdpdns xdpsni sensors suricata time \
+			proxy/calamaris/bin qos/bin red remote sensors suricata time \
 			updatexlrator/bin updatexlrator/autocheck urlfilter/autoupdate urlfilter/bin vpn \
-			wakeonlan wireguard wireless ; do \
+			wakeonlan wireguard wireless xdptailcall ddos xdpsni xdpdns; do \
 	        mkdir -p $(CONFIG_ROOT)/$$i; \
 	done
 
@@ -65,12 +65,12 @@ $(TARGET) :
 	    captive/settings captive/agb.txt captive/clients captive/voucher_out certs/index.txt certs/index.txt.attr ddns/config ddns/settings ddns/ipcache dhcp/settings \
 	    dhcp/fixleases dhcp/advoptions dhcp/dhcpd.conf.local dns/settings dns/servers dnsforward/config ethernet/aliases ethernet/settings ethernet/known_nics ethernet/scanned_nics \
 	    ethernet/wireless extrahd/scan extrahd/devices extrahd/partitions extrahd/settings firewall/settings firewall/locationblock firewall/input firewall/outgoing \
-	    fwhosts/customnetworks fwhosts/customhosts fwhosts/customgroups fwhosts/customservicegrp fwhosts/customlocationgrp fwlogs/ipsettings fwlogs/portsettings ipblocklist/modified \
-	    ipblocklist/settings mac/settings main/hosts main/routing main/security main/settings optionsfw/settings \
+	    fwhosts/customnetworks fwhosts/customhosts fwhosts/customgroups fwhosts/customservicegrp fwhosts/customlocationgrp fwlogs/ipsettings fwlogs/portsettings ipblocklist/modified haproxy/settings \
+	    ipblocklist/settings loxilb/settings mac/settings main/hosts main/routing main/security main/settings optionsfw/settings \
 	    ovpn/ccd.conf ovpn/ccdroute ovpn/ccdroute2 pakfire/settings portfw/config ppp/settings-1 ppp/settings-2 ppp/settings-3 ppp/settings-4 \
-	    ppp/settings-5 ppp/settings proxy/settings proxy/squid.conf proxy/advanced/settings proxy/advanced/cre/enable remote/settings ddos/settings ddos/tcp_ports ddos/udp-ddos-settings ddos/udp_ports ddos/dns-ddos-settings loxilb/settings xdpdns/settings xdpdns/domainfile xdpsni/settings xdpsni/domainfile keepalived/keepalived.conf keepalived/runsettings keepalived/settings keepalived/configvs keepalived/configrs haproxy/settings qos/settings qos/classes qos/subclasses qos/level7config qos/portconfig \
+	    ppp/settings-5 ppp/settings proxy/settings proxy/squid.conf proxy/advanced/settings proxy/advanced/cre/enable remote/settings qos/settings qos/classes qos/subclasses qos/level7config qos/portconfig \
 	    qos/tosconfig suricata/settings vpn/config vpn/settings vpn/ipsec.conf \
-	    vpn/ipsec.secrets vpn/caconfig wakeonlan/clients.conf wireguard/peers wireguard/settings wireless/config wireless/settings; do \
+	    vpn/ipsec.secrets vpn/caconfig wakeonlan/clients.conf wireguard/peers wireguard/settings wireless/config wireless/settings xdptailcall/settings ddos/settings xdpsni/settings xdpsni/domainfile xdpdns/settings xdpdns/domainfile; do \
 	    touch $(CONFIG_ROOT)/$$i; \
 	done
 
@@ -81,7 +81,7 @@ $(TARGET) :
 	cp $(DIR_SRC)/config/cfgroot/location-functions.pl	$(CONFIG_ROOT)/
 	cp $(DIR_SRC)/config/cfgroot/ipblocklist-functions.pl	$(CONFIG_ROOT)/
 	cp $(DIR_SRC)/config/cfgroot/ids-functions.pl		$(CONFIG_ROOT)/
-	cp $(DIR_SRC)/config/cfgroot/wireguard-functions.pl     $(CONFIG_ROOT)/
+	cp $(DIR_SRC)/config/cfgroot/wireguard-functions.pl	$(CONFIG_ROOT)/
 	cp $(DIR_SRC)/config/cfgroot/lang.pl			$(CONFIG_ROOT)/
 	cp $(DIR_SRC)/config/cfgroot/countries.pl		$(CONFIG_ROOT)/
 	cp $(DIR_SRC)/config/cfgroot/graphs.pl			$(CONFIG_ROOT)/
@@ -99,16 +99,6 @@ $(TARGET) :
 	cp $(DIR_SRC)/config/cfgroot/main-settings		$(CONFIG_ROOT)/main/settings
 	cp $(DIR_SRC)/config/cfgroot/manualpages		$(CONFIG_ROOT)/main/
 	cp $(DIR_SRC)/config/cfgroot/ssh-settings		$(CONFIG_ROOT)/remote/settings
-	cp $(DIR_SRC)/config/cfgroot/ddos-settings		$(CONFIG_ROOT)/ddos/settings
-	cp $(DIR_SRC)/config/cfgroot/tcp_ports			$(CONFIG_ROOT)/ddos/tcp_ports
-	cp $(DIR_SRC)/config/cfgroot/udp-ddos-settings		$(CONFIG_ROOT)/ddos/udp-ddos-settings
-	cp $(DIR_SRC)/config/cfgroot/udp_ports			$(CONFIG_ROOT)/ddos/udp_ports
-	cp $(DIR_SRC)/config/cfgroot/dns-ddos-settings		$(CONFIG_ROOT)/ddos/dns-ddos-settings
-	cp $(DIR_SRC)/config/cfgroot/loxilb-settings		$(CONFIG_ROOT)/loxilb/settings
-	cp $(DIR_SRC)/config/cfgroot/loxilb-FWconfig.txt	$(CONFIG_ROOT)/loxilb/FWconfig.txt
-	cp $(DIR_SRC)/config/cfgroot/xdpdns-settings		$(CONFIG_ROOT)/xdpdns/settings
-	cp $(DIR_SRC)/config/cfgroot/xdpsni-settings		$(CONFIG_ROOT)/xdpsni/settings
-	cp $(DIR_SRC)/config/cfgroot/haproxy-settings		$(CONFIG_ROOT)/haproxy/settings
 	cp $(DIR_SRC)/config/cfgroot/time-settings		$(CONFIG_ROOT)/time/settings
 	cp $(DIR_SRC)/config/cfgroot/logging-settings		$(CONFIG_ROOT)/logging/settings
 	cp $(DIR_SRC)/config/cfgroot/ethernet-vlans		$(CONFIG_ROOT)/ethernet/vlans
@@ -122,29 +112,20 @@ $(TARGET) :
 	cp $(DIR_SRC)/config/fwhosts/icmp-types			$(CONFIG_ROOT)/fwhosts/icmp-types
 	cp $(DIR_SRC)/config/fwhosts/customservices		$(CONFIG_ROOT)/fwhosts/customservices
 	cp $(DIR_SRC)/config/fwhosts/customservices             $(CONFIG_ROOT)/fwhosts/customservices.default
+	cp $(DIR_SRC)/config/cfgroot/xdptailcall-settings	$(CONFIG_ROOT)/xdptailcall/settings
+	cp $(DIR_SRC)/config/cfgroot/xdpsni-settings		$(CONFIG_ROOT)/xdpsni/settings
+	cp $(DIR_SRC)/config/cfgroot/xdpdns-settings		$(CONFIG_ROOT)/xdpdns/settings
+	cp $(DIR_SRC)/config/cfgroot/ddos-settings		$(CONFIG_ROOT)/ddos/settings
+	cp $(DIR_SRC)/config/cfgroot/tcp-ddos-settings		$(CONFIG_ROOT)/ddos/tcp-ddos-settings
+	cp $(DIR_SRC)/config/cfgroot/tcp_ports			$(CONFIG_ROOT)/ddos/tcp_ports
+	cp $(DIR_SRC)/config/cfgroot/loxilb-settings		$(CONFIG_ROOT)/loxilb/settings
+	cp $(DIR_SRC)/config/cfgroot/loxilb-FWconfig.txt	$(CONFIG_ROOT)/loxilb/FWconfig.txt
+	cp $(DIR_SRC)/config/cfgroot/haproxy-settings		$(CONFIG_ROOT)/haproxy/settings
 	# Oneliner configfiles
 	echo  "ENABLED=off"		> $(CONFIG_ROOT)/vpn/settings
 	echo  "01"			> $(CONFIG_ROOT)/certs/serial
 	echo  "nameserver    1.2.3.4"	> $(CONFIG_ROOT)/ppp/fake-resolv.conf
-	echo  "DROPNEWNOTSYN=on"	>> $(CONFIG_ROOT)/optionsfw/settings
-	echo  "DROPINPUT=on"		>> $(CONFIG_ROOT)/optionsfw/settings
-	echo  "DROPFORWARD=on"		>> $(CONFIG_ROOT)/optionsfw/settings
-	echo  "FWPOLICY=DROP"		>> $(CONFIG_ROOT)/optionsfw/settings
-	echo  "FWPOLICY1=DROP"		>> $(CONFIG_ROOT)/optionsfw/settings
-	echo  "FWPOLICY2=DROP"		>> $(CONFIG_ROOT)/optionsfw/settings
-	echo  "DROPPORTSCAN=on"		>> $(CONFIG_ROOT)/optionsfw/settings
-	echo  "DROPOUTGOING=on"		>> $(CONFIG_ROOT)/optionsfw/settings
-	echo  "DROPSAMBA=off"		>> $(CONFIG_ROOT)/optionsfw/settings
-	echo  "DROPPROXY=off"		>> $(CONFIG_ROOT)/optionsfw/settings
-	echo  "SHOWREMARK=on"		>> $(CONFIG_ROOT)/optionsfw/settings
-	echo  "SHOWCOLORS=on"		>> $(CONFIG_ROOT)/optionsfw/settings
-	echo  "SHOWTABLES=off"		>> $(CONFIG_ROOT)/optionsfw/settings
-	echo  "SHOWDROPDOWN=off"	>> $(CONFIG_ROOT)/optionsfw/settings
-	echo  "DROPWIRELESSINPUT=on"	>> $(CONFIG_ROOT)/optionsfw/settings
-	echo  "DROPWIRELESSFORWARD=on"	>> $(CONFIG_ROOT)/optionsfw/settings
-	echo  "DROPSPOOFEDMARTIAN=on"	>> $(CONFIG_ROOT)/optionsfw/settings
-	echo  "DROPHOSTILE=on"		>> $(CONFIG_ROOT)/optionsfw/settings
-	echo  "LOGDROPCTINVALID=on"	>> $(CONFIG_ROOT)/optionsfw/settings
+	cp $(DIR_SRC)/config/cfgroot/optionsfw-settings		$(CONFIG_ROOT)/optionsfw/settings
 	echo  "POLICY=MODE2"		>> $(CONFIG_ROOT)/firewall/settings
 	echo  "POLICY1=MODE2"		>> $(CONFIG_ROOT)/firewall/settings
 	echo  "USE_ISP_NAMESERVERS=on"  >> $(CONFIG_ROOT)/dns/settings

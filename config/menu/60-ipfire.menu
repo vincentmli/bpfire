@@ -1,48 +1,23 @@
-    $subipfire->{'10.ddos'} = {'caption' => $Lang::tr{'ebpf xdp ddos'},
-                                'uri' => '/cgi-bin/ddos.cgi',
-                                'title' => "$Lang::tr{'ebpf xdp ddos system'}",
-                                'enabled' => 1,
-                                };
-    $subipfire->{'15.xdpdns'} = {'caption' => $Lang::tr{'xdpdns domain'},
+    $subipfire->{'10.pakfire'} = {'caption' => 'Pakfire',
+				  'uri' => '/cgi-bin/pakfire.cgi',
+				  'title' => "Pakfire",
+				  'enabled' => 1,
+				  };
+    $subipfire->{'20.xdptcpddos'} = {'caption' => 'XDP TCP DDoS',
+				  'uri' => '/cgi-bin/tcp-ddos.cgi',
+				  'title' => "XDP TCP DDoS",
+				  'enabled' => 1,
+				  };
+    $subipfire->{'25.xdpdns'} = {'caption' => $Lang::tr{'xdpdns domain'},
                                 'uri' => '/cgi-bin/xdpdns.cgi',
                                 'title' => "$Lang::tr{'xdpdns domain'}",
                                 'enabled' => 1,
                                 };
-    $subipfire->{'16.xdpsni'} = {'caption' => $Lang::tr{'xdpsni domain'},
+    $subipfire->{'26.xdpsni'} = {'caption' => $Lang::tr{'xdpsni domain'},
                                 'uri' => '/cgi-bin/xdpsni.cgi',
                                 'title' => "$Lang::tr{'xdpsni domain'}",
                                 'enabled' => 1,
                                 };
-    $subipfire->{'17.locationblock'} = {
-                                'caption' => $Lang::tr{'locationblock'},
-                                'uri' => '/cgi-bin/location-block.cgi',
-                                'title' => $Lang::tr{'locationblock'},
-                                'enabled' => 1,
-                                };
-    $subipfire->{'20.loxilb'} = {
-                                 'caption' => $Lang::tr{'loxilb enable'},
-                                 'uri' => '/cgi-bin/loxilb.cgi',
-                                 'title' => "$Lang::tr{'loxilb enable'}",
-                                 'enabled' => 1,
-                                 };
-    $subipfire->{'30.loxilbconfig'} = {
-                                 'caption' => $Lang::tr{'loxilb config'},
-                                 'uri' => '/cgi-bin/loxilbconfig.cgi',
-                                 'title' => "$Lang::tr{'loxilb config'}",
-                                 'enabled' => 1,
-                                 };
-    $subipfire->{'40.loxilbfw'} = {
-                                 'caption' => $Lang::tr{'loxilb fw'},
-                                 'uri' => '/cgi-bin/loxilbfw.cgi',
-                                 'title' => "$Lang::tr{'loxilb fw'}",
-                                 'enabled' => 1,
-                                 };
-    $subipfire->{'50.keepalived'} = {
-                                 'caption' => $Lang::tr{'keepalived'},
-                                 'uri' => '/cgi-bin/keepalived.cgi',
-                                 'title' => "$Lang::tr{'keepalived'}",
-                                 'enabled' => 1,
-                                 };
     $subipfire->{'99.help'} = {'caption' => $Lang::tr{'help'},
 				  'uri' => '/cgi-bin/help.cgi',
 				  'title' => "$Lang::tr{'help'}",

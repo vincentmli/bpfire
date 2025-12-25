@@ -37,6 +37,7 @@ newtComponent dhcptyperadio;
 newtComponent pppoetyperadio;
 newtComponent dhcphostnameentry;
 newtComponent dhcpforcemtuentry;
+newtComponent dhcprapidcommitentry;
 
 /* acceptable character filter for IP and netmaks entry boxes */
 static int ip_input_filter(newtComponent entry, void * data, int ch, int cursor)
@@ -52,11 +53,11 @@ static int ip_input_filter(newtComponent entry, void * data, int ch, int cursor)
 int changeaddress(struct keyvalue *kv, char *colour, int typeflag,
 	char *defaultdhcphostname)
 {
-	char *addressresult;
-	char *netmaskresult;
-	char *gatewayresult;
-	char *dhcphostnameresult;
-	char *dhcpforcemturesult;
+	const char *addressresult;
+	const char *netmaskresult;
+	const char *gatewayresult;
+	const char *dhcphostnameresult;
+	const char *dhcpforcemturesult;
 	struct newtExitStruct es;
 	newtComponent header;
 	newtComponent addresslabel;
@@ -64,6 +65,7 @@ int changeaddress(struct keyvalue *kv, char *colour, int typeflag,
 	newtComponent gatewaylabel;
 	newtComponent dhcphostnamelabel;
 	newtComponent dhcpforcemtulabel;
+	newtComponent dhcprapidcommitlabel;
 	newtComponent ok, cancel;	
 	char message[1000];
 	char temp[STRING_SIZE];
@@ -73,6 +75,8 @@ int changeaddress(struct keyvalue *kv, char *colour, int typeflag,
 	char typefield[STRING_SIZE];
 	char dhcphostnamefield[STRING_SIZE];
 	char dhcpforcemtufield[STRING_SIZE];
+	char dhcprapidcommitfield[STRING_SIZE];
+	char enablerapidcommit;
 	int error;
 	int result = 0;
 	char type[STRING_SIZE];
@@ -88,9 +92,10 @@ int changeaddress(struct keyvalue *kv, char *colour, int typeflag,
 	sprintf(typefield, "%s_TYPE", colour);
 	sprintf(dhcphostnamefield, "%s_DHCP_HOSTNAME", colour);
 	sprintf(dhcpforcemtufield, "%s_DHCP_FORCE_MTU", colour);
+	sprintf(dhcprapidcommitfield, "%s_DHCP_RAPID_COMMIT", colour);
 		
 	sprintf(message, _("Interface - %s"), colour);
-	newtCenteredWindow(44, (typeflag ? 19 : 12), message);
+	newtCenteredWindow(44, (typeflag ? 20 : 12), message);
 	
 	networkform = newtForm(NULL, NULL, 0);
 
@@ -102,6 +107,15 @@ int changeaddress(struct keyvalue *kv, char *colour, int typeflag,
 	 * of the window down two rows to make room. */
 	if (typeflag)
 	{
+		*temp = '\0';
+
+		// Find RapidCommit setting
+		findkey(kv, dhcprapidcommitfield, temp);
+		if (strcmp(temp, "yes") == 0 || strcmp(temp, "true") == 0 || strcmp(temp, "on") == 0 || strcmp(temp, "") == 0)
+			enablerapidcommit = '*';
+		else
+			enablerapidcommit = ' ';
+
 		strcpy(temp, "STATIC"); findkey(kv, typefield, temp);
 		if (strcmp(temp, "STATIC") == 0) startstatictype = 1;
 		if (strcmp(temp, "DHCP") == 0) startdhcptype = 1;
@@ -119,28 +133,35 @@ int changeaddress(struct keyvalue *kv, char *colour, int typeflag,
 		newtTextboxSetText(dhcphostnamelabel, _("DHCP Hostname:"));
 		dhcpforcemtulabel = newtTextbox(2, 9, 18, 1, 0);
 		newtTextboxSetText(dhcpforcemtulabel, _("Force DHCP MTU:"));
+		dhcprapidcommitlabel = newtTextbox(2, 10, 18, 1, 0);
+		newtTextboxSetText(dhcprapidcommitlabel, _("Rapid Commit:"));
 		strcpy(temp, defaultdhcphostname);
 		findkey(kv, dhcphostnamefield, temp);
 		dhcphostnameentry = newtEntry(20, 8, temp, 20, &dhcphostnameresult, 0);
 		strcpy(temp, "");
 		findkey(kv, dhcpforcemtufield, temp);
 		dhcpforcemtuentry = newtEntry(20, 9, temp, 20, &dhcpforcemturesult, 0);
+		dhcprapidcommitentry = newtCheckbox(20, 10, "", enablerapidcommit, " *", &enablerapidcommit);
+		newtComponentAddCallback(dhcprapidcommitentry, networkdialogcallbacktype, NULL);
 		newtFormAddComponent(networkform, dhcphostnamelabel);
 		newtFormAddComponent(networkform, dhcphostnameentry);
 		newtFormAddComponent(networkform, dhcpforcemtulabel);
 		newtFormAddComponent(networkform, dhcpforcemtuentry);
+		newtFormAddComponent(networkform, dhcprapidcommitlabel);
+		newtFormAddComponent(networkform, dhcprapidcommitentry);
 		if (startdhcptype == 0)
 			{
 				newtEntrySetFlags(dhcphostnameentry, NEWT_FLAG_DISABLED, NEWT_FLAGS_SET);
 				newtEntrySetFlags(dhcpforcemtuentry, NEWT_FLAG_DISABLED, NEWT_FLAGS_SET);
+				newtCheckboxSetFlags(dhcprapidcommitentry, NEWT_FLAG_DISABLED, NEWT_FLAGS_SET);
 			}
 	}
 	/* Address */
-	addresslabel = newtTextbox(2, (typeflag ? 11 : 4) + 0, 18, 1, 0);
+	addresslabel = newtTextbox(2, (typeflag ? 12 : 4) + 0, 18, 1, 0);
 	newtTextboxSetText(addresslabel, _("IP address:"));
 	strcpy(temp, "");
 	findkey(kv, addressfield, temp);
-	addressentry = newtEntry(20, (typeflag ? 11 : 4) + 0, temp, 20, &addressresult, 0);
+	addressentry = newtEntry(20, (typeflag ? 12 : 4) + 0, temp, 20, &addressresult, 0);
 	newtEntrySetFilter(addressentry, ip_input_filter, NULL);
 	if (typeflag == 1 && startstatictype == 0)
 		newtEntrySetFlags(addressentry, NEWT_FLAG_DISABLED, NEWT_FLAGS_SET);
@@ -148,10 +169,10 @@ int changeaddress(struct keyvalue *kv, char *colour, int typeflag,
 	newtFormAddComponent(networkform, addressentry);
 	
 	/* Netmask */
-	netmasklabel = newtTextbox(2, (typeflag ? 11 : 4) + 1, 18, 1, 0);
+	netmasklabel = newtTextbox(2, (typeflag ? 12 : 4) + 1, 18, 1, 0);
 	newtTextboxSetText(netmasklabel, _("Network mask:"));
 	strcpy(temp, "255.255.255.0"); findkey(kv, netmaskfield, temp);
-	netmaskentry = newtEntry(20, (typeflag ? 11 : 4) + 1, temp, 20, &netmaskresult, 0);
+	netmaskentry = newtEntry(20, (typeflag ? 12 : 4) + 1, temp, 20, &netmaskresult, 0);
 	newtEntrySetFilter(netmaskentry, ip_input_filter, NULL);
 	if (typeflag == 1 && startstatictype == 0) 
 		newtEntrySetFlags(netmaskentry, NEWT_FLAG_DISABLED, NEWT_FLAGS_SET);
@@ -162,11 +183,11 @@ int changeaddress(struct keyvalue *kv, char *colour, int typeflag,
 	if (typeflag)
 	{
 		/* Gateway */
-		gatewaylabel = newtTextbox(2, (typeflag ? 11 : 4) + 2, 18, 1, 0);
+		gatewaylabel = newtTextbox(2, (typeflag ? 12 : 4) + 2, 18, 1, 0);
 		newtTextboxSetText(gatewaylabel, _("Gateway:"));
 		strcpy(temp, "");
 		findkey(kv, gatewayfield, temp);
-		gatewayentry = newtEntry(20, (typeflag ? 11 : 4) + 2, temp, 20, &gatewayresult, 0);
+		gatewayentry = newtEntry(20, (typeflag ? 12 : 4) + 2, temp, 20, &gatewayresult, 0);
 		newtEntrySetFilter(gatewayentry, ip_input_filter, NULL);
 		if (typeflag == 1 && startstatictype == 0)
 			newtEntrySetFlags(gatewayentry, NEWT_FLAG_DISABLED, NEWT_FLAGS_SET);
@@ -175,8 +196,8 @@ int changeaddress(struct keyvalue *kv, char *colour, int typeflag,
 	}
 
 	/* Buttons. */
-	ok = newtButton(8, (typeflag ? 15 : 7), _("OK"));
-	cancel = newtButton(26, (typeflag ? 15 : 7), _("Cancel"));
+	ok = newtButton(8, (typeflag ? 16 : 7), _("OK"));
+	cancel = newtButton(26, (typeflag ? 16 : 7), _("Cancel"));
 
 	newtFormAddComponents(networkform, ok, cancel, NULL);
 
@@ -237,6 +258,12 @@ int changeaddress(struct keyvalue *kv, char *colour, int typeflag,
 				{
 					replacekeyvalue(kv, dhcphostnamefield, dhcphostnameresult);
 					replacekeyvalue(kv, dhcpforcemtufield, dhcpforcemturesult);
+
+					if (enablerapidcommit == '*')
+						replacekeyvalue(kv, dhcprapidcommitfield, "on");
+					else
+						replacekeyvalue(kv, dhcprapidcommitfield, "off");
+
 					if (strcmp(type, "STATIC") != 0)
 					{
 						replacekeyvalue(kv, addressfield, "0.0.0.0");
@@ -352,11 +379,13 @@ void networkdialogcallbacktype(newtComponent cm, void *data)
 	{
 		newtEntrySetFlags(dhcphostnameentry, NEWT_FLAG_DISABLED, NEWT_FLAGS_RESET);
 		newtEntrySetFlags(dhcpforcemtuentry, NEWT_FLAG_DISABLED, NEWT_FLAGS_RESET);
+		newtCheckboxSetFlags(dhcprapidcommitentry, NEWT_FLAG_DISABLED, NEWT_FLAGS_RESET);
 	}
 	else
 	{
 		newtEntrySetFlags(dhcphostnameentry, NEWT_FLAG_DISABLED, NEWT_FLAGS_SET);		
 		newtEntrySetFlags(dhcpforcemtuentry, NEWT_FLAG_DISABLED, NEWT_FLAGS_SET);		
+		newtCheckboxSetFlags(dhcprapidcommitentry, NEWT_FLAG_DISABLED, NEWT_FLAGS_SET);
 	}
 	newtRefresh();
 	newtDrawForm(networkform);
@@ -480,14 +509,14 @@ char* readmac(char *card) {
 char* find_nic4mac(char *findmac) {
 	DIR *dir;
 	struct dirent *dirzeiger;
-	char temp[STRING_SIZE], temp2[STRING_SIZE];
+	char temp[STRING_SIZE] = "";
+	char temp2[STRING_SIZE] = "";
         
 	if((dir=opendir(SYSDIR)) == NULL) {
 		fprintf(flog,"Fehler bei opendir (find_name4nic) ...\n");
 		return NULL;
 	}
 
-	sprintf(temp, "");
 	while((dirzeiger=readdir(dir)) != NULL) {
 		if(*((*dirzeiger).d_name) != '.' & strcmp(((*dirzeiger).d_name), "lo") != 0) {
 			sprintf(temp2, "%s", readmac((*dirzeiger).d_name) );
@@ -550,7 +579,6 @@ int rename_nics(void) {
 
 int write_configs_netudev(int card , int colour)
 {	
-	char commandstring[STRING_SIZE];
 	struct keyvalue *kv = initkeyvalues();
 	char temp1[STRING_SIZE], temp2[STRING_SIZE], temp3[STRING_SIZE];
 	char ucolour[STRING_SIZE];
@@ -586,7 +614,7 @@ int write_configs_netudev(int card , int colour)
 int scan_network_cards(void)
 {
 	FILE *fp;
-	char driver[STRING_SIZE], description[STRING_SIZE], macaddr[STRING_SIZE], temp_line[STRING_SIZE];
+	char temp_line[STRING_SIZE];
 	int count = 0;
 	const char _driver[]="driver: ";
 	const char _desc[]="desc: ";
@@ -732,7 +760,7 @@ int ask_clear_card_entry(int card)
 	sprintf(message, _("Do you really want to remove the assigned %s interface?"), ucolourcard[card]);
 	rc = newtWinChoice(_("Warning"), _("OK"), _("Cancel"), message);
 
-	if ( rc = 0 || rc == 1) {
+	if ( rc == 0 || rc == 1) {
 		clear_card_entry(card);
 	} else return 1;
 

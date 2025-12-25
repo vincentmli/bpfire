@@ -50,6 +50,10 @@ else
 	CONFIGURE_ARGS += --enable-jit
 endif
 
+ifeq "$(BUILD_ARCH)" "loongarch64"
+	CONFIGURE_ARGS += --disable-jit
+endif
+
 ###############################################################################
 # Top-level Rules
 ###############################################################################
@@ -58,7 +62,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_BLAKE2 = 3954e08cf3c67a5e2249bf72f8d4c1a90fe7a098fffa5a0a06d0d665d07899027cfd632eab2757fcf2b1b9b413a43d5c484c8e52d05b7ca113b3bbbc4dd3bb29
+$(DL_FILE)_BLAKE2 = 514a743cf62137d69cbab40900a60f1dc538543996fb37e16bcddf84570184c7062fc09e487d0213d12e86925d9c85e16d86af70b483c0b584ed5570be81e53a
 
 install : $(TARGET)
 

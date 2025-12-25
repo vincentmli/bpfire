@@ -899,6 +899,7 @@ readhash() {
 
 	local line
 	while read -r line; do
+
 		# Skip Blank Lines
 		if [[ ${line} =~ ^[[:space:]]*$ ]]; then
 			continue
@@ -909,14 +910,20 @@ readhash() {
 			continue
 		fi
 
-		# Check for a valid key followed by =
-		if ! [[ ${line} =~ ^[A-Za-z_][A-Za-z0-9_]*= ]]; then
+		# Skip lines without a =
+		if ! [[ ${line} =~ [^=]*=[^=]*$ ]]; then
 			echo "Invalid line '${line}'" >&2
 			continue
 		fi
 
-		local key="${line%%=*}"
+		local key="${line%=*}"
 		local val="${line#*=}"
+
+		# Skip lines with an invalid key
+		if ! [[ ${key} =~ ^[A-Za-z_][A-Za-z0-9_]*$ ]]; then
+			echo "Invalid key '${key}'" >&2
+			continue
+		fi
 
 		# Skip lines with invalid values
 		if ! [[ ${val} =~ ^[\'][\ A-Za-z0-9=/,.:%_@#+-]*[\']$ ]] && ! [[ ${val} =~ ^[A-Za-z0-9=/,.:%_@#+-]*$ ]]; then
@@ -925,12 +932,8 @@ readhash() {
 		fi
 
 		# strip leading and trailing single quotes
-		case "${val}" in
-			'*')
-				val="${val#\'}"
-				val="${val%\'}"
-				;;
-		esac
+		val="${val#\'}"
+		val="${val%\'}"
 
 		printf -v "${array}[${key}]" "%s" "${val}"
 	done < "${file}"

@@ -23,7 +23,6 @@
 . ${rc_functions}
 
 [ -r "/etc/sysconfig/keepalive" ] && . /etc/sysconfig/keepalive
-eval $(/usr/local/bin/readhash /var/ipfire/keepalived/runsettings)
 
 case "${1}" in
 	start)
@@ -33,10 +32,8 @@ case "${1}" in
 		# Enable connection tracking for IPVS
 		sysctl -w net.ipv4.vs.conntrack=1 &>/dev/null
 
-		if [ "$ENABLE_HA" == "on" ]; then
-			boot_mesg "Starting keepalive daemon..."
-			loadproc /usr/sbin/keepalived ${KEEPALIVED_OPTIONS}
-		fi
+		boot_mesg "Starting keepalive daemon..."
+		loadproc /usr/sbin/keepalived ${KEEPALIVED_OPTIONS}
 		;;
 
 	stop)

@@ -24,10 +24,11 @@
 #define _(x) dgettext("installer", x)
 
 #define INST_FILECOUNT 30000
-#define LICENSE_FILE	"/cdrom/COPYING"
 #define SOURCE_TEMPFILE "/tmp/downloads/image.iso"
 
 extern char url[STRING_SIZE];
+
+FILE* flog = NULL;
 
 static int newtChecklist(const char* title, const char* message,
 		unsigned int width, unsigned int height, unsigned int num_entries,
@@ -160,41 +161,11 @@ static int newtWinOkCancel(const char* title, const char* message, int width, in
 	return ret;
 }
 
-static int newtLicenseBox(const char* title, const char* text, int width, int height) {
-	int ret = 1;
-
-	newtCenteredWindow(width, height, title);
-
-	newtComponent form = newtForm(NULL, NULL, 0);
-
-	newtComponent textbox = newtTextbox(1, 1, width - 2, height - 7,
-		NEWT_FLAG_WRAP|NEWT_FLAG_SCROLL);
-	newtTextboxSetText(textbox, text);
-	newtFormAddComponent(form, textbox);
-
-	char choice;
-	newtComponent checkbox = newtCheckbox(3, height - 3, _("I accept this license"),
-		' ', " *", &choice);
-
-	newtComponent btn = newtButton(width - 15, height - 4, _("OK"));
-
-	newtFormAddComponents(form, checkbox, btn, NULL);
-
-	newtComponent answer = newtRunForm(form);
-	if (answer == btn && choice == '*')
-		ret = 0;
-
-	newtFormDestroy(form);
-	newtPopWindow();
-
-	return ret;
-}
-
-int write_lang_configs(char* lang) {
+int write_lang_configs(const char* lang) {
 	struct keyvalue *kv = initkeyvalues();
 
 	/* default stuff for main/settings. */
-	replacekeyvalue(kv, "LANGUAGE", lang);
+	replacekeyvalue(kv, "LANGUAGE", (char*)lang);
 	replacekeyvalue(kv, "HOSTNAME", DISTRO_SNAME);
 	replacekeyvalue(kv, "THEME", "ipfire");
 	writekeyvalues(kv, "/harddisk" CONFIG_ROOT "/main/settings");
@@ -247,7 +218,6 @@ static char* center_string(const char* str, int width) {
 
 #define DEFAULT_LANG "en.utf8"
 #define NUM_LANGS 13
-#define NUM_LANGS 14
 
 static struct lang {
 	const char* code;
@@ -266,7 +236,6 @@ static struct lang {
 	{ "pt.utf8",    "Portuguese (Brasil)" },
 	{ "ru.utf8",    "Русский (Russian)" },
 	{ "tr.utf8",    "Türkçe (Turkish)" },
-	{ "zh.utf8",    "简体中文 (Chinese)" },
 	{ NULL, NULL },
 };
 
@@ -279,7 +248,7 @@ static struct config {
 	int disable_swap;
 	char download_url[STRING_SIZE];
 	char postinstall[STRING_SIZE];
-	char* language;
+	const char* language;
 } config = {
 	.unattended = 0,
 	.serial_console = 0,
@@ -310,7 +279,8 @@ static void parse_command_line(FILE* flog, struct config* c) {
 
 		char* token = strtok(cmdline, " ");
 		while (token) {
-			strncpy(buffer, token, sizeof(buffer));
+			snprintf(buffer, sizeof(buffer), "%s", token);
+
 			char* val = buffer;
 			char* key = strsep(&val, "=");
 
@@ -336,7 +306,7 @@ static void parse_command_line(FILE* flog, struct config* c) {
 
 			// download url
 			else if (strcmp(key, "installer.download-url") == 0) {
-				strncpy(c->download_url, val, sizeof(c->download_url));
+				snprintf(c->download_url, sizeof(c->download_url), "%s", val);
 				c->perform_download = 1;
 
 				// Require networking for the download
@@ -344,7 +314,7 @@ static void parse_command_line(FILE* flog, struct config* c) {
 
 			// postinstall script
 			} else if (strcmp(key, "installer.postinstall") == 0) {
-				strncpy(c->postinstall, val, sizeof(c->postinstall));
+				snprintf(c->postinstall, sizeof(c->postinstall), "%s", val);
 
 				// Require networking for the download
 				c->require_networking = 1;
@@ -364,22 +334,20 @@ int main(int argc, char *argv[]) {
 	// Read /etc/system-release
 	char* system_release = get_system_release();
 
-	char discl_msg[40000] =	"Disclaimer\n";
-
 	char* sourcedrive = NULL;
+	struct hw_destination* destination = NULL;
+	struct hw_disk** selected_disks = NULL;
 	int rc = 0;
 	char commandstring[STRING_SIZE];
 	int choice;
 	char message[STRING_SIZE];
 	char title[STRING_SIZE];
 	int allok = 0;
-	FILE *copying;
 
 	setlocale(LC_ALL, "");
-	sethostname(DISTRO_SNAME, 10);
+	sethostname(DISTRO_SNAME, strlen(DISTRO_SNAME));
 
 	/* Log file/terminal stuff. */
-	FILE* flog = NULL;
 	if (argc >= 2) {
 		logfile = argv[1];
 
@@ -568,34 +536,15 @@ int main(int argc, char *argv[]) {
 		goto EXIT;
 	}
 
-	if (!config.unattended) {
-		// Read the license file.
-		if (!(copying = fopen(LICENSE_FILE, "r"))) {
-			sprintf(discl_msg, "Could not open license file: %s\n", LICENSE_FILE);
-			fprintf(flog, "%s", discl_msg);
-		} else {
-			fread(discl_msg, 1, 40000, copying);
-			fclose(copying);
-
-			if (newtLicenseBox(_("License Agreement"), discl_msg, 75, 20)) {
-				errorbox(_("License not accepted!"));
-
-				goto EXIT;
-			}
-		}
-	}
-
 	int part_type = HW_PART_TYPE_NORMAL;
 
 	// Scan for disks to install on.
 	struct hw_disk** disks = hw_find_disks(hw, sourcedrive);
-
-	struct hw_disk** selected_disks = NULL;
 	unsigned int num_selected_disks = 0;
 
 	// Check how many disks have been found and what
 	// we can do with them.
-	unsigned int num_disks = hw_count_disks((const struct hw_disk**)disks);
+	unsigned int num_disks = hw_count_disks(disks);
 
 	while (1) {
 		// no harddisks found
@@ -607,7 +556,7 @@ int main(int argc, char *argv[]) {
 		// or if we are running in unattended mode, we will select
 		// the first disk and go with that one
 		} else if ((num_disks == 1) || (config.unattended && num_disks >= 1)) {
-			selected_disks = hw_select_first_disk((const struct hw_disk**)disks);
+			selected_disks = hw_select_first_disk(disks);
 
 		// more than one usable disk has been found and
 		// the user needs to choose what to do with them
@@ -647,7 +596,7 @@ int main(int argc, char *argv[]) {
 		if (config.unattended)
 			break;
 
-		num_selected_disks = hw_count_disks((const struct hw_disk**)selected_disks);
+		num_selected_disks = hw_count_disks(selected_disks);
 
 		if (num_selected_disks == 1) {
 			snprintf(message, sizeof(message),
@@ -686,8 +635,40 @@ int main(int argc, char *argv[]) {
 
 	hw_free_disks(disks);
 
-	struct hw_destination* destination = hw_make_destination(hw, part_type,
-		selected_disks, config.disable_swap);
+	// Filesystem selection
+	int filesystem = HW_FS_DEFAULT;
+
+	if (!config.unattended) {
+		struct filesystems {
+			int fstype;
+			char* description;
+		} filesystems[] = {
+			{ HW_FS_EXT4,            _("ext4 Filesystem") },
+			{ HW_FS_XFS,             _("XFS Filesystem") },
+			{ HW_FS_BTRFS,           _("BTRFS Filesystem (EXPERIMENTAL)") },
+			{ 0, NULL },
+		};
+		unsigned int num_filesystems = sizeof(filesystems) / sizeof(*filesystems);
+
+		char* fs_names[num_filesystems];
+		int fs_choice = 0;
+		for (unsigned int i = 0; i < num_filesystems; i++) {
+			if (HW_FS_DEFAULT == filesystems[i].fstype)
+				fs_choice = i;
+
+			fs_names[i] = filesystems[i].description;
+		}
+
+		rc = newtWinMenu(_("Filesystem Selection"), _("Please choose your filesystem:"),
+			50, 5, 5, 5, fs_names, &fs_choice, _("OK"), _("Cancel"), NULL);
+
+		if (rc == 2)
+			goto EXIT;
+
+		filesystem = filesystems[fs_choice].fstype;
+	}
+
+	destination = hw_make_destination(hw, part_type, selected_disks, config.disable_swap, filesystem);
 
 	if (!destination) {
 		errorbox(_("Your harddisk is too small."));
@@ -711,37 +692,6 @@ int main(int argc, char *argv[]) {
 			if (rc != 1)
 				goto EXIT;
 		}
-	}
-
-	// Filesystem selection
-	if (!config.unattended) {
-		struct filesystems {
-			int fstype;
-			char* description;
-		} filesystems[] = {
-			{ HW_FS_EXT4,            _("ext4 Filesystem") },
-			{ HW_FS_EXT4_WO_JOURNAL, _("ext4 Filesystem without journal") },
-			{ HW_FS_XFS,             _("XFS Filesystem") },
-			{ 0, NULL },
-		};
-		unsigned int num_filesystems = sizeof(filesystems) / sizeof(*filesystems);
-
-		char* fs_names[num_filesystems];
-		int fs_choice = 0;
-		for (unsigned int i = 0; i < num_filesystems; i++) {
-			if (HW_FS_DEFAULT == filesystems[i].fstype)
-				fs_choice = i;
-
-			fs_names[i] = filesystems[i].description;
-		}
-
-		rc = newtWinMenu(_("Filesystem Selection"), _("Please choose your filesystem:"),
-			50, 5, 5, 5, fs_names, &fs_choice, _("OK"), _("Cancel"), NULL);
-
-		if (rc == 2)
-			goto EXIT;
-
-		destination->filesystem = filesystems[fs_choice].fstype;
 	}
 
 	// Setting up RAID if needed.
@@ -862,12 +812,6 @@ int main(int argc, char *argv[]) {
 	}
 
 	newtPopWindow();
-
-	/* Set marker that the user has already accepted the GPL if the license has been shown
-	 * in the installation process. In unatteded mode, the user will be presented the
-	 * license when he or she logs on to the web user interface for the first time. */
-	if (!config.unattended)
-		mysystem(logfile, "/usr/bin/touch /harddisk/var/ipfire/main/gpl_accepted");
 
 	/* Copy restore file from cdrom */
 	char* backup_file = hw_find_backup_file(logfile, SOURCE_MOUNT_PATH);

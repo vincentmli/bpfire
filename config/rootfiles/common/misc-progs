@@ -29,6 +29,7 @@ usr/local/bin/suricatactrl
 usr/local/bin/sshctrl
 usr/local/bin/syslogdctrl
 usr/local/bin/timectrl
+usr/local/bin/tcpddosctrl
 #usr/local/bin/torctrl
 usr/local/bin/unboundctrl
 usr/local/bin/updxlratorctrl
@@ -39,9 +40,6 @@ usr/local/bin/wireguardctrl
 usr/local/bin/wirelessclient
 usr/local/bin/wirelessctrl
 #usr/local/bin/wlanapctrl
-usr/local/bin/ddosctrl
-usr/local/bin/loxilbctrl
-usr/local/bin/keepalivedctrl
-usr/local/bin/xdpdnsctrl
-usr/local/bin/xdpsnictrl
 usr/local/bin/xdpgeoipctrl
+usr/local/bin/xdpsnictrl
+usr/local/bin/xdpdnsctrl

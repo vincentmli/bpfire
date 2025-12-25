@@ -43,15 +43,17 @@
 
 #define HW_FS_SWAP                    0
 #define HW_FS_EXT4                    1
-#define HW_FS_EXT4_WO_JOURNAL         2
-#define HW_FS_XFS                     3
-#define HW_FS_FAT32                   4
+#define HW_FS_XFS                     2
+#define HW_FS_FAT32                   3
+#define HW_FS_BTRFS                   4
 
 #define HW_FS_DEFAULT                 HW_FS_EXT4
 
 #define RAID_METADATA                 "1.0"
 
 #define SERIAL_BAUDRATE               115200
+
+#define BTRFS_MOUNT_OPTIONS           "compress=zstd:1"
 
 #define BYTES2MB(x) ((x) / 1024 / 1024)
 #define MB2BYTES(x) ((unsigned long long)(x) * 1024 * 1024)
@@ -103,6 +105,26 @@ struct hw_destination {
 	unsigned long long size_root;
 };
 
+// Struct to define the BTRFS subvolumes layout
+static const struct btrfs_subvolumes {
+	const char* name;
+	const char* mount_path;
+} btrfs_subvolumes[] = {
+	{ "@",          "/" },
+	{ "@snapshots", "/.snapshots" },
+	{ "@home",      "/home" },
+	{ "@root",      "/root" },
+	{ "@cache",     "/var/cache" },
+	{ "@backups",   "/var/ipfire/backup" },
+	{ "@lib",       "/var/lib" },
+	{ "@logs",      "/var/log" },
+	{ "@mails",     "/var/mail" },
+	{ "@tmp",       "/var/tmp" },
+
+	// Sentinel
+	{ NULL },
+};
+
 struct hw* hw_init();
 void hw_free(struct hw* hw);
 
@@ -113,12 +135,12 @@ char* hw_find_source_medium(struct hw* hw);
 
 struct hw_disk** hw_find_disks(struct hw* hw, const char* sourcedrive);
 void hw_free_disks(struct hw_disk** disks);
-unsigned int hw_count_disks(const struct hw_disk** disks);
+unsigned int hw_count_disks(struct hw_disk** disks);
 struct hw_disk** hw_select_disks(struct hw_disk** disks, int* selection);
-struct hw_disk** hw_select_first_disk(const struct hw_disk** disks);
+struct hw_disk** hw_select_first_disk(struct hw_disk** disks);
 
 struct hw_destination* hw_make_destination(struct hw* hw, int part_type, struct hw_disk** disks,
-	int disable_swap);
+	int disable_swap, int filesystem);
 
 unsigned long long hw_memory();
 

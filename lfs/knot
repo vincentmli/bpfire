@@ -1,7 +1,7 @@
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
-# Copyright (C) 2007-2023  IPFire Team  <info@ipfire.org>                     #
+# Copyright (C) 2007-2024  IPFire Team  <info@ipfire.org>                     #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
@@ -82,10 +82,8 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 		--disable-modules \
 		--enable-maxminddb=no \
 		--disable-documentation
-
 	cd $(DIR_APP)/src && make $(MAKETUNING) kdig kxdpgun
 	cd $(DIR_APP)/src/.libs && cp -av kdig kxdpgun /usr/bin
 	cd $(DIR_APP)/src/.libs && cp -av lib* /usr/lib
-
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)

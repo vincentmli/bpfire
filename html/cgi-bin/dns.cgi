@@ -2,7 +2,7 @@
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
-# Copyright (C) 2020  IPFire Development Team                                 #
+# Copyright (C) 2005-2025  IPFire Team  <info@ipfire.org>                     #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
@@ -134,12 +134,12 @@ if (($cgiparams{'SERVERS'} eq $Lang::tr{'save'}) || ($cgiparams{'SERVERS'} eq $L
 		}
 	}
 
-        # Check if a TLS is enabled and no TLS_HOSTNAME has benn specified.
-        if ($settings{'PROTO'} eq "TLS") {
-                unless ($cgiparams{"TLS_HOSTNAME"}) {
-                        $errormessage = "$Lang::tr{'dns no tls hostname given'}";
-                }
-        }
+	# Check if a TLS is enabled and no TLS_HOSTNAME has benn specified.
+	if ($settings{'PROTO'} eq "TLS") {
+		unless ($cgiparams{"TLS_HOSTNAME"}) {
+			$errormessage = "$Lang::tr{'dns no tls hostname given'}";
+		}
+	}
 
 	# Go further if there was no error.
 	if ( ! $errormessage) {
